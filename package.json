@@ -31,10 +31,10 @@
     "generate:fixtures": "npx tsx scripts/generateFixtures.ts"
   },
   "dependencies": {
-    "hast-util-to-string": "^3.0.1",
-    "rehype": "^13.0.2",
-    "unified": "^11.0.5",
-    "unist-util-visit": "^5.0.0"
+    "hast-util-to-string": "~3.0.1",
+    "rehype": "~13.0.2",
+    "unified": "~11.0.5",
+    "unist-util-visit": "~5.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

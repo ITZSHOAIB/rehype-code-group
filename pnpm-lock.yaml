@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       hast-util-to-string:
-        specifier: ^3.0.1
+        specifier: ~3.0.1
         version: 3.0.1
       rehype:
-        specifier: ^13.0.2
+        specifier: ~13.0.2
         version: 13.0.2
       unified:
-        specifier: ^11.0.5
+        specifier: ~11.0.5
         version: 11.0.5
       unist-util-visit:
-        specifier: ^5.0.0
+        specifier: ~5.0.0
         version: 5.0.0
     devDependencies:
       '@biomejs/biome':
