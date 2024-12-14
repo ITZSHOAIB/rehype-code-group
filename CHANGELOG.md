@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 0.2.3
+
+### Patch Changes
+
+- [`afd29c9`](https://github.com/ITZSHOAIB/rehype-code-group/commit/afd29c9a5eb3a306ab6aaed79a1e01ccb9ca5889) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - a minor bump
+
 ## 0.2.2
 
 ### Patch Changes
