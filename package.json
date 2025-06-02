@@ -43,7 +43,7 @@
     "@types/hast": "^3.0.4",
     "@types/node": "^22.9.0",
     "@vitest/coverage-v8": "2.1.5",
-    "lint-staged": "^15.2.10",
+    "lint-staged": "^16.1.0",
     "rehype-minify-whitespace": "^6.0.2",
     "rehype-parse": "^9.0.1",
     "rehype-stringify": "^10.0.1",
