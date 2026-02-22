@@ -1,4 +1,4 @@
-![Copy of Untitled Design (1)](https://github.com/user-attachments/assets/fa55322a-d00b-45df-9537-63f43cb781c7)
+<img width="1280" height="640" alt="Copy of Untitled Design" src="https://github.com/user-attachments/assets/5bdaea68-ad5c-4b27-a870-e9ac13947fda" />
 
 # Rehype Code Group Plugin 🤖
 
