@@ -1,4 +1,4 @@
-<img width="1280" height="640" alt="Copy of Untitled Design" src="https://github.com/user-attachments/assets/5bdaea68-ad5c-4b27-a870-e9ac13947fda" />
+<img width="1280" height="640" alt="rehype-code-group" src="https://github.com/user-attachments/assets/d7da11d1-9f5b-4c93-9023-fcf4d0f2c288" />
 
 # Rehype Code Group Plugin 🤖
 
