@@ -11,8 +11,8 @@
     }
   },
   "types": "dist/index.d.ts",
-  "files": ["dist"],
   "type": "module",
+  "files": ["dist"],
   "scripts": {
     "run:example": "pnpm build && node example/index.js",
     "build": "pnpm clean && tsc",
