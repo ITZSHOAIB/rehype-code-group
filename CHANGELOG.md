@@ -1,5 +1,17 @@
 # rehype-code-group
 
+## 0.2.4
+
+### Patch Changes
+
+- [#44](https://github.com/ITZSHOAIB/rehype-code-group/pull/44) [`73dbf05`](https://github.com/ITZSHOAIB/rehype-code-group/commit/73dbf059171d058dec38399cd7fab0f553228238) Thanks [@dependabot](https://github.com/apps/dependabot)! - chore(deps-dev): bump typescript from 5.7.3 to 5.8.2
+
+## 0.2.3
+
+### Patch Changes
+
+- [`afd29c9`](https://github.com/ITZSHOAIB/rehype-code-group/commit/afd29c9a5eb3a306ab6aaed79a1e01ccb9ca5889) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - a minor bump
+
 ## 0.2.2
 
 ### Patch Changes
