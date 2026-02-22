@@ -1,5 +1,6 @@
 import type { Element, Root } from "hast";
 import { toString as hastToString } from "hast-util-to-string";
+import * as emoji from "node-emoji";
 import {
   type CodeGroup,
   createRehypeCodeGroupElement,
@@ -38,7 +39,9 @@ export const handleStartDelimiter = (
   const startMatch = hastToString(node).trim().match(START_DELIMITER_REGEX);
 
   if (startMatch) {
-    const tabLabels = startMatch[1].split(",").map((label) => label.trim());
+    const tabLabels = startMatch[1]
+      .split(",")
+      .map((label) => emoji.emojify(label.trim()));
     codeGroups.push({ parentNode: parent, startIndex: index, tabLabels });
   }
 };

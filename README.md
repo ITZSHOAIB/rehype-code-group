@@ -18,6 +18,7 @@ A [Rehype](https://github.com/rehypejs/rehype) plugin for grouping code blocks w
 ## Features ✨
 
 - **Group Code Blocks with Tabs**: Easily group code blocks with tabs, allowing users to switch between different code snippets.
+- **Emoji Shortcode Support**: Use `:package:`, `:yarn:`, and other [emoji shortcodes](https://github.com/omnidan/node-emoji#readme) in tab labels—they're automatically converted to emojis.
 - **Automatic Styles and Scripts**: Automatically adds the necessary styles and scripts to the document.
 - **Accessibility**: Enhanced accessibility features for better user experience.
 - **Versatile Content Grouping**: Create tabs for any type of content, not just code blocks. Organize and display different types of content within tabs.
@@ -60,6 +61,26 @@ To incorporate code group tabs in your markdown file, use the following syntax:
 
 ~~~raw
 ::: code-group labels=[npm, pnpm, yarn]
+
+```bash
+npm install rehype-code-group
+```
+
+```bash
+pnpm add rehype-code-group
+```
+
+```bash
+yarn add rehype-code-group
+```
+
+:::
+~~~
+
+You can also use [emoji shortcodes](https://github.com/omnidan/node-emoji#readme) in labels—they're automatically converted to emojis:
+
+~~~raw
+::: code-group labels=[:package: npm, :package: pnpm, :yarn: yarn]
 
 ```bash
 npm install rehype-code-group
