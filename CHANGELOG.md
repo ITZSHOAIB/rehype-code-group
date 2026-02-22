@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 0.3.0
+
+### Minor Changes
+
+- [#98](https://github.com/ITZSHOAIB/rehype-code-group/pull/98) [`29e8bdb`](https://github.com/ITZSHOAIB/rehype-code-group/commit/29e8bdb165b459aafd76c188445bbe2c7d7fbf89) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - feat: icon support for labels using node-emoji
+
 ## 0.2.4
 
 ### Patch Changes
