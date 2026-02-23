@@ -55,7 +55,7 @@
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.9"
+    "vitest": "^4.0.18"
   },
   "peerDependencies": {
     "typescript": ">=5.0.4"
