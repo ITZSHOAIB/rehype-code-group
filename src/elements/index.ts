@@ -27,6 +27,7 @@ const createRcgTabsElement = (
       type: "element",
       tagName: "button",
       properties: {
+        type: "button",
         className: `${classNames.tabClass}${i === 0 ? ` ${classNames.activeTabClass}` : ""}`,
         role: "tab",
         "aria-selected": i === 0 ? "true" : "false",

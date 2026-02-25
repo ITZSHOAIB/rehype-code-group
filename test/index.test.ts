@@ -13,7 +13,7 @@ const readFixture = async (
   try {
     const filePath = path.join(fixturesDir, testCase, fileName);
     return fs.readFileSync(filePath, "utf8");
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 };
