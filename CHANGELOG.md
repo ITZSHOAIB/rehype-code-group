@@ -1,5 +1,14 @@
 # rehype-code-group
 
+## 0.3.1
+
+### Patch Changes
+
+- [#106](https://github.com/ITZSHOAIB/rehype-code-group/pull/106) [`1d362a3`](https://github.com/ITZSHOAIB/rehype-code-group/commit/1d362a353b30f4ff968b248dfa5de884048694e0) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - - Migrate Biome config to v2.4.4 (schema, files.includes, assist.organizeImports)
+  - Add `type="button"` to tab buttons for a11y compliance (useButtonType)
+  - Fix unused catch variables in scripts and tests
+  - Exclude .vscode and test/fixtures from lint
+
 ## 0.3.0
 
 ### Minor Changes
