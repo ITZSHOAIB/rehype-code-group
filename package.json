@@ -1,6 +1,6 @@
 {
   "name": "rehype-code-group",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A Rehype plugin for grouping code blocks with tabs, perfect for documentation and tutorials. Works with all Code Syntax Highlighters.",
   "main": "dist/index.js",
   "module": "dist/index.js",
