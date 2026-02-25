@@ -43,7 +43,7 @@
     "@changesets/cli": "^2.29.8",
     "@types/hast": "^3.0.4",
     "@types/node": "^24.0.3",
-    "@vitest/coverage-v8": "2.1.5",
+    "@vitest/coverage-v8": "4.0.18",
     "lint-staged": "^16.1.2",
     "rehype-minify-whitespace": "^6.0.2",
     "rehype-parse": "^9.0.1",
