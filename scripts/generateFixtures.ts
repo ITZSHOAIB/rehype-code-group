@@ -26,7 +26,7 @@ const generateFixture = async (testCase: string) => {
       const input = await fs.readFile(inputMdPath, "utf8");
       output = await processMarkdown(input, {});
     }
-  } catch (err) {
+  } catch (_err) {
     output = null;
   }
 

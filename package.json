@@ -11,7 +11,9 @@
     }
   },
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "run:example": "pnpm build && node example/index.js",
@@ -44,7 +46,7 @@
     "@types/hast": "^3.0.4",
     "@types/node": "^25.3.0",
     "@vitest/coverage-v8": "4.0.18",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.2.7",
     "rehype-minify-whitespace": "^6.0.2",
     "rehype-parse": "^9.0.1",
     "rehype-stringify": "^10.0.1",
@@ -92,7 +94,10 @@
     "access": "public"
   },
   "lint-staged": {
-    "*": ["pnpm lint", "git add"]
+    "*": [
+      "pnpm lint",
+      "git add"
+    ]
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm typecheck && pnpm test:coverage && pnpm lint:staged"
