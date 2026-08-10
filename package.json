@@ -40,7 +40,7 @@
     "unist-util-visit": "~5.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
+    "@biomejs/biome": "2.5.7",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.29.8",
     "@types/hast": "^3.0.4",
