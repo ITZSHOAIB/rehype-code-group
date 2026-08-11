@@ -1,4 +1,5 @@
 import { expect, test } from "vitest";
+import { processHtml } from "../scripts/processHtml.js";
 import {
   processMarkdown,
   processMarkdownFile,
@@ -166,6 +167,19 @@ test("groups arbitrary multi-node content with nested code-tab directives", asyn
   expect(output).toContain('data-rcg-value="pnpm"');
   expect(output).toContain(">pnpm</button>");
   expect(output).toContain("<p>Use pnpm:</p><pre>");
+});
+
+test("rejects adversarial unterminated rich-group attributes promptly", async () => {
+  const escapedPairs = "\\!".repeat(26);
+  const startedAt = performance.now();
+  const output = await processHtml(
+    `<p>:::: code-group</p><p>::: code-tab label="${escapedPairs}</p><p>Content</p><p>:::</p><p>::::</p>`,
+    { assets: "none" },
+  );
+
+  expect(performance.now() - startedAt).toBeLessThan(200);
+  expect(output).not.toContain('role="tablist"');
+  expect(output).toContain("code-tab");
 });
 
 test("selects a declared default tab in generated markup", async () => {

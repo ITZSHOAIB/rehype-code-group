@@ -16,13 +16,73 @@ const markerText = (node: RootContent): string | undefined =>
     ? hastToString(node).trim()
     : undefined;
 
+const isAttributeNameCharacter = (character: string | undefined) => {
+  if (!character) return false;
+  const code = character.charCodeAt(0);
+  return (
+    (code >= 48 && code <= 57) ||
+    (code >= 65 && code <= 90) ||
+    character === "_" ||
+    character === "-" ||
+    (code >= 97 && code <= 122)
+  );
+};
+
 const parseAttributes = (value = "") => {
   const attributes = new Map<string, string>();
-  const pattern = /([\w-]+)=(?:"((?:\\.|[^"])*)"|'((?:\\.|[^'])*)'|([^\s]+))/g;
-  for (const match of value.matchAll(pattern)) {
-    const raw = match[2] ?? match[3] ?? match[4] ?? "";
-    attributes.set(match[1], raw.replace(/\\([\\"'])/g, "$1"));
+  let cursor = 0;
+
+  while (cursor < value.length) {
+    while (/\s/.test(value[cursor] ?? "")) cursor += 1;
+
+    const keyStart = cursor;
+    while (isAttributeNameCharacter(value[cursor])) cursor += 1;
+    if (keyStart === cursor || value[cursor] !== "=") {
+      cursor = keyStart + 1;
+      continue;
+    }
+
+    const key = value.slice(keyStart, cursor);
+    cursor += 1;
+    const quote = value[cursor];
+
+    if (quote === '"' || quote === "'") {
+      cursor += 1;
+      let parsed = "";
+      let closed = false;
+      while (cursor < value.length) {
+        const character = value[cursor];
+        if (character === quote) {
+          cursor += 1;
+          closed = true;
+          break;
+        }
+        if (character === "\\" && cursor + 1 < value.length) {
+          const escaped = value[cursor + 1];
+          parsed +=
+            escaped === "\\" || escaped === '"' || escaped === "'"
+              ? escaped
+              : `\\${escaped}`;
+          cursor += 2;
+          continue;
+        }
+        parsed += character;
+        cursor += 1;
+      }
+      if (!closed) break;
+      attributes.set(key, parsed);
+      continue;
+    }
+
+    const valueStart = cursor;
+    while (cursor < value.length && !/\s/.test(value[cursor] ?? "")) {
+      cursor += 1;
+    }
+    if (valueStart < cursor) {
+      attributes.set(key, value.slice(valueStart, cursor));
+    }
   }
+
   return attributes;
 };
 
