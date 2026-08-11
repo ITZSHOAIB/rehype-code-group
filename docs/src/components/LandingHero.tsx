@@ -2,6 +2,7 @@ import ArrowUpRight from "~icons/lucide/arrow-up-right";
 import BookOpen from "~icons/lucide/book-open";
 import Github from "~icons/lucide/github";
 import PackageCheck from "~icons/lucide/package-check";
+import Npm from "~icons/simple-icons/npm";
 import { CodeGroupPreview } from "./CodeGroupPreview.js";
 import { ProofPoints } from "./ProofPoints.js";
 
@@ -38,6 +39,13 @@ export function LandingHero() {
             >
               <Github aria-hidden="true" />
               GitHub
+            </a>
+            <a
+              className="rcg-home-button"
+              href="https://www.npmjs.com/package/rehype-code-group"
+            >
+              <Npm aria-hidden="true" />
+              View on npm
             </a>
           </div>
         </div>

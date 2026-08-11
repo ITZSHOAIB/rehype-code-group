@@ -297,10 +297,22 @@ body:has(.rcg-home) [data-v-gutter-top] {
 
 .rcg-home-proof-lead {
   border-inline-end: 1px solid var(--rcg-border);
+  color: inherit;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 1.75rem 2rem;
+  text-decoration: none;
+  transition: background 150ms ease;
+}
+
+.rcg-home-proof-lead:hover {
+  background: rgb(251 146 60 / 5%);
+}
+
+.rcg-home-proof-lead:focus-visible {
+  outline: 3px solid rgb(253 186 116 / 35%);
+  outline-offset: -3px;
 }
 
 .rcg-home-proof-kicker {

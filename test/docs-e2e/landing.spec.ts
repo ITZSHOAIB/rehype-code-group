@@ -33,6 +33,24 @@ test("presents a product landing hero with a documentation CTA", async ({
   await expect(page.getByRole("complementary")).toHaveCount(0);
 });
 
+test("links package discovery surfaces to npm", async ({ page }) => {
+  await page.goto("/");
+
+  const packageUrl = "https://www.npmjs.com/package/rehype-code-group";
+
+  await expect(
+    page.getByRole("link", { name: "View on npm", exact: true }),
+  ).toHaveAttribute("href", packageUrl);
+  await expect(
+    page.getByRole("link", { name: "npm", exact: true }),
+  ).toHaveAttribute("href", packageUrl);
+  await expect(
+    page.getByRole("link", {
+      name: "View rehype-code-group download statistics on npm",
+    }),
+  ).toHaveAttribute("href", packageUrl);
+});
+
 test("pairs the landing message with install choices and project proof points", async ({
   page,
 }) => {

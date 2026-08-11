@@ -4,11 +4,15 @@ import ShieldCheck from "~icons/lucide/shield-check";
 export function ProofPoints() {
   return (
     <section aria-label="Project highlights" className="rcg-home-proof">
-      <div className="rcg-home-proof-lead">
+      <a
+        aria-label="View rehype-code-group download statistics on npm"
+        className="rcg-home-proof-lead"
+        href="https://www.npmjs.com/package/rehype-code-group"
+      >
         <span className="rcg-home-proof-kicker">Used in the wild</span>
         <strong>16k</strong>
         <p>downloads in the last 30 days</p>
-      </div>
+      </a>
       <div className="rcg-home-proof-details">
         <article>
           <Keyboard aria-hidden="true" />
