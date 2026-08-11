@@ -1,4 +1,5 @@
 packages:
+  - .
   - docs
 
 minimumReleaseAge: 4320
