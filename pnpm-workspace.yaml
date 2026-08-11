@@ -10,4 +10,5 @@ strictDepBuilds: true
 allowBuilds:
   es5-ext@0.10.64: false
   esbuild@0.28.1: true
+  simple-git-hooks@2.13.1: false
   vue-demi@0.14.10: true
