@@ -15,6 +15,11 @@ overrides:
   postcss@>=8.0.0 <8.5.26: 8.5.26
   yaml@>=2.0.0 <2.9.0: 2.9.0
 
+patchedDependencies:
+  image-size@2.0.2:
+    hash: 0f7282d1c1922e03bb525d9e7cd475d3636938c88cb081448d97b357cab24b0b
+    path: patches/image-size@2.0.2.patch
+
 importers:
 
   .:
@@ -7113,7 +7118,7 @@ snapshots:
 
   ignore@5.3.2: {}
 
-  image-size@2.0.2: {}
+  image-size@2.0.2(patch_hash=0f7282d1c1922e03bb525d9e7cd475d3636938c88cb081448d97b357cab24b0b): {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -9043,7 +9048,7 @@ snapshots:
       extend: 3.0.2
       github-slugger: 2.0.0
       hono: 4.13.1
-      image-size: 2.0.2
+      image-size: 2.0.2(patch_hash=0f7282d1c1922e03bb525d9e7cd475d3636938c88cb081448d97b357cab24b0b)
       lz-string: 1.5.0
       magic-string: 0.30.21
       mdast-util-from-markdown: 2.0.3

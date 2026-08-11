@@ -140,6 +140,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify patched dependencies
+        run: pnpm security:patches
+
       - name: Audit all dependencies
         run: pnpm audit
 
@@ -173,4 +176,7 @@ jobs:
       - name: Review dependency changes
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
         with:
+          # image-size 2.0.2 has no patched release; its vulnerable loops are
+          # patched and exercised by the dependency-security job above.
+          allow-ghsas: GHSA-5p2g-fcmc-qvqq, GHSA-w3rx-r6r6-pgpr
           fail-on-severity: low
