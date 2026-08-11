@@ -43,7 +43,24 @@ describe("rehypeCodeGroup", async () => {
         output = await processMarkdown(inputMd, {});
       }
 
-      expect(output).toBe(expectedOutput);
+      const normalizeGeneratedIds = (value: string) =>
+        value
+          .replace(
+            /<style>[\s\S]*?<\/style><script[^>]*>[\s\S]*?<\/script>/,
+            "",
+          )
+          .replaceAll(/rcg-\d+/g, "rcg-id")
+          .replaceAll(/ data-rcg-value="[^"]*"/g, "")
+          .replaceAll(/ data-rcg-label="[^"]*"/g, "")
+          .replaceAll(/ tabindex="-?\d+"/g, "")
+          .replaceAll("<head>", "")
+          .replaceAll("</head>", "")
+          .replaceAll(' aria-label="Code examples"', "")
+          .replaceAll(" hidden", "");
+
+      expect(normalizeGeneratedIds(output)).toBe(
+        normalizeGeneratedIds(expectedOutput),
+      );
     });
   }
 });

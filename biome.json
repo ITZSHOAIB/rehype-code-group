@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -9,10 +9,15 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
-      "!dist",
-      "!node_modules",
+      "!**/dist",
+      "!**/node_modules",
       "!tsconfig.json",
-      "!coverage",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/.astro",
+      "!**/*.astro",
+      "!**/pages.gen.ts",
       "!.vscode",
       "!test/fixtures"
     ]
@@ -32,7 +37,10 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended",
+      "style": {
+        "noDescendingSpecificity": "off"
+      }
     }
   },
   "javascript": {

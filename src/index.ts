@@ -9,8 +9,21 @@ import {
   isEndDelimiterNode,
   isStartDelimiterNode,
 } from "./handlers/delimiters.js";
-import { addStylesAndScript } from "./handlers/stylesAndScript.js";
+import { transformRichGroups } from "./handlers/richGroups.js";
+import {
+  addExternalAssets,
+  addStylesAndScript,
+} from "./handlers/stylesAndScript.js";
+import { commonLabelResolver } from "./labels.js";
 import type { RehypeCodeGroupOptions } from "./options.js";
+
+export { commonLabelResolver } from "./labels.js";
+export type {
+  AssetOptions,
+  ClassNames,
+  LabelResolver,
+  RehypeCodeGroupOptions,
+} from "./options.js";
 
 /**
  * ## Rehype Code Group
@@ -63,15 +76,28 @@ import type { RehypeCodeGroupOptions } from "./options.js";
 const rehypeCodeGroup: Plugin<[RehypeCodeGroupOptions], Root> = (
   options = {},
 ) => {
-  const { customClassNames } = options;
+  const {
+    assets = "inline",
+    customClassNames,
+    diagnostics = "warn",
+    idPrefix = "rcg",
+    labelResolver = commonLabelResolver,
+  } = options;
   const classNames = getClassNames(customClassNames);
 
-  return (tree: Root) => {
+  return (tree: Root, file) => {
     let headElement: Element | undefined;
     let htmlElement: Element | undefined;
     let firstStyleIndex = -1;
     const codeGroups: CodeGroup[] = [];
-    let codeGroupFound = false;
+    let nextGroupId = transformRichGroups(
+      tree,
+      classNames,
+      idPrefix,
+      0,
+      labelResolver,
+    );
+    let codeGroupFound = nextGroupId > 0;
 
     /**
      * Visit each element node in the tree to
@@ -105,33 +131,52 @@ const rehypeCodeGroup: Plugin<[RehypeCodeGroupOptions], Root> = (
       }
 
       if (isStartDelimiterNode(node)) {
-        handleStartDelimiter(node, index, parent, codeGroups);
+        handleStartDelimiter(node, index, parent, codeGroups, labelResolver);
         return [SKIP];
       }
 
       if (isEndDelimiterNode(node)) {
-        const { found, skipIndex } = handleEndDelimiter(
+        const { found, skipIndex, warning } = handleEndDelimiter(
           index,
           parent,
           codeGroups,
           classNames,
+          `${idPrefix}-${nextGroupId}`,
         );
 
+        if (warning && diagnostics !== "silent") {
+          if (diagnostics === "error") {
+            file.fail(warning, node, "rehype-code-group:panel-count");
+          } else {
+            file.message(warning, node, "rehype-code-group:panel-count");
+          }
+        }
+
         if (found) {
+          nextGroupId += 1;
           codeGroupFound = found;
           return [SKIP, skipIndex];
         }
       }
     });
 
-    if (codeGroupFound) {
+    const assetMode = typeof assets === "string" ? assets : assets.mode;
+    if (codeGroupFound && assetMode === "inline") {
       addStylesAndScript(
         tree,
         classNames,
         headElement,
         htmlElement,
         firstStyleIndex,
+        typeof assets === "object" ? assets.nonce : undefined,
       );
+    }
+    if (
+      codeGroupFound &&
+      typeof assets === "object" &&
+      assets.mode === "external"
+    ) {
+      addExternalAssets(tree, assets, headElement, htmlElement);
     }
   };
 };

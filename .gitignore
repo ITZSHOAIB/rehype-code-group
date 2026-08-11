@@ -1,3 +1,7 @@
 node_modules
 dist
 coverage
+playwright-report
+test-results
+.astro
+docs/src/pages.gen.ts

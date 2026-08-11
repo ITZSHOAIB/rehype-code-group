@@ -1,0 +1,86 @@
+---
+title: State and syncing
+description: Synchronize tab choices and persist them locally or in the URL.
+---
+
+import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
+
+# State and syncing
+
+State is opt-in. Groups never synchronize merely because their labels happen to match.
+
+## Synchronize related groups
+
+Give related groups the same explicit `sync` key and use stable tab `value` attributes. Try either group below—the other follows immediately.
+
+### Synchronized package-manager choice
+
+Two separate groups share one explicit state key.
+
+````md
+:::: code-group sync="package-manager"
+
+::: code-tab label="npm" value="npm"
+```sh
+npm install package
+```
+:::
+
+::: code-tab label="pnpm" value="pnpm"
+```sh
+pnpm add package
+```
+:::
+
+::::
+````
+
+<CodeGroupPreview
+  id="state-install"
+  accessibleLabel="Install package"
+  sync="docs-package-manager"
+  items={[
+    { label: "npm", value: "npm", code: "npm install package", lang: "sh" },
+    { label: "pnpm", value: "pnpm", code: "pnpm add package", lang: "sh" },
+  ]}
+/>
+
+<CodeGroupPreview
+  id="state-run"
+  accessibleLabel="Run development server"
+  sync="docs-package-manager"
+  items={[
+    { label: "npm", value: "npm", code: "npm run dev", lang: "sh" },
+    { label: "pnpm", value: "pnpm", code: "pnpm dev", lang: "sh" },
+  ]}
+/>
+
+Selecting `pnpm` updates every enhanced group with the same `sync` key that contains a `pnpm` value. Groups without that value remain unchanged.
+
+## Persist locally
+
+Add `persist="local"` to remember a choice in `localStorage`. The namespaced key is `rehype-code-group:<sync-key>`. Storage failures are ignored so privacy modes and sandboxed embeds remain usable.
+
+```md
+:::: code-group sync="package-manager" persist="local"
+```
+
+## Persist in the URL
+
+Use `persist="url"` for shareable state. The client writes a query parameter such as `?rcg-package-manager=pnpm` with `history.replaceState`, so selection does not reload the page.
+
+```md
+:::: code-group sync="package-manager" persist="url"
+```
+
+## Observe changes
+
+Every direct pointer or keyboard selection emits a bubbling `rehype-code-group:change` event with a small typed detail object.
+
+```ts
+document.addEventListener("rehype-code-group:change", (event) => {
+  const { index, source, syncKey, value } = event.detail;
+});
+```
+
+The client also observes newly inserted markup. This supports client-side navigation and streamed content without reinitializing the whole document.

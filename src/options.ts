@@ -48,7 +48,32 @@ export type ClassNames = {
 /**
  * Options to customize the Rehype Code Group plugin.
  */
+export type AssetOptions =
+  | "inline"
+  | "none"
+  | { mode: "inline"; nonce?: string }
+  | {
+      mode: "external";
+      nonce?: string;
+      scriptSrc: string;
+      stylesheetHref: string;
+    };
+
+export type LabelResolver = (label: string) => string;
+
 export type RehypeCodeGroupOptions = {
+  /** How the browser runtime and styles are delivered. Default: "inline". */
+  assets?: AssetOptions;
+
+  /** How malformed code groups are reported. Default: "warn". */
+  diagnostics?: "warn" | "error" | "silent";
+
+  /** Prefix for generated tab and panel IDs. Default: "rcg". */
+  idPrefix?: string;
+
+  /** Transform a tab's display label. Defaults to the small built-in emoji set. */
+  labelResolver?: LabelResolver;
+
   /**
    * An object to override the default class names.
    * This allows you to provide custom class names for the various elements of the code group.

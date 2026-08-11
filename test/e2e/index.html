@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rehype Code Group browser fixture</title>
+    <link rel="stylesheet" href="/dist/styles.css" />
+  </head>
+  <body>
+    <div
+      class="rehype-code-group"
+      data-rcg-sync="package-manager"
+      data-rcg-persist="local"
+      id="primary-group"
+    >
+      <div class="rcg-tab-container" role="tablist" aria-label="Install with">
+        <button
+          type="button"
+          class="rcg-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="rcg-0-block-0"
+          data-rcg-value="npm"
+          id="rcg-0-tab-0"
+        >npm</button>
+        <button
+          type="button"
+          class="rcg-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="rcg-0-block-1"
+          data-rcg-value="pnpm"
+          id="rcg-0-tab-1"
+        >pnpm</button>
+      </div>
+      <div
+        class="rcg-block active"
+        role="tabpanel"
+        aria-labelledby="rcg-0-tab-0"
+        data-rcg-label="npm"
+        id="rcg-0-block-0"
+      ><pre><code>npm install</code></pre></div>
+      <div
+        class="rcg-block"
+        role="tabpanel"
+        aria-labelledby="rcg-0-tab-1"
+        data-rcg-label="pnpm"
+        id="rcg-0-block-1"
+      ><pre><code>pnpm add</code></pre></div>
+    </div>
+    <div
+      class="rehype-code-group"
+      data-rcg-sync="package-manager"
+      data-rcg-persist="url"
+      data-rcg-orientation="vertical"
+      id="secondary-group"
+    >
+      <div
+        class="rcg-tab-container"
+        role="tablist"
+        aria-label="Run with"
+        aria-orientation="vertical"
+      >
+        <button
+          type="button"
+          class="rcg-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="rcg-1-block-0"
+          data-rcg-value="npm"
+          id="rcg-1-tab-0"
+        >npm</button>
+        <button
+          type="button"
+          class="rcg-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="rcg-1-block-1"
+          data-rcg-value="pnpm"
+          id="rcg-1-tab-1"
+        >pnpm</button>
+      </div>
+      <div
+        class="rcg-block active"
+        role="tabpanel"
+        aria-labelledby="rcg-1-tab-0"
+        data-rcg-label="npm"
+        id="rcg-1-block-0"
+      ><pre><code>npm test</code></pre></div>
+      <div
+        class="rcg-block"
+        role="tabpanel"
+        aria-labelledby="rcg-1-tab-1"
+        data-rcg-label="pnpm"
+        id="rcg-1-block-1"
+      ><pre><code>pnpm test</code></pre></div>
+    </div>
+    <div
+      class="rehype-code-group custom-group"
+      data-rcg-active-tab-classes="active selected-tab"
+      data-rcg-active-block-classes="active selected-panel"
+      id="custom-class-group"
+    >
+      <div class="rcg-tab-container" role="tablist" aria-label="Custom classes">
+        <button
+          type="button"
+          class="rcg-tab active selected-tab"
+          role="tab"
+          aria-selected="true"
+          aria-controls="custom-block-0"
+          data-rcg-value="first"
+          id="custom-tab-0"
+        >First</button>
+        <button
+          type="button"
+          class="rcg-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="custom-block-1"
+          data-rcg-value="second"
+          id="custom-tab-1"
+        >Second</button>
+      </div>
+      <div
+        class="rcg-block active selected-panel"
+        role="tabpanel"
+        aria-labelledby="custom-tab-0"
+        data-rcg-label="First"
+        id="custom-block-0"
+      >First panel</div>
+      <div
+        class="rcg-block"
+        role="tabpanel"
+        aria-labelledby="custom-tab-1"
+        data-rcg-label="Second"
+        id="custom-block-1"
+      >Second panel</div>
+    </div>
+    <script type="module" src="/dist/client.js"></script>
+  </body>
+</html>

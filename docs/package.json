@@ -1,0 +1,31 @@
+{
+  "name": "rehype-code-group-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vocs build",
+    "dev": "vocs dev",
+    "preview": "vocs preview"
+  },
+  "dependencies": {
+    "rehype-code-group": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-server-dom-webpack": "19.2.8",
+    "vocs": "2.8.5",
+    "waku": "1.0.0-beta.8"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "rollup": "4.62.4",
+    "typescript": "6.0.3",
+    "vite": "8.2.1",
+    "webpack": "5.109.2"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

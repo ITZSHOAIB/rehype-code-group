@@ -1,13 +1,33 @@
 {
   "name": "rehype-code-group",
   "version": "0.3.1",
-  "description": "A Rehype plugin for grouping code blocks with tabs, perfect for documentation and tutorials. Works with all Code Syntax Highlighters.",
+  "description": "Accessible, framework-neutral code and content tabs for rehype, with syncing, persistence, and CSP-safe asset modes.",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js"
+    },
+    "./remark": {
+      "types": "./dist/remark.d.ts",
+      "import": "./dist/remark.js"
+    },
+    "./package-managers": {
+      "types": "./dist/package-managers.d.ts",
+      "import": "./dist/package-managers.js"
+    },
+    "./emoji": {
+      "types": "./dist/emoji.d.ts",
+      "import": "./dist/emoji.js"
+    },
+    "./styles.css": {
+      "types": "./dist/styles.css.d.ts",
+      "default": "./dist/styles.css"
     }
   },
   "types": "dist/index.d.ts",
@@ -17,36 +37,50 @@
   ],
   "scripts": {
     "run:example": "pnpm build && node example/index.js",
-    "build": "pnpm clean && tsc",
+    "build": "pnpm clean && tsc && node scripts/buildAssets.mjs",
     "clean": "rimraf dist",
     "format": "biome format --write",
-    "lint": "biome check --fix",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "lint:staged": "lint-staged",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "pnpm build && changeset publish",
     "prepare": "npx simple-git-hooks",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
-    "generate:fixtures": "npx tsx scripts/generateFixtures.ts"
+    "test:e2e": "pnpm build && playwright test",
+    "test:docs": "pnpm docs:build && playwright test --config playwright.docs.config.ts",
+    "test:package": "pnpm build && tsc -p test-dts/tsconfig.json && node scripts/checkPackage.mjs",
+    "docs:build": "pnpm build && pnpm --dir docs build",
+    "docs:dev": "pnpm build && pnpm --dir docs dev",
+    "docs:preview": "pnpm --dir docs preview",
+    "generate:fixtures": "npx tsx scripts/generateFixtures.ts",
+    "audit": "pnpm audit --audit-level low",
+    "audit:prod": "pnpm audit --prod --audit-level low",
+    "security:patches": "node scripts/checkPatchedDependencies.mjs",
+    "deps:outdated": "pnpm outdated"
   },
   "dependencies": {
+    "@types/hast": "3.0.5",
+    "@types/mdast": "4.0.4",
     "hast-util-to-string": "~3.0.1",
     "node-emoji": "^2.2.0",
-    "rehype": "~13.0.2",
     "unified": "~11.0.5",
     "unist-util-visit": "~5.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.29.8",
-    "@types/hast": "^3.0.4",
-    "@types/node": "^25.3.0",
-    "@vitest/coverage-v8": "4.0.18",
-    "lint-staged": "^16.2.7",
+    "@axe-core/playwright": "4.12.1",
+    "@biomejs/biome": "2.5.7",
+    "@changesets/changelog-github": "0.7.0",
+    "@changesets/cli": "2.31.1",
+    "@playwright/test": "1.62.1",
+    "@types/node": "20.19.43",
+    "@vitest/coverage-v8": "4.1.10",
+    "lint-staged": "17.3.0",
+    "rehype": "~13.0.2",
     "rehype-minify-whitespace": "^6.0.2",
     "rehype-parse": "^9.0.1",
     "rehype-stringify": "^10.0.1",
@@ -54,17 +88,29 @@
     "remark-rehype": "^11.1.2",
     "rimraf": "^6.1.3",
     "simple-git-hooks": "^2.13.1",
-    "ts-node": "^10.9.2",
-    "tslib": "^2.8.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
   },
-  "peerDependencies": {
-    "typescript": ">=5.0.4"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@>=5.0.0 <5.0.9": "5.0.9",
+      "esbuild@>=0.27.3 <0.28.1": "0.28.1",
+      "js-yaml@>=3.0.0 <3.15.1": "3.15.1",
+      "js-yaml@>=4.0.0 <4.3.1": "4.3.1",
+      "nanoid@>=3.0.0 <3.3.18": "3.3.18",
+      "picomatch@>=2.0.0 <2.3.2": "2.3.2",
+      "picomatch@>=4.0.0 <4.0.5": "4.0.5",
+      "postcss@>=8.0.0 <8.5.26": "8.5.26",
+      "yaml@>=2.0.0 <2.9.0": "2.9.0"
+    },
+    "patchedDependencies": {
+      "image-size@2.0.2": "patches/image-size@2.0.2.patch"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-71329",
+        "CVE-2025-71330"
+      ]
     }
   },
   "keywords": [
@@ -83,7 +129,17 @@
     "rehype-code-grouping-tabs-block",
     "rehype-tabs-block",
     "rehype-tab-block",
-    "rehype-code-grouping-tab-block"
+    "rehype-code-grouping-tab-block",
+    "remark-plugin",
+    "unified",
+    "markdown",
+    "mdx",
+    "astro",
+    "starlight",
+    "documentation",
+    "code-tabs",
+    "accessible",
+    "syntax-highlighting"
   ],
   "author": "Sohab Sk",
   "license": "MIT",
@@ -95,16 +151,22 @@
   },
   "lint-staged": {
     "*": [
-      "pnpm lint",
-      "git add"
+      "biome check --write --no-errors-on-unmatched"
     ]
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm typecheck && pnpm test:coverage && pnpm lint:staged"
   },
-  "packageManager": "pnpm@9.12.0",
+  "packageManager": "pnpm@10.34.5",
   "engines": {
     "node": ">=20.0.0"
   },
-  "sideEffects": false
+  "sideEffects": [
+    "./dist/styles.css",
+    "./dist/client.js"
+  ],
+  "homepage": "https://rehype-code-group.pages.dev/",
+  "bugs": {
+    "url": "https://github.com/ITZSHOAIB/rehype-code-group/issues"
+  }
 }

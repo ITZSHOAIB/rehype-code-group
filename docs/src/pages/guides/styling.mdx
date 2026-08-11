@@ -1,0 +1,84 @@
+---
+title: Styling and assets
+description: Theme code groups and choose inline, external, or application-owned assets.
+---
+
+import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
+
+# Styling and assets
+
+The markup ships with a stable styling contract. Start with CSS custom properties, then add classes when a project needs deeper control.
+
+## CSS custom properties
+
+Override stable variables on a page or one individual group.
+
+```css
+.docs-code-group {
+  --rcg-accent: light-dark(#ea580c, #fb923c);
+  --rcg-border-color: light-dark(#fed7aa, #7c2d12);
+  --rcg-focus-color: light-dark(#f97316, #fdba74);
+  --rcg-tab-background-active: light-dark(#fff7ed, #431407);
+}
+```
+
+### Themed preview
+
+The same variables are applied to this live preview, so the rendered result matches the theme contract shown above.
+
+<CodeGroupPreview
+  id="styling-theme"
+  accessibleLabel="Language"
+  className="docs-code-group"
+  items={[
+    { label: "JavaScript", value: "js", code: "export const answer = 42;", lang: "js" },
+    { label: "TypeScript", value: "ts", code: "export const answer: number = 42;", lang: "ts" },
+  ]}
+/>
+
+The bundled styles use logical properties for right-to-left layouts, adapt to dark and forced-color preferences, and print every panel rather than only the active one.
+
+## Add custom classes
+
+Default classes are always retained so the browser client stays functional. Your classes are added alongside them, including active-state classes that move with the selection.
+
+```ts
+processor.use(rehypeCodeGroup, {
+  customClassNames: {
+    codeGroupClass: "docs-code-group",
+    tabClass: "docs-code-tab",
+    activeTabClass: "is-active",
+  },
+});
+```
+
+## Inline assets
+
+Inline mode is zero-config and supports a CSP nonce.
+
+```ts
+processor.use(rehypeCodeGroup, {
+  assets: { mode: "inline", nonce: requestNonce },
+});
+```
+
+## External assets
+
+External mode emits a stylesheet link and module script using URLs you control.
+
+```ts
+processor.use(rehypeCodeGroup, {
+  assets: {
+    mode: "external",
+    stylesheetHref: "/assets/code-group.css",
+    scriptSrc: "/assets/code-group.js",
+    nonce: requestNonce,
+  },
+});
+```
+
+Copy `rehype-code-group/styles.css` and bundle `rehype-code-group/client` at those URLs.
+
+## Application-owned assets
+
+Use `assets: "none"` when your framework already owns CSS and JavaScript delivery. Server markup leaves all panels readable; only the enhanced state hides inactive panels.
