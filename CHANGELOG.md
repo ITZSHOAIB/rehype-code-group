@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 1.0.0
+
+### Major Changes
+
+- [#128](https://github.com/ITZSHOAIB/rehype-code-group/pull/128) [`ffd6da5`](https://github.com/ITZSHOAIB/rehype-code-group/commit/ffd6da5854ba0e9a649733baa2aec5bf6709c3fa) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Add accessible progressive enhancement, rich-content tab syntax, explicit synchronization and persistence, public client and CSS entry points, CSP-safe asset modes, remark syntax helpers, package-manager conversion, configurable label resolution, deterministic IDs, diagnostics, and documented Starlight examples. The default stylesheet now protects tab and panel alignment from host flow margins and follows the page's manual light or dark color scheme. The default emoji resolver contains a small common set; use `fullEmojiResolver` from `rehype-code-group/emoji` for the complete catalog.
+
 ## 0.3.1
 
 ### Patch Changes
