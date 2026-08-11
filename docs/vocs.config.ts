@@ -34,6 +34,11 @@ export default defineConfig({
   topNav: [
     { text: "Docs", link: "/getting-started" },
     {
+      text: "npm",
+      link: "https://www.npmjs.com/package/rehype-code-group",
+      external: true,
+    },
+    {
       text: "GitHub",
       link: "https://github.com/ITZSHOAIB/rehype-code-group",
       external: true,

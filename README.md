@@ -11,7 +11,7 @@
 
 Accessible, framework-neutral code tabs for rehype. Group highlighted code or arbitrary content, synchronize related choices, persist state, and choose exactly how browser assets are delivered.
 
-[Documentation](https://rehype-code-group.pages.dev/) · [Live playground](https://rehype-code-group.pages.dev/#try-heading) · [Report an issue](https://github.com/ITZSHOAIB/rehype-code-group/issues)
+[Documentation](https://rehype-code-group.pages.dev/) · [npm](https://www.npmjs.com/package/rehype-code-group) · [Report an issue](https://github.com/ITZSHOAIB/rehype-code-group/issues)
 
 ## Why use it?
 
@@ -257,14 +257,14 @@ See the [framework guide](https://rehype-code-group.pages.dev/guides/frameworks/
 
 ## Documentation site
 
-The documentation is a fully static [Vocs](https://vocs.dev/) site with live, production-package previews.
+The documentation is a fully static [Vocs](https://vocs.dev/) site with interactive examples powered by the package's public browser client and stylesheet.
 
 ```sh
 pnpm docs:dev
 pnpm docs:build
 ```
 
-For Cloudflare Pages, use `pnpm docs:build` as the build command and `docs/dist/public` as the output directory. Set `VOCS_BASE_URL` to the deployed site URL when canonical absolute URLs are required; it is intentionally optional so local previews use relative assets.
+For Cloudflare Pages, keep the repository root as the project root, use `pnpm docs:build` as the build command, and use `docs/dist/public` as the output directory. Set `VOCS_BASE_URL` to the canonical deployed URL in the production environment only; leave it unset for local and branch previews so their assets and navigation remain self-contained.
 
 ## Quality and security
 
