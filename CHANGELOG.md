@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 1.0.1
+
+### Patch Changes
+
+- [#132](https://github.com/ITZSHOAIB/rehype-code-group/pull/132) [`9df34f0`](https://github.com/ITZSHOAIB/rehype-code-group/commit/9df34f0bfe4a0b1d3db80b5a050f6661e4c59ede) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Refresh the npm package README to remove the retired playground, link to the npm package page, and clarify the current documentation and Cloudflare Pages setup.
+
 ## 1.0.0
 
 ### Major Changes
