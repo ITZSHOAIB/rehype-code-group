@@ -1,0 +1,11 @@
+packages:
+  - docs
+
+minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  - nanoid@3.3.18
+blockExoticSubdeps: true
+strictDepBuilds: true
+
+allowBuilds:
+  esbuild@0.28.1: true

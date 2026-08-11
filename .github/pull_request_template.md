@@ -16,7 +16,7 @@
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
 
-## Checklist:
+## Checklist
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 
@@ -24,9 +24,9 @@
 - [ ] My code follows the code style of this project.
 - [ ] My change requires a change to the documentation.
 - [ ] I have updated the documentation accordingly.
-- [ ] I have read the [**CONTRIBUTING**](https://github.com/ITZSHOAIB/hashtegrity/blob/master/.github/CONTRIBUTING.md) document.
+- [ ] I have read [CONTRIBUTING.md](../CONTRIBUTING.md).
 - [ ] I have included a **changeset** according to the type of my changes
-- [ ] I have added tests to cover my changes.
+- [ ] I added a failing public-behavior test before the implementation.
 - [ ] All new and existing tests passed.
 
 

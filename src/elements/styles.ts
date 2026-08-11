@@ -45,28 +45,107 @@ export const getClassNames = (
 
 export const styles = `
 .${defaultClassNames.codeGroupClass} {
+  --rcg-accent: #2563eb;
+  --rcg-border-color: #d4d4d8;
+  --rcg-focus-color: #2563eb;
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: #f4f4f5;
+  --rcg-tab-color: inherit;
   display: grid;
-  gap: 0.6rem;
+  gap: 0;
+  min-width: 0;
 }
 .${defaultClassNames.tabContainerClass} {
   display: flex;
-  border-bottom: 1px solid #ddd;
+  gap: 0.125rem;
+  overflow-x: auto;
+  border-block-end: 1px solid var(--rcg-border-color);
 }
 .${defaultClassNames.tabClass} {
   padding: 0.5rem 1rem;
+  margin: 0;
   cursor: pointer;
-  border: none;
-  background: none;
-  &.${defaultClassNames.activeTabClass} {
-    border-bottom: 2px solid;
-    font-weight: bold;
-  }
+  color: var(--rcg-tab-color);
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: var(--rcg-tab-background);
+  font: inherit;
+}
+.${defaultClassNames.tabClass}.${defaultClassNames.activeTabClass} {
+  border-block-end-color: var(--rcg-accent);
+  background: var(--rcg-tab-background-active);
+  font-weight: 600;
+}
+.${defaultClassNames.tabClass}:focus-visible {
+  outline: 2px solid var(--rcg-focus-color);
+  outline-offset: -2px;
 }
 .${defaultClassNames.blockContainerClass} {
-  display: none;
+  min-width: 0;
   overflow-x: auto;
-  &.${defaultClassNames.activeBlockClass} {
+  margin: 0;
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] {
+  grid-template-columns: minmax(max-content, 12rem) minmax(0, 1fr);
+  align-items: start;
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabContainerClass} {
+  flex-direction: column;
+  inline-size: 100%;
+  border-block-end: 0;
+  border-inline-end: 1px solid var(--rcg-border-color);
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabClass} {
+  text-align: start;
+  border-block-end: 0;
+  border-inline-end: 2px solid transparent;
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabClass}.${defaultClassNames.activeTabClass} {
+  border-inline-end-color: var(--rcg-accent);
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass} {
+  display: none;
+}
+.${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass}.${defaultClassNames.activeBlockClass} {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  .${defaultClassNames.codeGroupClass} {
+    --rcg-accent: #60a5fa;
+    --rcg-border-color: #3f3f46;
+    --rcg-focus-color: #93c5fd;
+    --rcg-tab-background-active: #27272a;
+  }
+}
+@supports (color: light-dark(black, white)) {
+  .${defaultClassNames.codeGroupClass} {
+    --rcg-accent: light-dark(#2563eb, #60a5fa);
+    --rcg-border-color: light-dark(#d4d4d8, #3f3f46);
+    --rcg-focus-color: light-dark(#2563eb, #93c5fd);
+    --rcg-tab-background-active: light-dark(#f4f4f5, #27272a);
+  }
+}
+@media (forced-colors: active) {
+  .${defaultClassNames.codeGroupClass} {
+    --rcg-accent: Highlight;
+    --rcg-border-color: CanvasText;
+    --rcg-focus-color: Highlight;
+  }
+}
+@media print {
+  .${defaultClassNames.tabContainerClass} {
+    display: none;
+  }
+  .${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass},
+  .${defaultClassNames.codeGroupClass} .${defaultClassNames.blockContainerClass}[hidden] {
+    display: block !important;
+    break-inside: avoid;
+  }
+  .${defaultClassNames.blockContainerClass}::before {
+    content: attr(data-rcg-label);
     display: block;
+    margin-block-end: 0.4rem;
+    font-weight: 600;
   }
 }
 `;

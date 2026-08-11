@@ -1,0 +1,124 @@
+---
+title: Syntax
+description: Legacy, fence-metadata, and rich-content code group syntax.
+---
+
+import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
+
+# Syntax
+
+Choose the authoring style that matches the content. Every form compiles to the same accessible runtime contract.
+
+## Compact syntax
+
+The compact form is ideal for neighboring code blocks. Quote a label when it contains a comma.
+
+### Compact code tabs
+
+The smallest authoring surface for adjacent examples.
+
+````md
+::: code-group labels=["npm, classic", pnpm]
+
+```sh
+npm install package
+```
+
+```sh
+pnpm add package
+```
+
+:::
+````
+
+<CodeGroupPreview
+  id="syntax-compact"
+  accessibleLabel="Package manager"
+  items={[
+    { label: "npm, classic", value: "npm", code: "npm install package", lang: "sh" },
+    { label: "pnpm", value: "pnpm", code: "pnpm add package", lang: "sh" },
+  ]}
+/>
+
+Common emoji shortcodes such as `:package:`, `:yarn:`, `:rocket:`, and `:sparkles:` are resolved without loading an emoji catalog.
+
+## Fence metadata
+
+Add the remark companion before `remark-rehype` to derive labels from fence metadata while preserving other metadata.
+
+```ts
+import remarkCodeGroup from "rehype-code-group/remark";
+
+processor.use(remarkCodeGroup).use(remarkRehype);
+```
+
+````md
+::: code-group
+
+```sh [npm]
+npm install package
+```
+
+```sh [pnpm]
+pnpm add package
+```
+
+:::
+````
+
+## Rich-content tabs
+
+Use four colons for the group and nested `code-tab` directives when a panel needs prose, lists, images, or several code blocks.
+
+### Rich runtime guide
+
+Panels can contain explanatory content and multiple nodes.
+
+`````md
+:::: code-group label="Choose a runtime" default="node"
+
+::: code-tab label="Node.js" value="node"
+Install the LTS release, then run:
+
+```sh
+node app.js
+```
+:::
+
+::: code-tab label="Bun" value="bun"
+Install Bun, then run:
+
+```sh
+bun app.ts
+```
+:::
+
+::::
+`````
+
+<CodeGroupPreview
+  id="syntax-rich"
+  accessibleLabel="Choose a runtime"
+  defaultValue="node"
+  items={[
+    { label: "Node.js", value: "node", note: "Install the current LTS release, then run:", code: "node app.js", lang: "sh" },
+    { label: "Bun", value: "bun", note: "Install Bun, then run:", code: "bun app.ts", lang: "sh" },
+  ]}
+/>
+
+> **Stable tab identity**
+>
+> `label` names the tab list for assistive technology. `value` is the stable value used by synchronization and persistence. `default` selects the initial value.
+
+## Full emoji catalog
+
+The default entry point stays small. Opt into the complete `node-emoji` catalog only when your content needs it.
+
+```ts
+import rehypeCodeGroup from "rehype-code-group";
+import { fullEmojiResolver } from "rehype-code-group/emoji";
+
+processor.use(rehypeCodeGroup, { labelResolver: fullEmojiResolver });
+```
+
+You can also provide any `(label: string) => string` resolver—for icons, localization, or project-specific naming.

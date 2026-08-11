@@ -1,0 +1,52 @@
+---
+title: Getting started
+description: Install rehype-code-group and render your first accessible code tabs.
+---
+
+import { CodeGroupPreview } from "../components/CodeGroupPreview.js";
+
+# Getting started
+
+`rehype-code-group` turns neighboring code blocks—or arbitrary HTML content—into an accessible tab interface. It runs in the rehype phase, so it stays independent of your syntax highlighter and frontend framework.
+
+## Install
+
+### Source
+
+```sh
+npm install rehype-code-group
+```
+
+### Live preview
+
+<CodeGroupPreview
+  id="getting-started-install"
+  accessibleLabel="Package manager"
+  items={[
+    { label: "npm", value: "npm", code: "npm install rehype-code-group", lang: "sh" },
+    { label: "pnpm", value: "pnpm", code: "pnpm add rehype-code-group", lang: "sh" },
+    { label: "Yarn", value: "yarn", code: "yarn add rehype-code-group", lang: "sh" },
+    { label: "Bun", value: "bun", code: "bun add rehype-code-group", lang: "sh" },
+  ]}
+/>
+
+## Add the plugin
+
+Add the plugin after Markdown has been converted to HAST. It stays independent of your syntax highlighter.
+
+```ts
+import { rehype } from "rehype";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeCodeGroup from "rehype-code-group";
+
+const file = await rehype()
+  .use(remarkParse)
+  .use(remarkRehype)
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify)
+  .process(markdown);
+```
+
+Continue with the guides for rich-content groups or review the reference for every plugin option.

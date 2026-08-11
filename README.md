@@ -1,188 +1,281 @@
-<img width="1280" height="640" alt="rehype-code-group" src="https://github.com/user-attachments/assets/d7da11d1-9f5b-4c93-9023-fcf4d0f2c288" />
+<p align="center">
+  <img width="1280" height="640" alt="rehype-code-group" src="https://github.com/user-attachments/assets/d7da11d1-9f5b-4c93-9023-fcf4d0f2c288" />
+</p>
 
-# Rehype Code Group Plugin 🤖
+# rehype-code-group
 
-![NPM Version](https://img.shields.io/npm/v/rehype-code-group)
-![NPM Downloads](https://img.shields.io/npm/dm/rehype-code-group)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/rehype-code-group)
-![NPM License](https://img.shields.io/npm/l/rehype-code-group)
+[![npm version](https://img.shields.io/npm/v/rehype-code-group)](https://www.npmjs.com/package/rehype-code-group)
+[![weekly downloads](https://img.shields.io/npm/dw/rehype-code-group)](https://www.npmjs.com/package/rehype-code-group)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/rehype-code-group)](https://bundlephobia.com/package/rehype-code-group)
+[![license](https://img.shields.io/npm/l/rehype-code-group)](./LICENSE)
 
+Accessible, framework-neutral code tabs for rehype. Group highlighted code or arbitrary content, synchronize related choices, persist state, and choose exactly how browser assets are delivered.
 
-A [Rehype](https://github.com/rehypejs/rehype) plugin for grouping code blocks with tabs, allowing you to switch between different code snippets easily. Perfect for **documentation** and **tutorials** where you want to show the same code in different languages or configurations.
+[Documentation](https://rehype-code-group.pages.dev/) · [Live playground](https://rehype-code-group.pages.dev/#try-heading) · [Report an issue](https://github.com/ITZSHOAIB/rehype-code-group/issues)
 
-**Inspired by [Vitepress Code Groups](https://vitepress.dev/guide/markdown#code-groups)**
+## Why use it?
 
-> [!TIP]
-> **This plugin is versatile and can be used to create tabs for any type of content, not just code blocks. You can easily organize and display different types of content within tabs.**
+- Works after any syntax highlighter instead of owning highlighting.
+- Uses ARIA tabs, roving focus, RTL-aware arrows, vertical navigation, and `Home`/`End`.
+- Keeps every panel readable when JavaScript is unavailable and when printing.
+- Supports compact code groups and rich tabs containing prose, lists, or multiple blocks.
+- Synchronizes only with explicit keys; state can live in local storage or a shareable URL.
+- Offers inline, external, nonce-bearing, and application-owned asset modes for strict CSPs.
+- Includes remark helpers for fence metadata and npm/pnpm/Yarn/Bun command conversion.
+- Ships an ESM browser client, authoritative CSS, and TypeScript declarations as public subpaths.
 
-## Features ✨
+Inspired by [VitePress code groups](https://vitepress.dev/guide/markdown#code-groups), designed for the wider unified ecosystem.
 
-- **Group Code Blocks with Tabs**: Easily group code blocks with tabs, allowing users to switch between different code snippets.
-- **Emoji Shortcode Support**: Use `:package:`, `:yarn:`, and other [emoji shortcodes](https://github.com/omnidan/node-emoji#readme) in tab labels—they're automatically converted to emojis.
-- **Automatic Styles and Scripts**: Automatically adds the necessary styles and scripts to the document.
-- **Accessibility**: Enhanced accessibility features for better user experience.
-- **Versatile Content Grouping**: Create tabs for any type of content, not just code blocks. Organize and display different types of content within tabs.
-- **Customizable Class Names**: Customize the class names used by the plugin to match your project's styles.
+## Install
 
-## Installation 📦
+This package is ESM-only and supports Node.js 20 or newer.
 
-> [!NOTE]
-> This package is [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) only.
-
-Install the plugin using any package manager:
-
-```bash
+```sh
 npm install rehype-code-group
-# or
-pnpm add rehype-code-group
-# or
-yarn add rehype-code-group
+# pnpm add rehype-code-group
+# yarn add rehype-code-group
+# bun add rehype-code-group
 ```
 
-In Deno with [esm.sh](https://esm.sh/):
+## Quick start
 
-```js
-import rehypeCodeGroup from 'https://esm.sh/rehype-code-group'
-```
-
-In browsers with [esm.sh](https://esm.sh/):
-
-```html
-<script type="module">
-  import rehypeCodeGroup from 'https://esm.sh/rehype-code-group?bundle'
-</script>
-```
-
-## Usage 🚀
-
-### Markdown Syntax
-
-To incorporate code group tabs in your markdown file, use the following syntax:
-
-~~~raw
-::: code-group labels=[npm, pnpm, yarn]
-
-```bash
-npm install rehype-code-group
-```
-
-```bash
-pnpm add rehype-code-group
-```
-
-```bash
-yarn add rehype-code-group
-```
-
-:::
-~~~
-
-You can also use [emoji shortcodes](https://github.com/omnidan/node-emoji#readme) in labels—they're automatically converted to emojis:
-
-~~~raw
-::: code-group labels=[:package: npm, :package: pnpm, :yarn: yarn]
-
-```bash
-npm install rehype-code-group
-```
-
-```bash
-pnpm add rehype-code-group
-```
-
-```bash
-yarn add rehype-code-group
-```
-
-:::
-~~~
-
-The code group will be rendered like this (The below UI used [Expressive Code](https://expressive-code.com/) as a syntax highlighter):
-
-![Screenshot 2024-11-13 021749](https://github.com/user-attachments/assets/0bcae4e7-569a-4189-b890-9f543a67feb6)
-
-Check this functionalty live: [https://4techloverz.com/wordpress-astro-migration-easy-guide/#initialize-astro-project](https://4techloverz.com/wordpress-astro-migration-easy-guide/#initialize-astro-project)
-
-### With Rehype
-
-Here's an example of how to use the plugin with Rehype:
-
-```typescript
+```ts
 import { rehype } from "rehype";
+import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
-import rehypeMinifyWhitespace from "rehype-minify-whitespace";
-import rehypeStringify from "rehype-stringify";
 import rehypeCodeGroup from "rehype-code-group";
-
-const options = {};
 
 const file = await rehype()
   .use(remarkParse)
   .use(remarkRehype)
-  .use(rehypeCodeGroup, options)
-  .use(rehypeMinifyWhitespace)
+  .use(rehypeCodeGroup)
   .use(rehypeStringify)
-  .process(input);
-
-console.log(String(file))
+  .process(markdown);
 ```
 
-### With Astro
+Then write one label per code block:
 
-You can also use this plugin with Astro (`astro.config.ts`):
+````md
+::: code-group labels=[npm, pnpm, yarn]
 
-```typescript
-import { defineConfig } from 'astro/config';
-import rehypeCodeGroup from 'rehype-code-group';
+```sh
+npm install rehype-code-group
+```
 
-// https://docs.astro.build/en/reference/configuration-reference/
+```sh
+pnpm add rehype-code-group
+```
+
+```sh
+yarn add rehype-code-group
+```
+
+:::
+````
+
+Labels containing commas can be quoted. The small default resolver supports common shortcodes including `:package:`, `:yarn:`, `:robot:`, `:rocket:`, and `:sparkles:`.
+
+## Rich-content groups
+
+Use four colons around nested `code-tab` directives. Panels may contain any content emitted into HAST.
+
+`````md
+:::: code-group label="Choose a runtime" default="node" sync="runtime" persist="local"
+
+::: code-tab label="Node.js" value="node"
+
+Use the current LTS release:
+
+```sh
+node app.js
+```
+
+:::
+
+::: code-tab label="Bun" value="bun"
+
+Run TypeScript directly:
+
+```sh
+bun app.ts
+```
+
+:::
+
+::::
+`````
+
+Set `orientation="vertical"` for an `ArrowUp`/`ArrowDown` tab list. Use `persist="url"` when the selected value should be shareable as `?rcg-runtime=bun`.
+
+## Fence metadata
+
+Run the remark companion before `remark-rehype` to use fence metadata as labels:
+
+```ts
+import remarkCodeGroup from "rehype-code-group/remark";
+
+processor.use(remarkCodeGroup).use(remarkRehype);
+```
+
+````md
+::: code-group
+
+```sh [npm]
+npm install package
+```
+
+```sh [pnpm]
+pnpm add package
+```
+
+:::
+````
+
+## Package-manager tabs
+
+The optional remark converter translates install aliases, removals, scripts, multiline fences, and `npx` executables. Unsupported npm commands emit a diagnostic rather than guessing.
+
+```ts
+import remarkPackageManagers from "rehype-code-group/package-managers";
+
+processor
+  .use(remarkPackageManagers, { packageManagers: ["npm", "pnpm", "yarn", "bun"] })
+  .use(remarkCodeGroup)
+  .use(remarkRehype);
+```
+
+````md
+```sh npm2yarn
+npm install rehype-code-group
+```
+````
+
+## Asset delivery
+
+Inline assets are the zero-config default and are emitted only when a group exists.
+
+```ts
+processor.use(rehypeCodeGroup, {
+  assets: { mode: "inline", nonce: requestNonce },
+});
+```
+
+For a global application bundle:
+
+```ts
+// Markdown configuration
+processor.use(rehypeCodeGroup, { assets: "none" });
+
+// Application entry point
+import "rehype-code-group/styles.css";
+import { initCodeGroups } from "rehype-code-group/client";
+
+const cleanup = initCodeGroups(document);
+```
+
+Strict CSP deployments can ask the plugin to emit external URLs:
+
+```ts
+processor.use(rehypeCodeGroup, {
+  assets: {
+    mode: "external",
+    stylesheetHref: "/assets/code-group.css",
+    scriptSrc: "/assets/code-group.js",
+    nonce: requestNonce,
+  },
+});
+```
+
+## Options
+
+```ts
+type RehypeCodeGroupOptions = {
+  assets?:
+    | "inline"
+    | "none"
+    | { mode: "inline"; nonce?: string }
+    | {
+        mode: "external";
+        nonce?: string;
+        scriptSrc: string;
+        stylesheetHref: string;
+      };
+  customClassNames?: Partial<ClassNames>;
+  diagnostics?: "warn" | "error" | "silent";
+  idPrefix?: string;
+  labelResolver?: (label: string) => string;
+};
+```
+
+Malformed compact groups remain untouched. `diagnostics: "warn"` adds a VFile message, `"error"` fails the build, and `"silent"` suppresses the message.
+
+Generated IDs are deterministic per transformation. Supply `idPrefix` when separately compiled fragments will later share one document.
+
+## Styling
+
+Default classes are retained when custom classes are added, keeping browser behavior stable. The bundled styles keep tabs aligned inside host typography systems and follow the page's light or dark `color-scheme`. Theme with `--rcg-accent`, `--rcg-border-color`, `--rcg-focus-color`, `--rcg-tab-background`, `--rcg-tab-background-active`, and `--rcg-tab-color`.
+
+```css
+.rehype-code-group {
+  --rcg-accent: rebeccapurple;
+  --rcg-tab-background-active: color-mix(in srgb, rebeccapurple 12%, transparent);
+}
+```
+
+## Emoji catalog
+
+The default resolver intentionally stays small. Opt into the complete catalog:
+
+```ts
+import rehypeCodeGroup from "rehype-code-group";
+import { fullEmojiResolver } from "rehype-code-group/emoji";
+
+processor.use(rehypeCodeGroup, { labelResolver: fullEmojiResolver });
+```
+
+Any application-defined label resolver is supported.
+
+## Browser events
+
+Direct selections emit a bubbling `rehype-code-group:change` event with `{ index, source, syncKey, value }`. The client observes dynamically inserted groups and repeated initialization of the same root is safe and returns its existing cleanup function.
+
+## Astro
+
+```ts
+import { defineConfig } from "astro/config";
+import rehypeCodeGroup from "rehype-code-group";
+
 export default defineConfig({
-  // ...
   markdown: {
-    // ...
-    rehypePlugins: [
-      // ...
-      rehypeCodeGroup,
-    ],
+    rehypePlugins: [[rehypeCodeGroup, { assets: "inline" }]],
   },
-  // ...
-})
+});
 ```
 
-## Customization 🎨
+See the [framework guide](https://rehype-code-group.pages.dev/guides/frameworks/) for Astro and Vocs integration notes.
 
-You can customize the class names used by the plugin to match your project's styles. The available options are:
+## Documentation site
 
-- customClassNames: An object to override the default class names.
+The documentation is a fully static [Vocs](https://vocs.dev/) site with live, production-package previews.
 
-### Example
-
-```typescript
-.use(rehypeCodeGroup, {
-  customClassNames: {
-    codeGroupClass: "my-code-group",
-    tabContainerClass: "my-tab-container",
-    tabClass: "my-tab",
-    activeTabClass: "my-active-tab",
-    blockContainerClass: "my-block-container",
-    activeBlockClass: "my-active-block",
-  },
-})
+```sh
+pnpm docs:dev
+pnpm docs:build
 ```
 
-### Output Example 📄
+For Cloudflare Pages, use `pnpm docs:build` as the build command and `docs/dist/public` as the output directory. Set `VOCS_BASE_URL` to the deployed site URL when canonical absolute URLs are required; it is intentionally optional so local previews use relative assets.
 
-Given the following input Markdown: [input.md](/test/fixtures/single-md/input.md)
+## Quality and security
 
-The plugin will produce the following output: [output.html](/test/fixtures/single-md/output.html)
+Unit tests enforce coverage thresholds. Playwright exercises Chromium, Firefox, WebKit, dynamic content, keyboard behavior, no-JavaScript fallback, and axe checks. CI also tests supported Node releases, audits all dependencies, performs dependency review and CodeQL analysis, generates an SBOM, validates the packed npm artifact, and can run Snyk when `SNYK_TOKEN` is configured.
 
-## Contributing 🤝
-Contributions are welcome! Please read the contributing guidelines first.
+Security reports follow the private process in [SECURITY.md](./SECURITY.md).
 
-## License 📄
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/ITZSHOAIB/rehype-code-group?tab=MIT-1-ov-file) file for details.
+## Contributing
 
----
+Contributions are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md), add a failing public-behavior test first, and include a changeset for user-visible changes.
 
-Happy coding! 🎉
+## License
+
+[MIT](./LICENSE) © Sohab Sk

@@ -1,14 +1,43 @@
 import type { Element, Root } from "hast";
 import { toString as hastToString } from "hast-util-to-string";
-import * as emoji from "node-emoji";
 import {
   type CodeGroup,
   createRehypeCodeGroupElement,
 } from "../elements/index.js";
-import type { ClassNames } from "../options.js";
+import type { ClassNames, LabelResolver } from "../options.js";
 
-const START_DELIMITER_REGEX = /::: code-group labels=\[([^\]]+)\]/;
+const START_DELIMITER_REGEX = /^::: code-group labels=\[([^\]]+)\]$/;
 const END_DELIMITER = ":::";
+
+const parseLabels = (value: string): string[] => {
+  const labels: string[] = [];
+  let current = "";
+  let escaped = false;
+  let quote: '"' | "'" | undefined;
+
+  for (const character of value) {
+    if (escaped) {
+      current += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (quote) {
+      if (character === quote) quote = undefined;
+      else current += character;
+    } else if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === ",") {
+      labels.push(current.trim());
+      current = "";
+    } else {
+      current += character;
+    }
+  }
+
+  if (escaped) current += "\\";
+  labels.push(current.trim());
+  return labels;
+};
 
 export const isStartDelimiterNode = (node: Element): boolean => {
   const match = hastToString(node).trim().match(START_DELIMITER_REGEX);
@@ -24,24 +53,18 @@ export const isEndDelimiterNode = (node: Element): boolean => {
  * If the node is a start delimiter,
  * - create a code group object
  * - push it to the code groups stack.
- *
- * @param {Element} node - The current node being visited.
- * @param {number} index - The index of the current node in its parent's children.
- * @param {Element | Root} parent - The parent of the current node.
- * @param {CodeGroup[]} codeGroups - The stack to keep track of the last found start delimiter.
  */
 export const handleStartDelimiter = (
   node: Element,
   index: number,
   parent: Element | Root,
   codeGroups: CodeGroup[],
+  resolveLabel: LabelResolver,
 ) => {
   const startMatch = hastToString(node).trim().match(START_DELIMITER_REGEX);
 
   if (startMatch) {
-    const tabLabels = startMatch[1]
-      .split(",")
-      .map((label) => emoji.emojify(label.trim()));
+    const tabLabels = parseLabels(startMatch[1]).map(resolveLabel);
     codeGroups.push({ parentNode: parent, startIndex: index, tabLabels });
   }
 };
@@ -55,29 +78,36 @@ export const handleStartDelimiter = (
  * - return the skip index to skip the replaced nodes.
  * - return the found status.
  * If the node is not an end delimiter, return the not found status.
- *
- * @param {number} index - The index of the current node in its parent's children.
- * @param {Element | Root} parent - The parent of the current node.
- * @param {CodeGroup[]} codeGroups - The stack to keep track of the last found start delimiter.
- * @param {ClassNames} classNames - The class names for styling code group elements.
- * @returns {Object} An object containing the found status and the skip index.
  */
 export const handleEndDelimiter = (
   index: number,
   parent: Element | Root,
   codeGroups: CodeGroup[],
   classNames: ClassNames,
+  uniqueId: string,
 ) => {
   const codeGroup = codeGroups.pop();
   const endIndex = index;
 
   if (codeGroup && codeGroup.parentNode === parent) {
     const { parentNode, startIndex } = codeGroup;
+    const panelCount = parentNode.children
+      .slice(startIndex + 1, endIndex)
+      .filter((child) => child.type === "element").length;
+
+    if (panelCount !== codeGroup.tabLabels.length) {
+      return {
+        found: false,
+        skipIndex: -1,
+        warning: `Code group has ${codeGroup.tabLabels.length} labels but ${panelCount} panel${panelCount === 1 ? "" : "s"}.`,
+      };
+    }
 
     const rehypeCodeGroupElement: Element = createRehypeCodeGroupElement(
       codeGroup,
       endIndex,
       classNames,
+      uniqueId,
     );
 
     parentNode.children.splice(
@@ -90,5 +120,5 @@ export const handleEndDelimiter = (
       skipIndex: startIndex + 1,
     };
   }
-  return { found: false, skipIndex: -1 };
+  return { found: false, skipIndex: -1, warning: undefined };
 };
