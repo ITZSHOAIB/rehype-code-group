@@ -1,6 +1,6 @@
 {
   "name": "rehype-code-group",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Accessible, framework-neutral code and content tabs for rehype, with syncing, persistence, and CSP-safe asset modes.",
   "main": "dist/index.js",
   "module": "dist/index.js",
