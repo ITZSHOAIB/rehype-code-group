@@ -21,7 +21,7 @@
     "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "6.0.5",
     "rollup": "4.62.4",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vite": "8.2.1",
     "webpack": "5.109.2"
   },
