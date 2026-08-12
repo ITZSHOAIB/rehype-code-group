@@ -1,0 +1,7 @@
+/index.md /assets/md/index.md 200
+/getting-started.md /assets/md/getting-started.md 200
+/agent-resources.md /assets/md/agent-resources.md 200
+/changelog.md /assets/md/changelog.md 200
+/migration.md /assets/md/migration.md 200
+/guides/:page.md /assets/md/guides/:page.md 200
+/reference/:page.md /assets/md/reference/:page.md 200

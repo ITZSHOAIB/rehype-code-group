@@ -9,6 +9,10 @@ import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
 
 State is opt-in. Groups never synchronize merely because their labels happen to match.
 
+:::note[Explicit by design]
+Matching labels do not create global state. A group participates only when it has the same `sync` key and a matching stable `value`.
+:::
+
 ## Synchronize related groups
 
 Give related groups the same explicit `sync` key and use stable tab `value` attributes. Try either group below—the other follows immediately.
@@ -17,7 +21,7 @@ Give related groups the same explicit `sync` key and use stable tab `value` attr
 
 Two separate groups share one explicit state key.
 
-````md
+````md [synchronized-groups.md]
 :::: code-group sync="package-manager"
 
 ::: code-tab label="npm" value="npm"
@@ -38,6 +42,7 @@ pnpm add package
 <CodeGroupPreview
   id="state-install"
   accessibleLabel="Install package"
+  agentSummary="First synchronized package-manager group with npm and pnpm install commands."
   sync="docs-package-manager"
   items={[
     { label: "npm", value: "npm", code: "npm install package", lang: "sh" },
@@ -48,6 +53,7 @@ pnpm add package
 <CodeGroupPreview
   id="state-run"
   accessibleLabel="Run development server"
+  agentSummary="Second synchronized package-manager group with npm and pnpm run commands. Selecting a tab updates both groups."
   sync="docs-package-manager"
   items={[
     { label: "npm", value: "npm", code: "npm run dev", lang: "sh" },
@@ -61,7 +67,7 @@ Selecting `pnpm` updates every enhanced group with the same `sync` key that cont
 
 Add `persist="local"` to remember a choice in `localStorage`. The namespaced key is `rehype-code-group:<sync-key>`. Storage failures are ignored so privacy modes and sandboxed embeds remain usable.
 
-```md
+```md [local-persistence.md]
 :::: code-group sync="package-manager" persist="local"
 ```
 
@@ -69,7 +75,7 @@ Add `persist="local"` to remember a choice in `localStorage`. The namespaced key
 
 Use `persist="url"` for shareable state. The client writes a query parameter such as `?rcg-package-manager=pnpm` with `history.replaceState`, so selection does not reload the page.
 
-```md
+```md [url-persistence.md]
 :::: code-group sync="package-manager" persist="url"
 ```
 
@@ -77,10 +83,19 @@ Use `persist="url"` for shareable state. The client writes a query parameter suc
 
 Every direct pointer or keyboard selection emits a bubbling `rehype-code-group:change` event with a small typed detail object.
 
-```ts
+```ts twoslash [observe-groups.ts]
+import type { CodeGroupChangeDetail } from "rehype-code-group/client";
+
 document.addEventListener("rehype-code-group:change", (event) => {
-  const { index, source, syncKey, value } = event.detail;
+  const { index, source, syncKey, value } = (
+    event as CustomEvent<CodeGroupChangeDetail>
+  ).detail;
+  //      ^?
 });
 ```
 
 The client also observes newly inserted markup. This supports client-side navigation and streamed content without reinitializing the whole document.
+
+:::details[Change event payload]
+`index` is the selected zero-based panel index, `value` is the stable tab value, `syncKey` identifies related groups when present, and `source` distinguishes direct selection from synchronized updates.
+:::

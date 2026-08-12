@@ -84,6 +84,29 @@ test("keeps documentation readable after sidebar navigation", async ({
   expect(fontFamily).not.toMatch(/Times New Roman/i);
 });
 
+test("documents the Vocs integration from the guides navigation", async ({
+  page,
+}) => {
+  await page.goto("/getting-started/");
+
+  await page
+    .getByRole("complementary")
+    .getByRole("link", { name: "Vocs integration", exact: true })
+    .click();
+
+  await expect(page).toHaveURL(/\/guides\/vocs$/);
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Use rehype-code-group with Vocs",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("Choose one code-group syntax")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Vocs Markdown extensions" }),
+  ).toHaveAttribute("href", "https://vocs.dev/writing/markdown-extensions");
+});
+
 test("renders the tab list and active preview as one connected control", async ({
   page,
 }) => {

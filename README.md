@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="1280" height="640" alt="rehype-code-group" src="https://github.com/user-attachments/assets/d7da11d1-9f5b-4c93-9023-fcf4d0f2c288" />
+  <img width="180" height="180" alt="rehype-code-group logo" src="https://raw.githubusercontent.com/ITZSHOAIB/rehype-code-group/main/docs/public/rehype-code-group-logo.png" />
 </p>
 
 # rehype-code-group

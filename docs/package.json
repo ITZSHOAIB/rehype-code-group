@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vocs build",
+    "build": "vocs markdown-audit && vocs build",
+    "agent:audit": "vocs markdown-audit",
     "dev": "vocs dev",
     "preview": "vocs preview"
   },

@@ -1,4 +1,4 @@
-import { createReadStream, statSync } from "node:fs";
+import { createReadStream, readFile, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
 
@@ -26,10 +26,26 @@ createServer((request, response) => {
 
   try {
     if (!statSync(filePath).isFile()) throw new Error("Not a file");
-    response.writeHead(200, {
-      "content-type":
-        contentTypes[extname(filePath)] ?? "application/octet-stream",
-    });
+    const contentType =
+      contentTypes[extname(filePath)] ?? "application/octet-stream";
+    response.writeHead(200, { "content-type": contentType });
+
+    if (extname(filePath) === ".html") {
+      readFile(filePath, "utf8", (error, html) => {
+        if (error) {
+          response.destroy(error);
+          return;
+        }
+        response.end(
+          html.replaceAll(
+            /<base href="[^"]*"\s*\/>/g,
+            '<base href="http://127.0.0.1:4321"/>',
+          ),
+        );
+      });
+      return;
+    }
+
     createReadStream(filePath).pipe(response);
   } catch {
     response.writeHead(404).end("Not found");

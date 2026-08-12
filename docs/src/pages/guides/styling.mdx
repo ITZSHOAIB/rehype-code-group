@@ -9,11 +9,17 @@ import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
 
 The markup ships with a stable styling contract. Start with CSS custom properties, then add classes when a project needs deeper control.
 
+| Asset mode | Choose it when | Runtime ownership |
+| --- | --- | --- |
+| Inline | You want zero configuration | Plugin |
+| External | CSP or caching requires explicit URLs | Plugin emits your URLs |
+| None | Your application already bundles CSS and JavaScript | Application |
+
 ## CSS custom properties
 
 Override stable variables on a page or one individual group.
 
-```css
+```css [theme.css]
 .docs-code-group {
   --rcg-accent: light-dark(#ea580c, #fb923c);
   --rcg-border-color: light-dark(#fed7aa, #7c2d12);
@@ -29,6 +35,7 @@ The same variables are applied to this live preview, so the rendered result matc
 <CodeGroupPreview
   id="styling-theme"
   accessibleLabel="Language"
+  agentSummary="Rendered result: themed JavaScript and TypeScript tabs using the package's documented CSS custom properties."
   className="docs-code-group"
   items={[
     { label: "JavaScript", value: "js", code: "export const answer = 42;", lang: "js" },
@@ -42,7 +49,7 @@ The bundled styles use logical properties for right-to-left layouts, adapt to da
 
 Default classes are always retained so the browser client stays functional. Your classes are added alongside them, including active-state classes that move with the selection.
 
-```ts
+```ts [markdown-pipeline.ts]
 processor.use(rehypeCodeGroup, {
   customClassNames: {
     codeGroupClass: "docs-code-group",
@@ -56,9 +63,9 @@ processor.use(rehypeCodeGroup, {
 
 Inline mode is zero-config and supports a CSP nonce.
 
-```ts
+```ts [inline-assets.ts]
 processor.use(rehypeCodeGroup, {
-  assets: { mode: "inline", nonce: requestNonce },
+  assets: { mode: "inline", nonce: requestNonce }, // [!code focus]
 });
 ```
 
@@ -66,9 +73,9 @@ processor.use(rehypeCodeGroup, {
 
 External mode emits a stylesheet link and module script using URLs you control.
 
-```ts
+```ts [external-assets.ts]
 processor.use(rehypeCodeGroup, {
-  assets: {
+  assets: { // [!code focus:6]
     mode: "external",
     stylesheetHref: "/assets/code-group.css",
     scriptSrc: "/assets/code-group.js",
@@ -79,6 +86,15 @@ processor.use(rehypeCodeGroup, {
 
 Copy `rehype-code-group/styles.css` and bundle `rehype-code-group/client` at those URLs.
 
+:::warning
+External mode emits the URLs you provide; it does not copy package files into those locations. Your deployment pipeline must publish both assets.
+:::
+
 ## Application-owned assets
 
 Use `assets: "none"` when your framework already owns CSS and JavaScript delivery. Server markup leaves all panels readable; only the enhanced state hides inactive panels.
+
+```ts [application-entry.ts]
+import "rehype-code-group/styles.css";
+import "rehype-code-group/client";
+```

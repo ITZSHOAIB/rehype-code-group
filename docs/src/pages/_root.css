@@ -33,6 +33,25 @@
   --vocs-color-blue: light-dark(#c2410c, #fb923c);
   --vocs-color-green: light-dark(#15803d, #86efac);
   --vocs-color-iris: light-dark(#c2410c, #fb923c);
+  --vocs-background-color-primary: #0d0c0b;
+  --vocs-background-color-surface: #141210;
+  --vocs-background-color-surfaceMuted: #1c1917;
+  --vocs-background-color-surfaceTint: #292421;
+  --vocs-background-color-code-block: #0a0908;
+  --vocs-background-color-inline-code: #292421;
+  --vocs-border-color-primary: #39322c;
+  --vocs-border-color-secondary: #292421;
+  --vocs-border-color-tab-active: #fb923c;
+  --vocs-text-color-primary: #ede9e5;
+  --vocs-text-color-secondary: #c9c0b8;
+  --vocs-text-color-muted: #a89d93;
+  --vocs-text-color-heading: #f8f5f2;
+  --vocs-text-color-link: #fdba74;
+  --vocs-text-color-link-hover: #fed7aa;
+  --vocs-leading-base: 1.6;
+  --vocs-leading-p: 1.7;
+  --vocs-leading-li: 1.65;
+  --vocs-spacing-content: 48rem;
 }
 
 /* Chosen direction: warm ink and burnished ember—one accent, quiet hierarchy. */
@@ -134,6 +153,28 @@ body:has(.rcg-home) [data-v-gutter-top] {
 .rcg-home-install-footnote svg {
   block-size: 1rem;
   inline-size: 1rem;
+}
+
+.rcg-home-brand-mark {
+  block-size: 2rem;
+  flex: none;
+  inline-size: 2rem;
+}
+
+[data-v-logo-text] {
+  align-items: center;
+  display: flex;
+  font-size: 1.05rem;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+[data-v-logo-text]::before {
+  background: url("/logo-64.png") center / contain no-repeat;
+  block-size: 1.75rem;
+  content: "";
+  flex: none;
+  inline-size: 1.75rem;
 }
 
 .rcg-hero h1 {
