@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>rehype-code-group</title>
+  <path d="M17 7h24l6 6h6a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V12a5 5 0 0 1 5-5Z" fill="#fff7ed"/>
+  <path d="M11 13h23l6 6h7a5 5 0 0 1 5 5v27a5 5 0 0 1-5 5H11a5 5 0 0 1-5-5V18a5 5 0 0 1 5-5Z" fill="#be185d"/>
+  <path d="M7 20h20l6 6h18a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V25a5 5 0 0 1 5-5Z" fill="#fb923c"/>
+  <path d="m22 35-7 7 7 7m13-14 7 7-7 7" fill="none" stroke="#fff7ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+</svg>

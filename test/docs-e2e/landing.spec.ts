@@ -5,6 +5,22 @@ test("introduces the documentation from a focused package home page", async ({
 }) => {
   await page.goto("/");
 
+  await expect(page.locator("[data-v-logo-text]").first()).toHaveText(
+    "rehype-code-group",
+  );
+  expect(
+    await page
+      .locator("[data-v-logo-text]")
+      .first()
+      .evaluate(
+        (element) => getComputedStyle(element, "::before").backgroundImage,
+      ),
+  ).toContain("/logo-64.png");
+  await expect(page.locator(".rcg-home-brand-mark")).toHaveAttribute(
+    "src",
+    "/logo-128.png",
+  );
+
   await expect(
     page.getByRole("heading", {
       level: 1,

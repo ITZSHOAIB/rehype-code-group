@@ -9,6 +9,12 @@ import { CodeGroupPreview } from "../../components/CodeGroupPreview.js";
 
 Choose the authoring style that matches the content. Every form compiles to the same accessible runtime contract.
 
+| Authoring form | Best for | Companion plugin |
+| --- | --- | --- |
+| Compact labels | Small adjacent code examples | None |
+| Fence metadata | Highlighter-friendly labelled fences | `rehype-code-group/remark` |
+| Rich content | Panels containing prose or multiple nodes | None |
+
 ## Compact syntax
 
 The compact form is ideal for neighboring code blocks. Quote a label when it contains a comma.
@@ -17,7 +23,7 @@ The compact form is ideal for neighboring code blocks. Quote a label when it con
 
 The smallest authoring surface for adjacent examples.
 
-````md
+````md [compact-group.md]
 ::: code-group labels=["npm, classic", pnpm]
 
 ```sh
@@ -34,6 +40,7 @@ pnpm add package
 <CodeGroupPreview
   id="syntax-compact"
   accessibleLabel="Package manager"
+  agentSummary="Rendered result: two code tabs labelled npm, classic and pnpm. The npm tab is selected initially."
   items={[
     { label: "npm, classic", value: "npm", code: "npm install package", lang: "sh" },
     { label: "pnpm", value: "pnpm", code: "pnpm add package", lang: "sh" },
@@ -42,17 +49,21 @@ pnpm add package
 
 Common emoji shortcodes such as `:package:`, `:yarn:`, `:rocket:`, and `:sparkles:` are resolved without loading an emoji catalog.
 
+:::tip
+Use compact syntax when every panel is exactly one code block. Rich-content syntax is clearer as soon as a panel needs prose or more than one node.
+:::
+
 ## Fence metadata
 
 Add the remark companion before `remark-rehype` to derive labels from fence metadata while preserving other metadata.
 
-```ts
+```ts [markdown-pipeline.ts]
 import remarkCodeGroup from "rehype-code-group/remark";
 
-processor.use(remarkCodeGroup).use(remarkRehype);
+processor.use(remarkCodeGroup).use(remarkRehype); // [!code focus]
 ```
 
-````md
+````md [fence-metadata.md]
 ::: code-group
 
 ```sh [npm]
@@ -74,7 +85,7 @@ Use four colons for the group and nested `code-tab` directives when a panel need
 
 Panels can contain explanatory content and multiple nodes.
 
-`````md
+`````md [runtime-guide.md]
 :::: code-group label="Choose a runtime" default="node"
 
 ::: code-tab label="Node.js" value="node"
@@ -99,6 +110,7 @@ bun app.ts
 <CodeGroupPreview
   id="syntax-rich"
   accessibleLabel="Choose a runtime"
+  agentSummary="Rendered result: rich-content tabs for Node.js and Bun. Node.js is selected initially."
   defaultValue="node"
   items={[
     { label: "Node.js", value: "node", note: "Install the current LTS release, then run:", code: "node app.js", lang: "sh" },
@@ -106,19 +118,19 @@ bun app.ts
   ]}
 />
 
-> **Stable tab identity**
->
-> `label` names the tab list for assistive technology. `value` is the stable value used by synchronization and persistence. `default` selects the initial value.
+:::info[Stable tab identity]
+`label` names the tab list for assistive technology. `value` is the stable value used by synchronization and persistence. `default` selects the initial value.
+:::
 
 ## Full emoji catalog
 
 The default entry point stays small. Opt into the complete `node-emoji` catalog only when your content needs it.
 
-```ts
+```ts [emoji-labels.ts]
 import rehypeCodeGroup from "rehype-code-group";
 import { fullEmojiResolver } from "rehype-code-group/emoji";
 
-processor.use(rehypeCodeGroup, { labelResolver: fullEmojiResolver });
+processor.use(rehypeCodeGroup, { labelResolver: fullEmojiResolver }); // [!code focus]
 ```
 
 You can also provide any `(label: string) => string` resolver—for icons, localization, or project-specific naming.

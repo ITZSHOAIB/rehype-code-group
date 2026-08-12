@@ -1,0 +1,51 @@
+---
+title: Agent resources
+description: Machine-readable documentation and reliable entry points for AI coding agents.
+---
+
+# Agent resources
+
+The documentation is published in both human-readable HTML and compact Markdown. AI assistants should start with the index, retrieve only the pages relevant to the task, and use the repository when implementation details are required.
+
+## Machine-readable endpoints
+
+| Resource | Purpose |
+| --- | --- |
+| `https://rehype-code-group.pages.dev/llms.txt` | Concise page index with titles and descriptions |
+| `https://rehype-code-group.pages.dev/llms-full.txt` | Complete documentation in one file |
+| `https://rehype-code-group.pages.dev/index.md` | Markdown version of the package home page |
+| `https://rehype-code-group.pages.dev/getting-started.md` | Focused installation and first-group guide |
+| `https://rehype-code-group.pages.dev/guides/syntax.md` | Authoring syntax in Markdown |
+| [GitHub source](https://github.com/ITZSHOAIB/rehype-code-group) | Plugin, client, styles, tests, and documentation source |
+
+Vocs also exposes **Copy page for AI** and **View as Markdown** from the Ask AI menu on every documentation page.
+
+## Suggested agent workflow
+
+::::steps
+##### Read the index
+
+Use `/llms.txt` to identify the smallest relevant set of pages instead of loading the complete site.
+
+##### Read focused Markdown
+
+Open the page's `.md` URL. Code-group previews are converted into concise textual summaries, while source examples remain ordinary fenced code blocks.
+
+##### Verify against source
+
+Use the GitHub repository for exact types, runtime behavior, and tests. Documentation explains the supported contract; source establishes the current implementation.
+
+##### Preserve package guarantees
+
+Changes should retain progressive enhancement, ARIA tab semantics, keyboard behavior, deterministic IDs, CSP-safe asset modes, and the no-JavaScript fallback.
+::::
+
+## Copyable instruction
+
+:::prompt
+Read https://rehype-code-group.pages.dev/llms.txt first. Fetch only the relevant Markdown pages, then verify implementation details against https://github.com/ITZSHOAIB/rehype-code-group. Preserve the documented public API, accessibility behavior, and asset-delivery contract.
+:::
+
+:::note[MCP deployment]
+Vocs includes an MCP server, but it requires a dynamic server runtime. This documentation currently deploys as fully static Cloudflare Pages, so it intentionally does not advertise a non-functional `/api/mcp` endpoint. The generated Markdown indexes and per-page Markdown remain available without a runtime.
+:::

@@ -12,7 +12,13 @@ export function LandingHero() {
       <div className="rcg-home-shell">
         <div className="rcg-home-copy">
           <p className="rcg-home-eyebrow">
-            <PackageCheck aria-hidden="true" />
+            <img
+              alt=""
+              className="rcg-home-brand-mark"
+              height="32"
+              src="/logo-128.png"
+              width="32"
+            />
             rehype-code-group · Rehype plugin
           </p>
           <h1 id="rcg-home-title">Code tabs that belong in your docs.</h1>

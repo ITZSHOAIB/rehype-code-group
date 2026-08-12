@@ -1,0 +1,119 @@
+---
+title: Vocs integration
+description: Use rehype-code-group safely alongside Vocs Markdown and MDX.
+---
+
+import { Card, Cards } from "vocs";
+
+# Use rehype-code-group with Vocs
+
+Vocs already includes polished code blocks and package-manager code groups. Add `rehype-code-group` when your content needs the package's framework-neutral HTML contract, arbitrary rich-content panels, explicit synchronization, or persisted choices.
+
+:::warning[Choose one code-group syntax]
+Vocs and `rehype-code-group` both use a `code-group` directive, but they are different authoring systems. Use Vocs' native `:::code-group` for ordinary hand-authored code examples. Process package-owned groups in a separate unified pipeline or render their generated markup through an MDX component; do not send the same directive through both transformers.
+:::
+
+## Choose the right path
+
+| Requirement | Recommended path |
+| --- | --- |
+| Package-manager or language snippets written directly in Vocs | [Vocs native code groups](https://vocs.dev/writing/code#code-groups) |
+| Generated Markdown or HTML consumed outside the Vocs page compiler | `rehype-code-group` unified pipeline |
+| Rich panels containing prose, lists, and multiple code blocks | `rehype-code-group` rich-content groups |
+| Tabs synchronized across separate previews | `sync` with the package browser client |
+| A choice persisted in local storage or the URL | `persist="local"` or `persist="url"` |
+
+## Add a package preview
+
+::::steps
+##### Keep the integration in a client component
+
+Vocs pages can import React components from the documentation source tree. A small client boundary can initialize the browser behavior after hydration.
+
+:::file-tree
+- +docs
+  - +src
+    - +components
+      - **CodeGroupEnhancer.tsx** imports the browser client
+      - CodeGroupPreview.tsx renders the generated markup contract
+    - +pages
+      - guide.mdx imports the preview component
+- vocs.config.ts
+:::
+
+##### Load application-owned assets once
+
+Use the public stylesheet in the preview component or your root stylesheet. Import the client from a client component so it only runs in the browser.
+
+```tsx [CodeGroupEnhancer.tsx]
+// [!include ~/components/CodeGroupEnhancer.tsx]
+```
+
+Import `rehype-code-group/styles.css` once from the preview component or the application stylesheet.
+
+##### Render the stable HTML contract
+
+Wrap markup produced by `rehype-code-group` with the enhancer. Keep the required roles, relationships, default classes, and `data-rcg-value` attributes intact so the browser client and stylesheet can enhance it.
+
+```mdx [guide.mdx]
+import { PackageManagerPreview } from '../components/PackageManagerPreview.js'
+
+<PackageManagerPreview />
+```
+::::
+
+## Process generated content
+
+When another build step owns the Markdown transformation, run the remark helper before `remark-rehype`, then run the rehype plugin after the tree becomes HAST. Set `assets: "none"` because the Vocs application already imports the stylesheet and client.
+
+```ts [render-markdown.ts]
+import rehypeCodeGroup from "rehype-code-group";
+import remarkCodeGroup from "rehype-code-group/remark";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+export async function renderMarkdown(markdown: string) {
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkCodeGroup) // [!code focus]
+    .use(remarkRehype) // [!code focus]
+    .use(rehypeCodeGroup, { assets: "none" }) // [!code focus]
+    .use(rehypeStringify)
+    .process(markdown);
+
+  return String(file);
+}
+```
+
+:::note[Why not add the plugin directly to `vocs.config.ts`?]
+Vocs' built-in Markdown extensions transform their own `code-group` directive as part of the page compiler. A separate pipeline makes ownership explicit and prevents one syntax from being interpreted twice.
+:::
+
+## Use Vocs features around previews
+
+Keep surrounding documentation native to Vocs: use callouts for constraints, steps for installation flows, file trees for project structure, and cards for related guides. Vocs code blocks also provide titles, copy controls, focus annotations, diffs, and line numbers without extra package styling.
+
+Read the official [Vocs Markdown extensions](https://vocs.dev/writing/markdown-extensions) and [code highlighting guide](https://vocs.dev/writing/code) for the complete authoring surface.
+
+<Cards>
+  <Card
+    title="Syntax"
+    description="Author compact groups, fence metadata, and rich-content tabs."
+    icon="code"
+    to="/guides/syntax"
+  />
+  <Card
+    title="Styling and assets"
+    description="Theme the stable CSS contract and choose who owns the assets."
+    icon="palette"
+    to="/guides/styling"
+  />
+  <Card
+    title="State and syncing"
+    description="Connect groups and persist user choices deliberately."
+    icon="refresh-cw"
+    to="/guides/state"
+  />
+</Cards>

@@ -4,17 +4,25 @@ description: Install rehype-code-group and render your first accessible code tab
 ---
 
 import { CodeGroupPreview } from "../components/CodeGroupPreview.js";
+import { Card, Cards } from "vocs";
 
 # Getting started
 
 `rehype-code-group` turns neighboring code blocks—or arbitrary HTML content—into an accessible tab interface. It runs in the rehype phase, so it stays independent of your syntax highlighter and frontend framework.
 
-## Install
+:::info[Before you begin]
+The package is ESM-only and supports Node.js 20 or newer.
+:::
+
+## Build your first group
+
+::::steps
+##### Install the package
 
 ### Source
 
-```sh
-npm install rehype-code-group
+```sh [terminal]
+$ npm install rehype-code-group
 ```
 
 ### Live preview
@@ -22,6 +30,7 @@ npm install rehype-code-group
 <CodeGroupPreview
   id="getting-started-install"
   accessibleLabel="Package manager"
+  agentSummary="Package-manager commands: npm install rehype-code-group; pnpm add rehype-code-group; yarn add rehype-code-group; bun add rehype-code-group."
   items={[
     { label: "npm", value: "npm", code: "npm install rehype-code-group", lang: "sh" },
     { label: "pnpm", value: "pnpm", code: "pnpm add rehype-code-group", lang: "sh" },
@@ -30,23 +39,73 @@ npm install rehype-code-group
   ]}
 />
 
-## Add the plugin
+##### Add the plugin to your unified pipeline
 
 Add the plugin after Markdown has been converted to HAST. It stays independent of your syntax highlighter.
 
-```ts
-import { rehype } from "rehype";
+```ts [build-docs.ts]
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeCodeGroup from "rehype-code-group";
+import { unified } from "unified";
 
-const file = await rehype()
+const file = await unified()
   .use(remarkParse)
-  .use(remarkRehype)
-  .use(rehypeCodeGroup)
+  .use(remarkRehype) // [!code focus]
+  .use(rehypeCodeGroup) // [!code focus]
   .use(rehypeStringify)
   .process(markdown);
 ```
 
-Continue with the guides for rich-content groups or review the reference for every plugin option.
+##### Author a compact code group
+
+Give the group one label per neighboring code block.
+
+````md [README.md]
+::: code-group labels=[npm, pnpm]
+
+```sh
+npm install package
+```
+
+```sh
+pnpm add package
+```
+
+:::
+````
+::::
+
+:::tip
+Add [`rehype-code-group/remark`](/guides/syntax#fence-metadata) before `remark-rehype` when you prefer labels in code-fence metadata.
+:::
+
+## Continue learning
+
+<Cards>
+  <Card
+    title="Syntax"
+    description="Choose compact, fence-metadata, or rich-content authoring."
+    icon="code"
+    to="/guides/syntax"
+  />
+  <Card
+    title="State and syncing"
+    description="Synchronize tabs and persist a choice locally or in the URL."
+    icon="refresh-cw"
+    to="/guides/state"
+  />
+  <Card
+    title="Vocs integration"
+    description="Use the package safely alongside Vocs' native Markdown features."
+    icon="book-open"
+    to="/guides/vocs"
+  />
+  <Card
+    title="Options"
+    description="Review asset modes, diagnostics, class names, and browser APIs."
+    icon="settings"
+    to="/reference/options"
+  />
+</Cards>

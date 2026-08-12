@@ -15,6 +15,7 @@ export type CodeGroupPreviewItem = {
 
 type Props = {
   accessibleLabel?: string;
+  agentSummary?: string;
   className?: string;
   defaultValue?: string;
   id: string;
