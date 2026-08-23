@@ -20,10 +20,10 @@
     "@types/node": "26.1.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "@vitejs/plugin-react": "6.0.5",
-    "rollup": "4.62.4",
+    "@vitejs/plugin-react": "6.1.0",
+    "rollup": "4.62.5",
     "typescript": "6.0.3",
-    "vite": "8.2.1",
+    "vite": "8.2.2",
     "webpack": "5.109.2"
   },
   "engines": {
