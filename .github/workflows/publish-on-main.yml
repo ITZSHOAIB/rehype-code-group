@@ -22,6 +22,7 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       id-token: write
       contents: write
       pull-requests: write
@@ -55,3 +56,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
+
+      # Workflows don't start for a pull request that GITHUB_TOKEN opened or
+      # updated, so the release PR would never report "Checks / Required".
+      - name: Run checks on the release pull request
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        run: gh workflow run pull-request.yml --ref changeset-release/main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

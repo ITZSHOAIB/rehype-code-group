@@ -2,12 +2,14 @@ name: Pull Request
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  # Started by Publish for the release pull request.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
