@@ -3,6 +3,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -11,4 +14,3 @@ jobs:
   checks:
     name: Checks
     uses: ./.github/workflows/pre-checks.yml
-    secrets: inherit
