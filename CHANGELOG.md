@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 1.0.2
+
+### Patch Changes
+
+- [#150](https://github.com/ITZSHOAIB/rehype-code-group/pull/150) [`58814f6`](https://github.com/ITZSHOAIB/rehype-code-group/commit/58814f6c408363e12345b0d3656fab7fdfeef9e3) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Accept typographic quotes in code-group labels and rich-group attributes. Hosts that run smartypants before rehype, such as Astro by default, curl `"…"` and `'…'` into `“…”` and `‘…’`, which previously broke quoted values like `label=":package: npm"` or `labels=["npm, classic", pnpm]`.
+
 ## 1.0.1
 
 ### Patch Changes
