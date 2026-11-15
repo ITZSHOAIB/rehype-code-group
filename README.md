@@ -28,7 +28,7 @@ Inspired by [VitePress code groups](https://vitepress.dev/guide/markdown#code-gr
 
 ## Install
 
-This package is ESM-only and supports Node.js 20 or newer.
+This package is ESM-only and supports Node.js 22.12 or newer.
 
 ```sh
 npm install rehype-code-group

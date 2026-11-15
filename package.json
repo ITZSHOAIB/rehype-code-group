@@ -83,8 +83,8 @@
     "@changesets/cli": "3.0.3",
     "@changesets/get-release-plan": "5.0.2",
     "@playwright/test": "1.65.0",
-    "@types/node": "20.19.43",
-    "@vitest/coverage-v8": "4.1.12",
+    "@types/node": "22.20.5",
+    "@vitest/coverage-v8": "5.1.0",
     "lint-staged": "17.6.0",
     "rehype": "~13.0.2",
     "rehype-minify-whitespace": "^6.0.2",
@@ -97,7 +97,7 @@
     "satteri": "0.11.7",
     "simple-git-hooks": "^2.14.0",
     "typescript": "7.0.2",
-    "vitest": "4.1.12"
+    "vitest": "5.1.0"
   },
   "peerDependencies": {
     "satteri": ">=0.10.5 <0.12.0"
@@ -189,7 +189,7 @@
   },
   "packageManager": "pnpm@10.34.5",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.12.0"
   },
   "sideEffects": [
     "./dist/styles.css",

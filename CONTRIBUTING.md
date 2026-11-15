@@ -4,7 +4,7 @@ Thanks for improving `rehype-code-group`.
 
 ## Requirements
 
-- Node.js 24 is recommended for the complete workspace; the published plugin is tested on Node.js 20, 22, and 24.
+- Node.js 24 is recommended for the complete workspace; the published plugin is tested on Node.js 22, 24, and 26.
 - pnpm 10.34.5, enabled through Corepack.
 
 ## Setup
