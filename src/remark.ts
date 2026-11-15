@@ -8,15 +8,21 @@ const paragraphText = (node: Parent["children"][number]) =>
     ? node.children[0].value.trim()
     : undefined;
 
-const setParagraphText = (paragraph: Paragraph, value: string) => {
-  paragraph.children = [{ type: "text", value }];
+/** How a host applies the label rewrites to its own mdast tree. */
+export type LabelEditor = {
+  setMeta: (code: Code, meta: string | undefined) => void;
+  setParagraphText: (paragraph: Paragraph, value: string) => void;
 };
 
-const transformParent = (parent: Parent) => {
+/**
+ * Move `[label]` fence metadata onto the `::: code-group` line, as
+ * `labels=[...]`, for every group in the tree.
+ */
+export const rewriteLabelMetadata = (parent: Parent, editor: LabelEditor) => {
   for (let index = 0; index < parent.children.length; index += 1) {
     const child = parent.children[index];
     if (paragraphText(child) !== "::: code-group") {
-      if ("children" in child) transformParent(child as Parent);
+      if ("children" in child) rewriteLabelMetadata(child as Parent, editor);
       continue;
     }
 
@@ -51,11 +57,11 @@ const transformParent = (parent: Parent) => {
     if (parsedMetadata.some((entry) => !entry)) continue;
 
     for (const entry of parsedMetadata) {
-      if (entry) entry.block.meta = entry.remainingMeta;
+      if (entry) editor.setMeta(entry.block, entry.remainingMeta);
     }
     const labels = parsedMetadata.map((entry) => entry?.label ?? "");
 
-    setParagraphText(
+    editor.setParagraphText(
       child as Paragraph,
       `::: code-group labels=[${labels.map((label) => JSON.stringify(label)).join(", ")}]`,
     );
@@ -63,7 +69,14 @@ const transformParent = (parent: Parent) => {
 };
 
 const remarkCodeGroup: Plugin<[], Root> = () => (tree) => {
-  transformParent(tree);
+  rewriteLabelMetadata(tree, {
+    setMeta: (code, meta) => {
+      code.meta = meta;
+    },
+    setParagraphText: (paragraph, value) => {
+      paragraph.children = [{ type: "text", value }];
+    },
+  });
 };
 
 export default remarkCodeGroup;

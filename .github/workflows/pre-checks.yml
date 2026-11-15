@@ -49,6 +49,11 @@ jobs:
       - name: Test
         run: pnpm test:coverage
 
+      - name: Test the oldest supported Sätteri
+        run: |
+          pnpm add --save-dev --workspace-root satteri@0.10.5
+          pnpm vitest run test/satteri.test.ts
+
   browser:
     name: Browser behavior
     runs-on: ubuntu-latest
