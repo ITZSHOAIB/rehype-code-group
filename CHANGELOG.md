@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 2.0.0
+
+### Major Changes
+
+- [#165](https://github.com/ITZSHOAIB/rehype-code-group/pull/165) [`5b75dc0`](https://github.com/ITZSHOAIB/rehype-code-group/commit/5b75dc02668dc59734b35cf5668e06f3898171e8) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Drop support for Node.js 20, which reached end of life in April 2026. The minimum supported version is now Node.js 22.12.
+
 ## 1.1.1
 
 ### Patch Changes
