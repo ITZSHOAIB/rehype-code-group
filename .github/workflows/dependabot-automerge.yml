@@ -17,10 +17,29 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
 
-      # Major updates are left for manual review.
+      # Only patch and minor updates merge on their own. Majors, prereleases
+      # (beta to rc is reported as a patch) and anything the metadata can't
+      # classify are left for manual review.
+      - name: Check update
+        id: check
+        run: |
+          case "$UPDATE_TYPE" in
+            version-update:semver-patch|version-update:semver-minor) ;;
+            *) echo "Not auto-merging: update type '$UPDATE_TYPE'."; exit 0 ;;
+          esac
+          prerelease=$(jq 'any(.[]; (.newVersion // "") | contains("-"))' <<<"$DEPENDENCIES" || true)
+          if [ "$prerelease" != "false" ]; then
+            echo "Not auto-merging: includes a prerelease, or the dependency list couldn't be read."
+            exit 0
+          fi
+          echo "eligible=true" >> "$GITHUB_OUTPUT"
+        env:
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DEPENDENCIES: ${{ steps.metadata.outputs.updated-dependencies-json }}
+
       # Merge waits for the required "Checks / Required" status.
       - name: Approve and enable auto-merge
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.check.outputs.eligible == 'true'
         run: |
           gh pr review --approve "$PR_URL"
           gh pr merge --auto --squash "$PR_URL"

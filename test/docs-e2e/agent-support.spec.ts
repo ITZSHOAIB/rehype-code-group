@@ -10,7 +10,7 @@ test("publishes focused machine-readable documentation", async ({
 
   expect(indexResponse.ok()).toBe(true);
   expect(await indexResponse.text()).toContain(
-    "[Agent resources](/agent-resources)",
+    "[Agent resources](/agent-resources.md)",
   );
 
   expect(pageResponse.ok()).toBe(true);
