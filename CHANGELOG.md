@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 1.1.0
+
+### Minor Changes
+
+- [#151](https://github.com/ITZSHOAIB/rehype-code-group/pull/151) [`32f1916`](https://github.com/ITZSHOAIB/rehype-code-group/commit/32f1916b4cf4fa050fa58d7dfae562fd1053987c) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Add Sätteri plugins for Astro 7's default Markdown processor. `rehype-code-group/satteri` exports `satteriCodeGroup`, which takes the same options and writes the same HTML as the rehype plugin, and `satteriCodeGroupLabels`, the counterpart of the remark companion for `[label]` fence metadata. Supports `satteri` 0.10.5 to 0.11.x as an optional peer dependency.
+
 ## 1.0.2
 
 ### Patch Changes
