@@ -5,6 +5,7 @@ import {
   createRehypeCodeGroupElement,
 } from "../elements/index.js";
 import type { ClassNames, LabelResolver } from "../options.js";
+import { closingQuoteFor } from "./quotes.js";
 
 const START_DELIMITER_REGEX = /^::: code-group labels=\[([^\]]+)\]$/;
 const END_DELIMITER = ":::";
@@ -13,7 +14,7 @@ const parseLabels = (value: string): string[] => {
   const labels: string[] = [];
   let current = "";
   let escaped = false;
-  let quote: '"' | "'" | undefined;
+  let closingQuote: string | undefined;
 
   for (const character of value) {
     if (escaped) {
@@ -21,11 +22,11 @@ const parseLabels = (value: string): string[] => {
       escaped = false;
     } else if (character === "\\") {
       escaped = true;
-    } else if (quote) {
-      if (character === quote) quote = undefined;
+    } else if (closingQuote) {
+      if (character === closingQuote) closingQuote = undefined;
       else current += character;
-    } else if (character === '"' || character === "'") {
-      quote = character;
+    } else if (closingQuoteFor(character)) {
+      closingQuote = closingQuoteFor(character);
     } else if (character === ",") {
       labels.push(current.trim());
       current = "";

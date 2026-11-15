@@ -5,6 +5,7 @@ import {
   createCodeGroupElement,
 } from "../elements/index.js";
 import type { ClassNames, LabelResolver } from "../options.js";
+import { closingQuoteFor } from "./quotes.js";
 
 type Parent = Element | Root;
 
@@ -44,15 +45,15 @@ const parseAttributes = (value = "") => {
 
     const key = value.slice(keyStart, cursor);
     cursor += 1;
-    const quote = value[cursor];
+    const closingQuote = closingQuoteFor(value[cursor]);
 
-    if (quote === '"' || quote === "'") {
+    if (closingQuote) {
       cursor += 1;
       let parsed = "";
       let closed = false;
       while (cursor < value.length) {
         const character = value[cursor];
-        if (character === quote) {
+        if (character === closingQuote) {
           cursor += 1;
           closed = true;
           break;
