@@ -9,11 +9,11 @@
     "preview": "vocs preview"
   },
   "dependencies": {
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-server-dom-webpack": "19.2.9",
     "rehype-code-group": "workspace:*",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-server-dom-webpack": "19.2.8",
-    "vocs": "2.8.5",
+    "vocs": "2.12.0",
     "waku": "1.0.0-beta.8"
   },
   "devDependencies": {
@@ -23,8 +23,8 @@
     "@vitejs/plugin-react": "6.0.5",
     "rollup": "4.62.4",
     "typescript": "6.0.3",
-    "vite": "8.2.1",
-    "webpack": "5.109.2"
+    "vite": "8.2.6",
+    "webpack": "5.112.2"
   },
   "engines": {
     "node": ">=22.12.0"
