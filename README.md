@@ -268,7 +268,7 @@ For Cloudflare Pages, keep the repository root as the project root, use `pnpm do
 
 ## Quality and security
 
-Unit tests enforce coverage thresholds. Playwright exercises Chromium, Firefox, WebKit, dynamic content, keyboard behavior, no-JavaScript fallback, and axe checks. CI also tests supported Node releases, audits all dependencies, performs dependency review and CodeQL analysis, generates an SBOM, validates the packed npm artifact, and can run Snyk when `SNYK_TOKEN` is configured.
+Unit tests enforce coverage thresholds. Playwright exercises Chromium, Firefox, WebKit, dynamic content, keyboard behavior, no-JavaScript fallback, and axe checks. CI also tests supported Node releases, audits all dependencies, performs dependency review and CodeQL analysis, generates an SBOM, and validates the packed npm artifact.
 
 Security reports follow the private process in [SECURITY.md](./SECURITY.md).
 

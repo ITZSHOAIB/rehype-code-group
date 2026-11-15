@@ -1,0 +1,26 @@
+name: Setup
+description: Install pnpm, Node.js and the workspace dependencies.
+
+inputs:
+  node-version:
+    description: Node.js version to install.
+    default: "24"
+  install-args:
+    description: Extra arguments for pnpm install, such as a workspace filter.
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "pnpm"
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm ${{ inputs.install-args }} install --frozen-lockfile
