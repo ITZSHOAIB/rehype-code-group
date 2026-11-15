@@ -107,6 +107,23 @@ describe("Sätteri output matches the unified plugins", () => {
   }
 });
 
+// Astro's Sätteri processor enables smart punctuation unless `smartypants` is false.
+test("reads quoted values curled by Astro's default smart punctuation", () => {
+  const { html } = markdownToHtml(
+    ':::: code-group label="Install with" sync="pm"\n\n::: code-tab label=":package: npm" value="npm"\n\n```sh\nnpm install\n```\n\n:::\n\n::::\n\n::: code-group labels=["npm, classic", \'pnpm\']\n\n```sh\nnpm install\n```\n\n```sh\npnpm add\n```\n\n:::',
+    {
+      features: { smartPunctuation: true },
+      hastPlugins: [satteriCodeGroup({ assets: "none" })],
+    },
+  );
+
+  expect(html).toContain('role="tablist" aria-label="Install with"');
+  expect(html).toContain('data-rcg-sync="pm"');
+  expect(html).toContain(">📦 npm</button>");
+  expect(html).toContain(">npm, classic</button>");
+  expect(html).toContain(">pnpm</button>");
+});
+
 test("numbers groups per document, not per plugin instance", () => {
   const plugins = {
     mdastPlugins: [satteriCodeGroupLabels()],
