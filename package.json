@@ -17,6 +17,10 @@
       "types": "./dist/remark.d.ts",
       "import": "./dist/remark.js"
     },
+    "./satteri": {
+      "types": "./dist/satteri.d.ts",
+      "import": "./dist/satteri.js"
+    },
     "./package-managers": {
       "types": "./dist/package-managers.d.ts",
       "import": "./dist/package-managers.js"
@@ -54,7 +58,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "pnpm build && playwright test",
     "test:docs": "pnpm docs:build && playwright test --config playwright.docs.config.ts",
-    "test:package": "pnpm build && tsc -p test-dts/tsconfig.json && node scripts/checkPackage.mjs",
+    "test:package": "pnpm build && tsc -p test-dts/tsconfig.json && tsc -p test-dts/tsconfig.satteri.json && node scripts/checkPackage.mjs",
     "docs:build": "pnpm build && pnpm --dir docs build",
     "docs:dev": "pnpm build && pnpm --dir docs dev",
     "docs:preview": "pnpm --dir docs preview",
@@ -90,9 +94,18 @@
     "remark-rehype": "^11.1.2",
     "remark-smartypants": "^3.0.3",
     "rimraf": "^6.1.4",
+    "satteri": "0.11.7",
     "simple-git-hooks": "^2.13.1",
     "typescript": "7.0.2",
     "vitest": "4.1.12"
+  },
+  "peerDependencies": {
+    "satteri": ">=0.10.5 <0.12.0"
+  },
+  "peerDependenciesMeta": {
+    "satteri": {
+      "optional": true
+    }
   },
   "pnpm": {
     "overrides": {
@@ -148,6 +161,7 @@
     "rehype-code-grouping-tab-block",
     "remark-plugin",
     "unified",
+    "satteri",
     "markdown",
     "mdx",
     "astro",

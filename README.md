@@ -242,6 +242,31 @@ Direct selections emit a bubbling `rehype-code-group:change` event with `{ index
 
 ## Astro
 
+Astro 7 renders Markdown with [Sätteri](https://satteri.bruits.org) by default. Use the Sätteri plugins from `rehype-code-group/satteri`; they take the same options and write the same HTML as the rehype plugin:
+
+```ts
+import { satteri } from "@astrojs/markdown-satteri";
+import { defineConfig } from "astro/config";
+import {
+  satteriCodeGroup,
+  satteriCodeGroupLabels,
+} from "rehype-code-group/satteri";
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({
+      // Optional: takes tab labels from `[label]` fence metadata.
+      mdastPlugins: [satteriCodeGroupLabels()],
+      hastPlugins: [satteriCodeGroup({ assets: "inline" })],
+    }),
+  },
+});
+```
+
+The Sätteri entry supports `satteri` 0.10.5 to 0.11.x. Sätteri doesn't report plugin diagnostics yet, so a malformed group is logged with `console.warn`, or fails the build when `diagnostics` is `"error"`.
+
+On Astro 6 and earlier, or with `@astrojs/markdown-remark` installed, use the rehype plugin:
+
 ```ts
 import { defineConfig } from "astro/config";
 import rehypeCodeGroup from "rehype-code-group";

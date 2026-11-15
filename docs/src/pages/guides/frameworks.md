@@ -9,13 +9,36 @@ The plugin belongs in the rehype phase regardless of framework. What changes is 
 
 | Environment | Pipeline hook | Recommended asset mode |
 | --- | --- | --- |
-| Astro | `markdown.rehypePlugins` | `"inline"` or `"none"` |
+| Astro 7 (Sätteri) | `markdown.processor` with `rehype-code-group/satteri` | `"inline"` or `"none"` |
+| Astro 6 and earlier | `markdown.rehypePlugins` | `"inline"` or `"none"` |
 | Vocs | Separate unified pipeline or MDX component | `"none"` |
 | Unified | `.use(rehypeCodeGroup)` after `remarkRehype` | Any |
 
 ## Astro
 
-Add the plugin to `markdown.rehypePlugins`.
+Astro 7 renders Markdown with Sätteri by default. Add the Sätteri plugins to its processor; they take the same options and write the same HTML as the rehype plugin.
+
+```ts [astro.config.ts]
+import { satteri } from "@astrojs/markdown-satteri";
+import { defineConfig } from "astro/config";
+import {
+  satteriCodeGroup,
+  satteriCodeGroupLabels,
+} from "rehype-code-group/satteri";
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({ // [!code focus]
+      mdastPlugins: [satteriCodeGroupLabels()], // [!code focus]
+      hastPlugins: [satteriCodeGroup({ assets: "inline" })], // [!code focus]
+    }), // [!code focus]
+  },
+});
+```
+
+`satteriCodeGroupLabels` is optional: it takes tab labels from `[label]` fence metadata, like the remark companion. The `npm2yarn` package-manager converter is remark-only for now.
+
+On Astro 6 and earlier, or with `@astrojs/markdown-remark` installed, add the rehype plugin to `markdown.rehypePlugins` instead.
 
 ```ts [astro.config.ts]
 import { defineConfig } from "astro/config";

@@ -45,6 +45,8 @@ assert(packedPaths.includes("package.json"));
 assert(packedPaths.includes("dist/index.js"));
 assert(packedPaths.includes("dist/index.d.ts"));
 assert(packedPaths.includes("dist/client.js"));
+assert(packedPaths.includes("dist/satteri.js"));
+assert(packedPaths.includes("dist/satteri.d.ts"));
 assert(packedPaths.includes("dist/styles.css"));
 assert(
   packedPaths.every(
