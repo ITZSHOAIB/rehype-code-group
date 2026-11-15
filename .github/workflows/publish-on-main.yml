@@ -4,15 +4,18 @@ on:
     branches:
       - "main"
 
+permissions:
+  contents: read
+
+# Queue release runs instead of cancelling one midway through a publish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   checks:
     name: Checks
     uses: ./.github/workflows/pre-checks.yml
-    secrets: inherit
 
   publish:
     name: Publish
