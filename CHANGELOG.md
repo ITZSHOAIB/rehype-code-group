@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 1.1.1
+
+### Patch Changes
+
+- [#162](https://github.com/ITZSHOAIB/rehype-code-group/pull/162) [`b2416ea`](https://github.com/ITZSHOAIB/rehype-code-group/commit/b2416eadbea65c5d86bc90ebf46a080ba01680fb) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Allow `unist-util-visit` 5.2.
+
 ## 1.1.0
 
 ### Minor Changes
