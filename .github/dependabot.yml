@@ -1,25 +1,36 @@
 version: 2
+
+# All updates, npm and GitHub Actions, arrive as one monthly pull request.
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: "monthly"
+
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    groups:
-      actions:
-        patterns:
-          - "*"
+    # The composite action isn't scanned unless its directory is listed.
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    patterns: ["*"]
+    multi-ecosystem-group: "dependencies"
+
   - package-ecosystem: "npm"
     directory: "/"
-    schedule:
-      interval: "monthly"
+    patterns: ["*"]
+    multi-ecosystem-group: "dependencies"
     # Matches minimumReleaseAge in pnpm-workspace.yaml (4320 minutes)
     cooldown:
       default-days: 3
-    groups:
-      non-major:
-        update-types:
-          - "patch"
-          - "minor"
-      major:
-        update-types:
-          - "major"
+    ignore:
+      # Types track the oldest supported Node.js (engines.node), not the newest.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # Vitest 5 needs Node.js 22.12+, and the test matrix still covers Node.js 20.
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vitest/*"
+        update-types: ["version-update:semver-major"]
+      # twoslash, used by vocs in docs, supports TypeScript 6 at most.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]

@@ -18,8 +18,8 @@ const readFixture = async (
   }
 };
 
-describe("rehypeCodeGroup", async () => {
-  const testCases = await fs.readdirSync(fixturesDir, { withFileTypes: true });
+describe("rehypeCodeGroup", () => {
+  const testCases = fs.readdirSync(fixturesDir, { withFileTypes: true });
   const directories = testCases
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
