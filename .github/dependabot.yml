@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       actions:
         patterns:
@@ -11,10 +11,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    # Matches minimumReleaseAge in pnpm-workspace.yaml (4320 minutes)
+    cooldown:
+      default-days: 3
     groups:
-      development-patches:
-        dependency-type: "development"
+      non-major:
         update-types:
           - "patch"
           - "minor"
+      major:
+        update-types:
+          - "major"
