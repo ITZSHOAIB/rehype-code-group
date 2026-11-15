@@ -96,9 +96,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Verify patched dependencies
-        run: pnpm security:patches
-
       - name: Audit all dependencies
         run: pnpm audit
 
@@ -124,9 +121,6 @@ jobs:
       - name: Review dependency changes
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
         with:
-          # image-size 2.0.2 has no patched release; its vulnerable loops are
-          # patched and exercised by the dependency-security job above.
-          allow-ghsas: GHSA-5p2g-fcmc-qvqq, GHSA-w3rx-r6r6-pgpr
           fail-on-severity: low
 
   # The one check branch protection requires, so jobs can be added or
