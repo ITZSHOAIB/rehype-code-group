@@ -18,7 +18,9 @@ for (const path of ["/", "/docs/syntax/rich-groups/"]) {
     test(`${path} has no detectable accessibility violations (${colorScheme})`, async ({
       page,
     }) => {
-      await page.emulateMedia({ colorScheme });
+      // Audit every section at full contrast, including those below the viewport.
+      // Motion and the preference itself are covered in motion.spec.ts.
+      await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
       await page.goto(path);
       await expect(
         page.locator(".rehype-code-group[data-rcg-enhanced]").first(),

@@ -1,17 +1,29 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { HomeMotion } from "@/components/home-motion";
 import { IntegrationHub } from "@/components/integration-hub";
 import { Logo } from "@/components/logo";
 import { getMDXComponents } from "@/components/mdx";
 import { npmUrl, repoUrl } from "@/lib/shared";
 import { homeDemos } from "@/lib/source";
 
-function Demo({ file, className }: { file: string; className?: string }) {
+function Demo({
+  file,
+  className,
+  reveal,
+}: {
+  file: string;
+  className?: string;
+  reveal?: boolean;
+}) {
   const entry = homeDemos.get(file);
   if (!entry) throw new Error(`Missing homepage demo: content/home/${file}`);
   const Body = entry.body;
   return (
-    <div className={className ? `home-demo ${className}` : "home-demo"}>
+    <div
+      data-home-reveal={reveal || undefined}
+      className={className ? `home-demo ${className}` : "home-demo"}
+    >
       <Body components={getMDXComponents()} />
     </div>
   );
@@ -37,7 +49,7 @@ function SourceAndResult({
   outro: ReactNode;
 }) {
   return (
-    <div className="compare-card">
+    <div className="compare-card" data-home-reveal>
       <div className="compare-pane compare-source">
         <p className="compare-label">
           <span>Markdown</span>
@@ -76,7 +88,7 @@ function SectionHeading({
   children: ReactNode;
 }) {
   return (
-    <div className="mx-auto mb-10 max-w-2xl text-center">
+    <div className="mx-auto mb-10 max-w-2xl text-center" data-home-reveal>
       <p className="mb-3 font-mono text-xs font-medium uppercase tracking-[0.2em] text-fd-primary">
         {eyebrow}
       </p>
@@ -123,7 +135,7 @@ const features: { title: string; body: ReactNode; href: string }[] = [
 
 export default function HomePage() {
   return (
-    <div className="relative flex flex-1 flex-col overflow-x-clip">
+    <HomeMotion>
       <div
         aria-hidden="true"
         className="home-grid-backdrop pointer-events-none absolute inset-x-0 top-0 h-[44rem]"
@@ -134,8 +146,8 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pt-16 pb-20 sm:pt-24 lg:grid-cols-[1.05fr_1fr]">
-        <div>
+      <section className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pt-16 pb-20 sm:pt-24 home-hero lg:grid-cols-[1.05fr_1fr]">
+        <div className="home-hero-copy">
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border bg-fd-card/70 px-3 py-1 font-mono text-xs text-fd-muted-foreground backdrop-blur">
             <Logo className="size-4" />a rehype plugin
           </p>
@@ -152,19 +164,19 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/docs/getting-started"
-              className="inline-flex items-center rounded-full bg-fd-primary px-5 py-2.5 text-sm font-medium text-fd-primary-foreground transition-colors hover:bg-fd-primary/85"
+              className="home-cta inline-flex items-center rounded-full bg-fd-primary px-5 py-2.5 text-sm font-medium text-fd-primary-foreground transition-colors hover:bg-fd-primary/85"
             >
               Get started
             </Link>
             <Link
               href="/docs"
-              className="inline-flex items-center rounded-full border bg-fd-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
+              className="home-cta inline-flex items-center rounded-full border bg-fd-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
             >
               Read the docs
             </Link>
           </div>
         </div>
-        <div className="folder-card">
+        <div className="folder-card home-hero-demo">
           <Demo file="install.mdx" />
         </div>
       </section>
@@ -233,7 +245,7 @@ export default function HomePage() {
           These two groups share a sync key. Choose a runtime in either one and
           both follow. Reload the page and your choice is still there.
         </SectionHeading>
-        <Demo file="synced.mdx" className="grid gap-6 lg:grid-cols-2" />
+        <Demo file="synced.mdx" className="grid gap-6 lg:grid-cols-2" reveal />
         <p className="mt-6 text-center text-sm text-fd-muted-foreground">
           Keyboard: focus a tab, then use <kbd className="key">←</kbd>{" "}
           <kbd className="key">→</kbd> <kbd className="key">Home</kbd>{" "}
@@ -250,7 +262,7 @@ export default function HomePage() {
           Rich groups take attributes for a default tab, sync, persistence and a
           vertical layout. Each tab can hold any Markdown.
         </SectionHeading>
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-4xl" data-home-reveal>
           <Demo file="vertical.mdx" />
         </div>
       </section>
@@ -264,9 +276,9 @@ export default function HomePage() {
           Everything is generated as static HTML, then enhanced by a small
           client script.
         </SectionHeading>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="home-features grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
-            <li key={feature.title}>
+            <li key={feature.title} data-home-reveal>
               <Link
                 href={feature.href}
                 className="group block h-full rounded-2xl border bg-fd-card p-6 transition-colors hover:border-fd-primary/50"
@@ -305,6 +317,6 @@ export default function HomePage() {
           </nav>
         </div>
       </footer>
-    </div>
+    </HomeMotion>
   );
 }

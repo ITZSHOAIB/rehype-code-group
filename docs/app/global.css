@@ -244,6 +244,87 @@ html > body[data-scroll-locked] {
   background: transparent;
 }
 
+/* One motion rhythm across the homepage. No effects hide server HTML. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-copy > *,
+  .home-hero-demo {
+    animation: home-arrive 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .home-hero-copy > :nth-child(2) {
+    animation-delay: 65ms;
+  }
+  .home-hero-copy > :nth-child(3) {
+    animation-delay: 130ms;
+  }
+  .home-hero-copy > :nth-child(4) {
+    animation-delay: 195ms;
+  }
+  .home-hero-demo {
+    animation-delay: 160ms;
+  }
+
+  .home-page [data-home-reveal] {
+    transition:
+      opacity 550ms ease,
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--home-delay, 0ms);
+  }
+  .home-page [data-motion-pending] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .home-features > :nth-child(3n + 2) {
+    --home-delay: 55ms;
+  }
+  .home-features > :nth-child(3n) {
+    --home-delay: 110ms;
+  }
+
+  .home-cta {
+    transition:
+      background-color 200ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+  .home-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -10px var(--color-fd-primary);
+  }
+  .home-cta:active {
+    transform: translateY(0);
+  }
+  .home-features a {
+    transition:
+      transform 250ms ease,
+      border-color 250ms ease,
+      background-color 250ms ease;
+  }
+  .home-features a:hover,
+  .home-features a:focus-visible {
+    transform: translateY(-3px);
+  }
+  .compare-arrow {
+    transition:
+      color 250ms ease,
+      background-color 250ms ease;
+  }
+  .compare-card:hover .compare-arrow {
+    background: var(--color-fd-primary);
+    color: var(--color-fd-primary-foreground);
+  }
+}
+
+@keyframes home-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Homepage: Markdown source next to a small rendered page */
 .compare-card {
   position: relative;
@@ -381,31 +462,41 @@ html > body[data-scroll-locked] {
   isolation: isolate;
 }
 
-.integration-showcase::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -1rem 0 1rem;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse at 50% 42%,
-    color-mix(in oklab, var(--color-fd-primary) 8%, transparent),
-    transparent 68%
-  );
-}
-
+/* Light stays along the lower edge, leaving the logos on a clean surface. */
 .integration-reel::before {
   content: "";
   position: absolute;
-  inset: 0 10% auto;
+  z-index: -1;
+  inset-inline: 18%;
+  bottom: -2.5rem;
+  height: 5rem;
+  pointer-events: none;
+  background: radial-gradient(ellipse, #38bdf81c, transparent 70%);
+}
+
+.integration-reel::after {
+  content: "";
+  position: absolute;
+  inset-inline: 5%;
+  bottom: 0;
   height: 1px;
+  pointer-events: none;
   background: linear-gradient(
     to right,
-    transparent,
-    color-mix(in oklab, var(--color-fd-foreground) 14%, transparent),
-    transparent
+    transparent 10%,
+    #7dd3fc33 35%,
+    #7dd3fcbb 48%,
+    #e0f2fe 50%,
+    #7dd3fcbb 52%,
+    #7dd3fc33 65%,
+    transparent 90%
   );
 }
+
+.dark .integration-reel::before {
+  background: radial-gradient(ellipse, #38bdf82e, transparent 70%);
+}
+
 .integration-reel {
   position: relative;
   overflow: hidden;
@@ -443,7 +534,11 @@ html > body[data-scroll-locked] {
   font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.025em;
-  color: var(--color-fd-muted-foreground);
+  color: color-mix(
+    in oklab,
+    var(--color-fd-foreground) 82%,
+    var(--color-fd-muted-foreground)
+  );
   transition: color 200ms ease;
 }
 
@@ -500,7 +595,6 @@ html > body[data-scroll-locked] {
   gap: 1rem;
   padding-block-start: 1.5rem;
   margin-block-start: 0.5rem;
-  border-block-start: 1px solid var(--color-fd-border);
   font-size: 0.75rem;
   color: var(--color-fd-muted-foreground);
 }
