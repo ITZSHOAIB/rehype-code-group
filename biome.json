@@ -17,9 +17,13 @@
       "!**/test-results",
       "!**/.astro",
       "!**/*.astro",
-      "!**/pages.gen.ts",
       "!.vscode",
-      "!test/fixtures"
+      "!test/fixtures",
+      "!**/.next",
+      "!**/out",
+      "!**/.source",
+      "!docs/next-env.d.ts",
+      "!docs/content/docs/changelog.md"
     ]
   },
   "formatter": {
@@ -51,6 +55,11 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

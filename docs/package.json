@@ -3,28 +3,30 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vocs markdown-audit && vocs build",
-    "agent:audit": "vocs markdown-audit",
-    "dev": "vocs dev",
-    "preview": "vocs preview"
+    "build": "node scripts/changelog.mjs && next build && node scripts/postbuild.mjs",
+    "dev": "node scripts/changelog.mjs && next dev",
+    "preview": "node scripts/serve.mjs --dir dist/public",
+    "typecheck": "node scripts/changelog.mjs && next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "fumadocs-core": "16.19.0",
+    "fumadocs-mdx": "15.6.1",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.19.0",
+    "lucide-react": "1.72.0",
+    "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "react-server-dom-webpack": "19.3.1",
-    "rehype-code-group": "workspace:*",
-    "vocs": "2.12.0",
-    "waku": "1.0.0-rc.5"
+    "rehype-code-group": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "26.1.2",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/mdx": "2.0.14",
+    "@types/node": "22.20.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@vitejs/plugin-react": "6.3.0",
-    "rollup": "4.68.2",
-    "typescript": "6.0.3",
-    "vite": "8.3.8",
-    "webpack": "5.112.2"
+    "postcss": "8.5.32",
+    "tailwindcss": "4.3.5",
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=22.12.0"

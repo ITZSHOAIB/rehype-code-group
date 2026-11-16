@@ -1,0 +1,94 @@
+---
+title: Labels and emoji
+description: Turn shortcodes into emoji, or rewrite tab labels with your own resolver function.
+---
+
+Every tab label passes through a **label resolver** before it is shown: a function that takes the label text and returns the text to display.
+
+## The default resolver
+
+The default, `commonLabelResolver`, knows five shortcodes and leaves anything else alone:
+
+| Shortcode    | Emoji |
+| ------------ | ----- |
+| `:package:`  | 📦    |
+| `:yarn:`     | 🧶    |
+| `:rocket:`   | 🚀    |
+| `:robot:`    | 🤖    |
+| `:sparkles:` | ✨    |
+
+````md
+::: code-group labels=[:package: npm, :yarn: Yarn, :rocket: Bun]
+
+```sh
+npm install rehype-code-group
+```
+
+```sh
+yarn add rehype-code-group
+```
+
+```sh
+bun add rehype-code-group
+```
+
+:::
+````
+
+::: code-group labels=[:package: npm, :yarn: Yarn, :rocket: Bun]
+
+```sh
+npm install rehype-code-group
+```
+
+```sh
+yarn add rehype-code-group
+```
+
+```sh
+bun add rehype-code-group
+```
+
+:::
+
+Unknown shortcodes, like `:unicorn:`, are left as text.
+
+## The full emoji catalog
+
+For every GitHub-style shortcode, use `fullEmojiResolver`. It lives in a separate entry point so that the catalog, from [node-emoji](https://github.com/omnidan/node-emoji), is only loaded when you ask for it.
+
+```js
+import rehypeCodeGroup from "rehype-code-group";
+import { fullEmojiResolver } from "rehype-code-group/emoji";
+
+unified().use(rehypeCodeGroup, { labelResolver: fullEmojiResolver });
+```
+
+## Your own resolver
+
+`labelResolver` accepts any `(label: string) => string` function. Here, short language names become friendlier labels, and the default shortcodes still work:
+
+```ts
+import rehypeCodeGroup, {
+  commonLabelResolver,
+  type LabelResolver,
+} from "rehype-code-group";
+
+const names: Record<string, string> = {
+  ts: "TypeScript",
+  js: "JavaScript",
+  py: "Python",
+};
+
+const labelResolver: LabelResolver = (label) =>
+  commonLabelResolver(names[label] ?? label);
+
+unified().use(rehypeCodeGroup, { labelResolver });
+```
+
+## What the resolver affects
+
+- **Compact groups:** the resolved label is shown on the tab and is also the tab's value.
+- **Rich groups:** the resolved `label` is shown on the tab. The value is the tab's `value` attribute or, if there isn't one, the label as written, before resolving.
+- The group's own `label` attribute, which names the tab list, is not resolved.
+- The resolved label is also stored on each panel as `data-rcg-label`. The print stylesheet shows it above each panel.

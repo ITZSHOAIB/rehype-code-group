@@ -1,0 +1,116 @@
+---
+title: HTML output
+description: The exact markup the plugin generates and the attributes the client changes, for styling, testing and custom clients.
+---
+
+The generated markup is the contract between the plugin, the client and your CSS. This rich group:
+
+`````md
+:::: code-group label="Runtime" default="bun" sync="runtime" persist="local"
+
+::: code-tab label="Node.js" value="node"
+
+```sh
+node app.js
+```
+
+:::
+
+::: code-tab label="Bun" value="bun"
+
+```sh
+bun app.ts
+```
+
+:::
+
+::::
+`````
+
+becomes this HTML, formatted here for reading:
+
+```html
+<div
+  class="rehype-code-group"
+  data-rcg-sync="runtime"
+  data-rcg-persist="local"
+>
+  <div class="rcg-tab-container" role="tablist" aria-label="Runtime">
+    <button
+      type="button"
+      class="rcg-tab"
+      role="tab"
+      aria-selected="false"
+      aria-controls="rcg-0-block-0"
+      data-rcg-value="node"
+      id="rcg-0-tab-0"
+      tabindex="-1"
+    >
+      Node.js
+    </button>
+    <button
+      type="button"
+      class="rcg-tab active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="rcg-0-block-1"
+      data-rcg-value="bun"
+      id="rcg-0-tab-1"
+      tabindex="0"
+    >
+      Bun
+    </button>
+  </div>
+  <div
+    class="rcg-block"
+    role="tabpanel"
+    aria-labelledby="rcg-0-tab-0"
+    data-rcg-label="Node.js"
+    id="rcg-0-block-0"
+  >
+    <pre><code class="language-sh">node app.js</code></pre>
+  </div>
+  <div
+    class="rcg-block active"
+    role="tabpanel"
+    aria-labelledby="rcg-0-tab-1"
+    data-rcg-label="Bun"
+    id="rcg-0-block-1"
+  >
+    <pre><code class="language-sh">bun app.ts</code></pre>
+  </div>
+</div>
+```
+
+A compact group produces the same structure, without the `data-rcg-sync`, `data-rcg-persist` and `data-rcg-orientation` attributes, and with `aria-label="Code examples"`.
+
+## Attributes on the group
+
+| Attribute                        | Set by  | Meaning                                                                        |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------ |
+| `data-rcg-sync`                  | plugin  | The `sync` key.                                                                |
+| `data-rcg-persist`               | plugin  | `local` or `url`.                                                              |
+| `data-rcg-orientation`           | plugin  | `horizontal` or `vertical`. The tab list also gets a matching `aria-orientation`. |
+| `data-rcg-active-tab-classes`    | plugin  | Present when `activeTabClass` is customized. The classes the client toggles.   |
+| `data-rcg-active-block-classes`  | plugin  | Present when `activeBlockClass` is customized.                                 |
+| `data-rcg-enhanced`              | client  | Added once the client has set the group up.                                    |
+
+## Attributes on tabs and panels
+
+| Attribute                      | On     | Meaning                                                                         |
+| ------------------------------ | ------ | ------------------------------------------------------------------------------- |
+| `data-rcg-value`               | tab    | The value used by `default`, `sync`, `persist`, and the change event.           |
+| `aria-selected`, `tabindex`    | tab    | Set by the plugin for the default tab, then kept current by the client.         |
+| `data-rcg-label`               | panel  | The tab's label, shown above each panel when printing.                          |
+| `hidden`                       | panel  | Added by the client to every panel except the selected one.                     |
+
+## What the client changes
+
+The client never adds or removes elements. On setup and on every selection, it only updates:
+
+- `aria-selected` and `tabindex` on tabs,
+- the active classes on tabs and panels,
+- `hidden` on panels,
+- `data-rcg-enhanced` on the group, once.
+
+The selected value is also written to local storage or the URL when `persist` is set.

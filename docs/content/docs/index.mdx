@@ -1,0 +1,78 @@
+---
+title: Introduction
+description: rehype-code-group turns marked runs of Markdown into accessible tabs at build time. A small browser client makes them switchable.
+---
+
+Documentation often shows one idea several ways: the same install command for four package managers, a config file in TypeScript and JavaScript, or setup steps for different operating systems. Stacking all of them makes the page long and hard to scan. **rehype-code-group** puts them into a single tabbed block.
+
+::: code-group labels=[TypeScript, JavaScript]
+
+```ts
+import rehypeCodeGroup from "rehype-code-group";
+import type { PluggableList } from "unified";
+
+export const rehypePlugins: PluggableList = [rehypeCodeGroup];
+```
+
+```js
+import rehypeCodeGroup from "rehype-code-group";
+
+/** @type {import("unified").PluggableList} */
+export const rehypePlugins = [rehypeCodeGroup];
+```
+
+:::
+
+The block above is real output from this site's build. It is written in Markdown like this:
+
+````md
+::: code-group labels=[TypeScript, JavaScript]
+
+```ts
+import rehypeCodeGroup from "rehype-code-group";
+```
+
+```js
+import rehypeCodeGroup from "rehype-code-group";
+```
+
+:::
+````
+
+## How it works
+
+The plugin runs on [hast](https://github.com/syntax-tree/hast), the HTML syntax tree used by rehype, so it works wherever rehype plugins are accepted. It does three things:
+
+1. **At build time**, it finds groups marked with `:::` lines and rewrites them into ARIA tab markup: a `tablist` of buttons followed by one `tabpanel` per tab.
+2. **It delivers assets**: by default, it inlines a stylesheet and a small script into any page that contains a group. You can switch to external files, a CSP nonce, or your own bundle.
+3. **In the browser**, the client marks each group as enhanced, hides inactive panels, and handles clicks, the keyboard, syncing, and persistence.
+
+Until the client runs, or if JavaScript is off, every panel stays visible, so the content is always readable. Highlighting is left to whatever highlighter you already use.
+
+## What you get
+
+- **Two syntaxes.** [Compact groups](/docs/syntax/compact-groups) for one block per tab, and [rich groups](/docs/syntax/rich-groups) for tabs holding prose, lists, and several code blocks.
+- **Fence-meta labels.** A [remark companion](/docs/syntax/fence-labels) lets each code fence carry its own `[label]`.
+- **Package-manager tabs.** Write `npm install` once and get [npm, pnpm, Yarn and Bun tabs](/docs/syntax/package-managers).
+- **Sync and persistence.** Groups that share a [`sync` key](/docs/syntax/sync-and-persistence) switch together, and the choice can be saved in local storage or the URL.
+- **Accessible by default.** ARIA tabs with roving focus, arrow keys that respect right-to-left layouts, vertical tab lists, `Home` and `End`. See [Accessibility](/docs/guides/accessibility).
+- **Your assets, your rules.** [Inline, external, nonce-bearing, or none](/docs/guides/asset-delivery), to fit any Content Security Policy.
+- **Themeable.** Six CSS custom properties, extra class names, dark mode, forced colors and print styles. See [Styling](/docs/guides/styling).
+- **Runs in many stacks.** unified, Astro (including the Astro 7 Sätteri processor), Next.js with Fumadocs, and MDX. See [Integrations](/docs/integrations/unified).
+
+## Next steps
+
+<Cards>
+  <Card title="Getting started" href="/docs/getting-started">
+    Install the plugin and render your first group in a couple of minutes.
+  </Card>
+  <Card title="Rich groups" href="/docs/syntax/rich-groups">
+    Put any Markdown in a tab, and choose a default, sync, persistence and orientation.
+  </Card>
+  <Card title="Asset delivery and CSP" href="/docs/guides/asset-delivery">
+    Choose how the browser client and stylesheet reach the page.
+  </Card>
+  <Card title="Options" href="/docs/reference/options">
+    Every option, its type, and its default.
+  </Card>
+</Cards>

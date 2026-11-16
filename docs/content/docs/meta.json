@@ -1,0 +1,17 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "---Writing groups---",
+    "...syntax",
+    "---Shipping it---",
+    "...guides",
+    "---Integrations---",
+    "...integrations",
+    "---Reference---",
+    "...reference",
+    "changelog"
+  ]
+}

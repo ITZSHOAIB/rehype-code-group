@@ -1,0 +1,114 @@
+---
+title: unified and rehype
+description: Use rehype-code-group in a unified pipeline, from Markdown or from existing HTML, alongside a syntax highlighter.
+---
+
+rehype-code-group is a regular [unified](https://unifiedjs.com) plugin. Anything built on unified, and any tool that accepts a list of rehype plugins, can use it.
+
+## From Markdown
+
+This is the complete pipeline, with every optional companion:
+
+```js title="render.js"
+import rehypeCodeGroup from "rehype-code-group";
+import remarkPackageManagers from "rehype-code-group/package-managers";
+import remarkCodeGroup from "rehype-code-group/remark";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+const processor = unified()
+  .use(remarkParse)
+  // Optional: `npm2yarn` fences become package-manager groups.
+  .use(remarkPackageManagers)
+  // Optional: `[label]` on fences instead of `labels=[…]`.
+  .use(remarkCodeGroup)
+  .use(remarkRehype)
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify);
+
+const file = await processor.process(markdown);
+const html = String(file);
+```
+
+The order matters:
+
+1. `remarkPackageManagers` writes fences with `[label]` metadata.
+2. `remarkCodeGroup` turns those labels into a `labels=[…]` line.
+3. `remarkRehype` converts Markdown to HTML.
+4. `rehypeCodeGroup` builds the tabs.
+
+Leave out whichever companions you don't use.
+
+## From HTML
+
+The plugin works on HTML too, because it reads paragraphs, not Markdown. Mark a group with paragraphs around the blocks:
+
+```html title="page.html"
+<!doctype html>
+<html>
+  <head>
+    <title>Install</title>
+  </head>
+  <body>
+    <p>::: code-group labels=[npm, pnpm]</p>
+    <pre><code>npm install rehype-code-group</code></pre>
+    <pre><code>pnpm add rehype-code-group</code></pre>
+    <p>:::</p>
+  </body>
+</html>
+```
+
+```js
+import { readFile, writeFile } from "node:fs/promises";
+import { rehype } from "rehype";
+import rehypeCodeGroup from "rehype-code-group";
+
+const file = await rehype()
+  .use(rehypeCodeGroup)
+  .process(await readFile("page.html", "utf8"));
+
+await writeFile("page.out.html", String(file));
+```
+
+Because the input is a full document, the inline style and script go into its `<head>`.
+
+## With a syntax highlighter
+
+rehype-code-group doesn't highlight code. It groups whatever blocks it finds, so it works with any highlighter that outputs ordinary HTML elements. Here it is with Shiki's rehype plugin:
+
+```js
+import rehypeShiki from "@shikijs/rehype";
+
+unified()
+  .use(remarkParse)
+  .use(remarkRehype)
+  .use(rehypeShiki, { theme: "github-dark" })
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify);
+```
+
+If your highlighter turns code blocks into something other than HTML elements, such as MDX components, put rehype-code-group first. See [Next.js and Fumadocs](/docs/integrations/nextjs-fumadocs) for a real example.
+
+## Reading diagnostics
+
+Malformed compact groups are reported as [vfile](https://github.com/vfile/vfile) messages, with the source `rehype-code-group` and the rule `panel-count`:
+
+```js
+const file = await processor.process(markdown);
+
+for (const message of file.messages) {
+  console.warn(String(message));
+}
+```
+
+Pass `diagnostics: "error"` to fail instead. `process` then rejects with the same message. The package-manager plugin uses the rule `package-manager`.
+
+## Several fragments on one page
+
+Each call to `process` numbers its groups from `rcg-0`. If you render fragments separately and then put them on one page, give each a distinct [`idPrefix`](/docs/reference/options#idprefix):
+
+```js
+unified().use(rehypeCodeGroup, { idPrefix: `rcg-${slug}` });
+```

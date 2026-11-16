@@ -1,0 +1,178 @@
+---
+title: Next.js and Fumadocs
+description: Use rehype-code-group in a Fumadocs site, or any Next.js app that renders MDX, including the plugin order Fumadocs needs.
+---
+
+This site is a Fumadocs site on Next.js, and every tab on it comes from rehype-code-group. This page walks through its setup.
+
+## 1. Register the plugins
+
+Fumadocs MDX takes its plugin lists as functions that receive Fumadocs' own defaults. Put rehype-code-group **in front of** them:
+
+```ts title="lib/source.ts"
+import { applyMdxPreset } from "fumadocs-mdx/config";
+import { defineDocs } from "fumadocs-mdx/macro";
+import rehypeCodeGroup from "rehype-code-group";
+import remarkPackageManagers from "rehype-code-group/package-managers";
+import remarkCodeGroup from "rehype-code-group/remark";
+
+const docs = defineDocs({
+  dir: "content/docs",
+  docs: {
+    mdxOptions: applyMdxPreset({
+      // Turn off Fumadocs' own tab syntax and npm conversion, so that
+      // every tab comes from rehype-code-group.
+      remarkCodeTabOptions: false,
+      remarkNpmOptions: false,
+      remarkPlugins: (v) => [
+        [remarkPackageManagers, { diagnostics: "error" }],
+        remarkCodeGroup,
+        ...v,
+      ],
+      // Must come before Fumadocs' Shiki plugin, which is the first entry in `v`.
+      rehypePlugins: (v) => [
+        [rehypeCodeGroup, { assets: "none", diagnostics: "error" }],
+        ...v,
+      ],
+    }),
+  },
+});
+```
+
+<Callout type="warn" title="Order matters here">
+  Fumadocs' `rehypeCode` turns each code block into an MDX component. If rehype-code-group runs after it, it finds no HTML elements between the markers, nothing is grouped, and you get `Code group has 2 labels but 0 panels.` Putting it first lets it group the plain `<pre>` elements, which `rehypeCode` then highlights inside each panel as usual.
+</Callout>
+
+Turning off `remarkCodeTabOptions` and `remarkNpmOptions` is optional, but they offer competing syntaxes for the same job. Fumadocs' npm conversion is triggered by the fence language (` ```npm ` or ` ```package-install `) rather than by `npm2yarn` metadata, so both would work side by side, with different markup and styles.
+
+## 2. Load the client once
+
+React doesn't run `<script>` elements it renders on the client, so use `assets: "none"` and import the client and stylesheet from a client component:
+
+```tsx title="components/code-groups.tsx"
+"use client";
+import "rehype-code-group/client";
+import "rehype-code-group/styles.css";
+
+export function CodeGroups() {
+  return null;
+}
+```
+
+Render it once in the **root** layout, so it is loaded on every page, including any non-docs page that shows groups:
+
+```tsx title="app/layout.tsx"
+import { CodeGroups } from "@/components/code-groups";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <CodeGroups />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+The client listens on `document` and watches for new groups, so after a soft navigation the incoming page's groups work straight away, and a choice made with a `sync` key carries over to them.
+
+## 3. Match the theme
+
+Fumadocs toggles dark mode with a class. Map the [custom properties](/docs/guides/styling#custom-properties) to Fumadocs' color tokens so tabs follow the toggle:
+
+```css title="app/global.css"
+.rehype-code-group {
+  --rcg-accent: var(--color-fd-primary);
+  --rcg-border-color: var(--color-fd-border);
+  --rcg-focus-color: var(--color-fd-ring);
+  --rcg-tab-background-active: var(--color-fd-card);
+  --rcg-tab-color: var(--color-fd-muted-foreground);
+}
+
+/* Let a lone code block fill its panel. */
+.rehype-code-group .rcg-block > figure:only-child {
+  margin: 0;
+  border-radius: 0;
+}
+```
+
+## Several files on one page
+
+IDs restart at `rcg-0` in every compiled file. That's fine for a docs page, which is one file. If a page renders several MDX files, as this site's homepage does, give each file its own `idPrefix`, or the tab IDs collide. This site wraps the plugin and derives the prefix from the file name:
+
+```ts title="lib/source.ts"
+import { basename, extname } from "node:path";
+
+type Transformer = NonNullable<ReturnType<typeof rehypeCodeGroup>>;
+
+function rehypeCodeGroupPerFile(
+  this: ThisParameterType<typeof rehypeCodeGroup>,
+  options: RehypeCodeGroupOptions,
+): Transformer {
+  // Only `tree` and `file`: unified treats a transformer that declares
+  // a third parameter as callback-style and waits for it to be called.
+  return (tree, file) => {
+    const idPrefix = `home-${basename(file.path, extname(file.path))}`;
+    const transform = rehypeCodeGroup.call(this, { ...options, idPrefix });
+    return transform?.(tree, file, () => {});
+  };
+}
+```
+
+## Search
+
+Fumadocs builds its search index from the Markdown tree, before any rehype plugin runs. At that point the `:::` lines are still paragraphs, so they end up in search results as text like `::: code-tab label="npm"`. Filter them out where you create the search server:
+
+```ts title="app/api/search/route.ts"
+import { createFromSource } from "fumadocs-core/search/server";
+import { source } from "@/lib/source";
+
+const groupMarker = /^:{3,4}(\s+code-(group|tab)\b.*)?$/;
+
+export const { staticGET: GET } = createFromSource(source, {
+  buildIndex(page) {
+    const { structuredData } = page.data;
+    return {
+      id: page.url,
+      url: page.url,
+      title: page.data.title,
+      description: page.data.description,
+      structuredData: {
+        ...structuredData,
+        contents: structuredData.contents.filter(
+          (item) => !groupMarker.test(item.content.trim()),
+        ),
+      },
+    };
+  },
+});
+```
+
+Prose inside the tabs is still indexed.
+
+## Plain Next.js with @next/mdx
+
+Outside Fumadocs, the same two rules apply: pass the plugins to the MDX loader, use `assets: "none"`, and render the client component in the root layout.
+
+```js title="next.config.mjs"
+import createMDX from "@next/mdx";
+import rehypeCodeGroup from "rehype-code-group";
+
+const withMDX = createMDX({
+  options: {
+    rehypePlugins: [[rehypeCodeGroup, { assets: "none" }]],
+  },
+});
+
+export default withMDX({
+  pageExtensions: ["ts", "tsx", "md", "mdx"],
+});
+```
+
+With Turbopack, plugins must be passed by name, with JSON-serializable options, for example `["rehype-code-group", { assets: "none" }]`.
+
+## Static export
+
+This site is exported with `output: "export"`. The groups are part of the generated HTML, so they need nothing at request time.

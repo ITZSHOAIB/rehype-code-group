@@ -1,0 +1,74 @@
+---
+title: Fence-meta labels
+description: Write each tab's label on its code fence with the remark companion, rehype-code-group/remark.
+---
+
+Keeping a list of labels in step with the blocks below it gets tedious in long groups. The remark companion lets each code fence carry its own label in square brackets:
+
+````md
+::: code-group
+
+```ts [vite.config.ts]
+import { defineConfig } from "vite";
+
+export default defineConfig({});
+```
+
+```js [vite.config.js]
+import { defineConfig } from "vite";
+
+export default defineConfig({});
+```
+
+:::
+````
+
+::: code-group
+
+```ts [vite.config.ts]
+import { defineConfig } from "vite";
+
+export default defineConfig({});
+```
+
+```js [vite.config.js]
+import { defineConfig } from "vite";
+
+export default defineConfig({});
+```
+
+:::
+
+## Setup
+
+Add `rehype-code-group/remark` **before** `remark-rehype`. It is a remark (Markdown tree) plugin, so it must run while code fences still carry their metadata.
+
+```js
+import rehypeCodeGroup from "rehype-code-group";
+import remarkCodeGroup from "rehype-code-group/remark";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkCodeGroup)
+  .use(remarkRehype)
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify);
+```
+
+The companion doesn't build tabs. It moves the labels from the fences onto the opening line as `labels=[…]`, and the rehype plugin does the rest. On Sätteri, use [`satteriCodeGroupLabels`](/docs/integrations/satteri) instead.
+
+## How labels are found
+
+- The label is the first `[…]` in the fence's metadata, separated from other metadata by spaces. Spaces inside the brackets are fine: `[my label]`.
+- Other metadata stays on the fence, so highlighter options keep working. For example, ` ```sh [npm] title="Install" ` keeps `title="Install"`.
+- Labels can contain commas and quotes, because the companion quotes them when it writes the `labels=[…]` line.
+
+## All or nothing
+
+A group is rewritten only when **every** block between the markers is a code fence with a `[label]`. If one fence has no label, or the group holds a paragraph, the companion leaves the group alone. The opening line then has no `labels=[…]`, which the rehype plugin doesn't recognize, so the `:::` lines stay on the page **without a diagnostic**.
+
+You can still write `labels=[…]` by hand on any group. The companion only touches groups whose opening line is exactly `::: code-group`.

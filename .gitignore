@@ -4,4 +4,14 @@ coverage
 playwright-report
 test-results
 .astro
-docs/src/pages.gen.ts
+
+# Docs (Next.js / Fumadocs)
+docs/.next/
+docs/out/
+docs/.source/
+docs/next-env.d.ts
+docs/*.tsbuildinfo
+docs/dist/
+# Generated from CHANGELOG.md by docs/scripts/changelog.mjs
+docs/content/docs/changelog.md
+docs/AGENTS.md

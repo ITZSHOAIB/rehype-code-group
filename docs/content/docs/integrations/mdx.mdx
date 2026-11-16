@@ -1,0 +1,90 @@
+---
+title: MDX
+description: Use code groups in MDX with @mdx-js/mdx and the tools built on it, and avoid the syntax that MDX treats specially.
+---
+
+[MDX](https://mdxjs.com) compiles Markdown with JSX into JavaScript, using remark and rehype plugins on the way. rehype-code-group works on that pipeline like any other rehype plugin.
+
+## With @mdx-js/mdx
+
+```js title="compile.js"
+import { compile } from "@mdx-js/mdx";
+import rehypeCodeGroup from "rehype-code-group";
+import remarkCodeGroup from "rehype-code-group/remark";
+
+const code = await compile(source, {
+  remarkPlugins: [remarkCodeGroup],
+  rehypePlugins: [[rehypeCodeGroup, { assets: "none" }]],
+});
+```
+
+The same `remarkPlugins` and `rehypePlugins` options exist in the bundler integrations, such as `@mdx-js/rollup`, `@mdx-js/esbuild` and `@mdx-js/loader`, and in most frameworks that use MDX.
+
+## Assets
+
+MDX output is usually rendered by React, Preact, Vue or Solid. Those frameworks don't run `<script>` elements that they render on the client, so:
+
+1. Set `assets: "none"`.
+2. Import `rehype-code-group/client` and `rehype-code-group/styles.css` once in your application's browser entry or root layout.
+
+See [Asset delivery and CSP](/docs/guides/asset-delivery#your-own-bundle).
+
+## MDX syntax to watch for
+
+MDX gives meaning to a few characters that plain Markdown treats as text. Markers and labels are text, so:
+
+- **`{` and `}` start a JavaScript expression.** Escape a brace in a label as `\{`, or avoid it.
+- **`<` starts a JSX tag.** Write `&lt;` or escape it as `\<`.
+- **Indentation doesn't create code blocks.** Use fenced code blocks in tabs.
+
+Everything else works as it does in Markdown, including groups inside list items and block quotes. JSX components can go inside rich-group tabs:
+
+`````mdx
+:::: code-group label="Status"
+
+::: code-tab label="Stable"
+
+<Callout>This API is stable.</Callout>
+
+:::
+
+::: code-tab label="Beta"
+
+<Callout type="warn">This API may change.</Callout>
+
+:::
+
+::::
+`````
+
+:::: code-group label="Status"
+
+::: code-tab label="Stable"
+
+<Callout>This API is stable.</Callout>
+
+:::
+
+::: code-tab label="Beta"
+
+<Callout type="warn">This API may change.</Callout>
+
+:::
+
+::::
+
+## With Sätteri
+
+Sätteri compiles MDX too. Pass the [Sätteri plugins](/docs/integrations/satteri) to its `mdxToJs`:
+
+```js
+import { satteriCodeGroup, satteriCodeGroupLabels } from "rehype-code-group/satteri";
+import { mdxToJs } from "satteri";
+
+const { code } = mdxToJs(source, {
+  mdastPlugins: [satteriCodeGroupLabels()],
+  hastPlugins: [satteriCodeGroup({ assets: "none" })],
+});
+```
+
+Imports, exports, expressions and JSX in the document are kept intact.

@@ -1,0 +1,91 @@
+---
+title: Exports
+description: Every public entry point of the package and what it exports.
+---
+
+The package is ESM-only and ships TypeScript declarations for every entry point.
+
+## rehype-code-group
+
+```ts
+import rehypeCodeGroup, {
+  commonLabelResolver,
+  type AssetOptions,
+  type ClassNames,
+  type LabelResolver,
+  type RehypeCodeGroupOptions,
+} from "rehype-code-group";
+```
+
+| Export                   | Kind     | Description                                                              |
+| ------------------------ | -------- | ------------------------------------------------------------------------ |
+| `default`                | function | The rehype plugin. Takes [`RehypeCodeGroupOptions`](/docs/reference/options). |
+| `commonLabelResolver`    | function | The default label resolver, with five emoji shortcodes.                  |
+| `RehypeCodeGroupOptions` | type     | The options object.                                                      |
+| `AssetOptions`           | type     | The type of the `assets` option.                                         |
+| `ClassNames`             | type     | The class-name keys used by `customClassNames`.                          |
+| `LabelResolver`          | type     | `(label: string) => string`                                              |
+
+## rehype-code-group/remark
+
+```ts
+import remarkCodeGroup from "rehype-code-group/remark";
+```
+
+A remark plugin that moves `[label]` fence metadata onto the `::: code-group` line. Run it before `remark-rehype`. See [Fence-meta labels](/docs/syntax/fence-labels).
+
+The module also exports `rewriteLabelMetadata` and its `LabelEditor` type. They are the shared core that the Sätteri plugin reuses, and aren't meant for direct use.
+
+## rehype-code-group/package-managers
+
+```ts
+import remarkPackageManagers, {
+  type PackageManager,
+  type PackageManagerOptions,
+} from "rehype-code-group/package-managers";
+```
+
+A remark plugin that expands `npm2yarn` fences into package-manager groups. Run it before the remark companion. See [Package-manager tabs](/docs/syntax/package-managers).
+
+## rehype-code-group/emoji
+
+```ts
+import { fullEmojiResolver } from "rehype-code-group/emoji";
+```
+
+A label resolver with the full GitHub emoji shortcode catalog, from `node-emoji`.
+
+## rehype-code-group/satteri
+
+```ts
+import {
+  commonLabelResolver,
+  satteriCodeGroup,
+  satteriCodeGroupLabels,
+  type AssetOptions,
+  type ClassNames,
+  type LabelResolver,
+  type RehypeCodeGroupOptions,
+} from "rehype-code-group/satteri";
+```
+
+The Sätteri hast and mdast plugins, with the same option types as the main entry. Needs `satteri` 0.10.5 to 0.11.x. See [Sätteri](/docs/integrations/satteri).
+
+## rehype-code-group/client
+
+```ts
+import {
+  initCodeGroups,
+  type CodeGroupChangeDetail,
+} from "rehype-code-group/client";
+```
+
+The browser client. Importing it in a browser sets up every group in `document`. `initCodeGroups(root?)` sets up a root and returns a cleanup function. See [Browser client](/docs/guides/browser-client).
+
+## rehype-code-group/styles.css
+
+```ts
+import "rehype-code-group/styles.css";
+```
+
+The default stylesheet, identical to the one inline mode embeds. A type declaration is included, so TypeScript accepts the import.

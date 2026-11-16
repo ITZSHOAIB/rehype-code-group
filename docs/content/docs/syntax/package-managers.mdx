@@ -1,0 +1,94 @@
+---
+title: Package-manager tabs
+description: Write an npm command once and get npm, pnpm, Yarn and Bun tabs, with rehype-code-group/package-managers.
+---
+
+Install instructions usually come in four flavors. `rehype-code-group/package-managers` is a remark plugin that writes them for you. Mark a fence with `npm2yarn`:
+
+````md
+```sh npm2yarn
+npm install -D vitest
+```
+````
+
+and it becomes:
+
+```sh npm2yarn
+npm install -D vitest
+```
+
+## Setup
+
+The plugin turns the fence into a `::: code-group` of fences labeled `[npm]`, `[pnpm]` and so on. The [fence-label companion](/docs/syntax/fence-labels) then turns that into a normal group. Both must run before `remark-rehype`, in this order:
+
+```js
+import rehypeCodeGroup from "rehype-code-group";
+import remarkPackageManagers from "rehype-code-group/package-managers";
+import remarkCodeGroup from "rehype-code-group/remark";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkPackageManagers)
+  .use(remarkCodeGroup)
+  .use(remarkRehype)
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify);
+```
+
+## Marking a fence
+
+The fence's metadata must be exactly `npm2yarn`. The language can be anything, and it is copied to every tab. If the fence has other metadata as well, such as ` ```sh npm2yarn title="x" `, it isn't converted.
+
+## What gets translated
+
+Each line is translated on its own, so a fence can hold several commands.
+
+| npm                         | pnpm                             | Yarn                          | Bun                              |
+| --------------------------- | -------------------------------- | ----------------------------- | -------------------------------- |
+| `npm install <args>`        | `pnpm add <args>`                | `yarn add <args>`             | `bun add <args>`                 |
+| `npm i <args>`              | `pnpm add <args>`                | `yarn add <args>`             | `bun add <args>`                 |
+| `npm uninstall <args>`      | `pnpm remove <args>`             | `yarn remove <args>`          | `bun remove <args>`              |
+| `npm remove` / `npm rm`     | `pnpm remove <args>`             | `yarn remove <args>`          | `bun remove <args>`              |
+| `npm run <script>`          | `pnpm run <script>`              | `yarn run <script>`           | `bun run <script>`               |
+| `npm ci`                    | `pnpm install --frozen-lockfile` | `yarn install --immutable`    | `bun install --frozen-lockfile`  |
+| `npx <command>`             | `pnpm dlx <command>`             | `yarn dlx <command>`          | `bunx <command>`                 |
+
+Flags and package names are passed through unchanged, so `npm i -D vitest` becomes `pnpm add -D vitest`. The npm tab always shows your original text.
+
+```sh npm2yarn
+npm ci
+npm run build
+npx vite preview
+```
+
+## Commands it can't translate
+
+Lines that don't start with `npm` or `npx`, such as `cd my-app`, are copied unchanged into every tab.
+
+An `npm` or `npx` line that isn't in the table, such as `npm config set …` or a bare `npm install` without packages, is also copied unchanged, so the pnpm tab would show an npm command. Rather than hide that, the plugin reports `Unable to translate npm command: "…"`.
+
+## Options
+
+```js
+unified().use(remarkPackageManagers, {
+  packageManagers: ["pnpm", "npm"],
+  diagnostics: "error",
+});
+```
+
+| Option            | Type                                        | Default                           | Effect                                                         |
+| ----------------- | ------------------------------------------- | --------------------------------- | -------------------------------------------------------------- |
+| `packageManagers` | `("npm" \| "pnpm" \| "yarn" \| "bun")[]`    | `["npm", "pnpm", "yarn", "bun"]`  | Which tabs to create, in this order.                           |
+| `diagnostics`     | `"warn" \| "error" \| "silent"`             | `"warn"`                          | What to do with untranslatable commands. `"error"` fails the build. |
+
+This site uses `diagnostics: "error"`, so an untranslatable command can't slip into a page.
+
+<Callout title="Syncing install tabs across a page">
+  Generated groups are compact groups, so they can't take a `sync` key. If you need synced or persisted install tabs, write a [rich group](/docs/syntax/rich-groups) with `sync` instead.
+</Callout>
+
+There is no Sätteri version of this plugin yet. On Sätteri, write the group by hand.

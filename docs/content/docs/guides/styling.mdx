@@ -1,0 +1,193 @@
+---
+title: Styling and theming
+description: Theme groups with six CSS custom properties, add your own class names, and get dark mode, forced colors and print right.
+---
+
+The bundled stylesheet is deliberately plain. It handles layout and states and leaves fonts, spacing and colors to your site. Most theming needs only custom properties.
+
+## Custom properties
+
+Set these on `.rehype-code-group`, or on any ancestor of it, such as `:root`. The bundled stylesheet only reads them, with the defaults below as fallbacks, so wherever you set them takes effect.
+
+| Property                      | Default (light / dark)    | Used for                                           |
+| ----------------------------- | ------------------------- | -------------------------------------------------- |
+| `--rcg-accent`                | `#2563eb` / `#60a5fa`     | The underline on the active tab.                   |
+| `--rcg-border-color`          | `#d4d4d8` / `#3f3f46`     | The line between the tabs and the panels.          |
+| `--rcg-focus-color`           | `#2563eb` / `#93c5fd`     | The keyboard focus outline.                        |
+| `--rcg-tab-background`        | `transparent`             | Inactive tab background.                           |
+| `--rcg-tab-background-active` | `#f4f4f5` / `#27272a`     | Active tab background.                             |
+| `--rcg-tab-color`             | `inherit`                 | Tab text color.                                    |
+
+```css
+.rehype-code-group {
+  --rcg-accent: rebeccapurple;
+  --rcg-focus-color: rebeccapurple;
+  --rcg-tab-background-active: color-mix(in srgb, rebeccapurple 12%, transparent);
+}
+```
+
+## Overriding the bundled styles
+
+Your CSS always wins over the bundled look, whatever order the stylesheets load in. That matters with the default inline assets, where the plugin's `<style>` element ends up inside the rendered content, after your site's stylesheets.
+
+- **Visual rules** (spacing, borders, colors, the vertical layout) are wrapped in `:where()`, so they have zero specificity. A plain `.rcg-tab { padding: 0.25rem }` beats them.
+- **Behavior rules** keep their specificity: hiding inactive panels inside `[data-rcg-enhanced]`, and showing every panel when printing. A rule such as `.rcg-block { display: flex }` won't reveal hidden panels.
+- **Defaults live in private properties.** The built-in values are stored as `--_rcg-*`, so `var(--rcg-accent)` has no value unless you set it. To reuse a color in your own rules, set the property yourself first, as the [folder tabs recipe](#recipe-folder-tabs) does with `--rcg-border-color`. Don't depend on the `--_rcg-*` names; they may change.
+
+<Callout title="Version note">
+This applies from the release after 2.0.0. In 2.0.0 and earlier, the bundled rules match the specificity of typical overrides and set the `--rcg-*` properties on the group itself, so with inline assets you need a more specific selector, such as `body .rehype-code-group`, and setting the properties on `:root` has no effect.
+</Callout>
+
+## Dark mode
+
+The defaults are written with `light-dark()`, so they follow the CSS `color-scheme` of the page. Browsers without `light-dark()` fall back to the `prefers-color-scheme` media query.
+
+That works when your theme switch sets `color-scheme`, as most theme libraries do. If your dark mode is only a class, set the properties under that class instead. This site maps them to its own palette, so tabs always match the theme toggle:
+
+```css title="app/global.css"
+.rehype-code-group {
+  --rcg-accent: var(--color-fd-primary);
+  --rcg-border-color: var(--color-fd-border);
+  --rcg-focus-color: var(--color-fd-ring);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: var(--color-fd-card);
+  --rcg-tab-color: var(--color-fd-muted-foreground);
+}
+```
+
+## Class names
+
+Every group uses the same small set of classes:
+
+| Element                | Default class         | `customClassNames` key  |
+| ---------------------- | --------------------- | ----------------------- |
+| The group              | `rehype-code-group`   | `codeGroupClass`        |
+| The tab list           | `rcg-tab-container`   | `tabContainerClass`     |
+| Each tab button        | `rcg-tab`             | `tabClass`              |
+| Each panel             | `rcg-block`           | `blockContainerClass`   |
+| The selected tab       | `active`              | `activeTabClass`        |
+| The selected panel     | `active`              | `activeBlockClass`      |
+
+[`customClassNames`](/docs/reference/options#customclassnames) **adds** your classes next to the defaults instead of replacing them. The client and the bundled stylesheet rely on the default classes, so they keep working. This is handy for utility-class frameworks:
+
+```js
+unified().use(rehypeCodeGroup, {
+  customClassNames: {
+    codeGroupClass: "not-prose my-6 rounded-xl border",
+    tabClass: "px-3 py-2 text-sm",
+    activeTabClass: "text-orange-600",
+  },
+});
+```
+
+Space-separated values become several classes. Custom active classes are stored on the group, as `data-rcg-active-tab-classes` and `data-rcg-active-block-classes`, so the client can move them when the selection changes.
+
+## Styling states
+
+Besides the `active` classes, you can style from attributes that are always accurate:
+
+```css
+/* The selected tab */
+.rcg-tab[aria-selected="true"] {
+  font-weight: 600;
+}
+
+/* Only after the client has set the group up */
+.rehype-code-group[data-rcg-enhanced] {
+  border: 1px solid #d4d4d8;
+}
+
+/* Vertical groups */
+.rehype-code-group[data-rcg-orientation="vertical"] {
+  gap: 1rem;
+}
+```
+
+## Recipe: folder tabs
+
+The groups on this site are drawn as one card with folder-style tabs. That look is not built in. It is the CSS below, which you can copy and adjust. It only uses the classes and attributes listed above and sits on top of the bundled stylesheet, which still handles states and the narrow-screen layout.
+
+```css title="folder-tabs.css"
+.rehype-code-group {
+  --folder-surface: light-dark(#ffffff, #18181b);
+  --folder-rail: light-dark(#f4f4f5, #27272a);
+  --rcg-border-color: light-dark(#d4d4d8, #3f3f46);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: var(--folder-surface);
+
+  margin-block: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--rcg-border-color);
+  border-radius: 0.875rem;
+  background: var(--folder-surface);
+}
+
+/* The rail the tabs sit on */
+.rehype-code-group .rcg-tab-container {
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem 0;
+  background: var(--folder-rail);
+}
+
+/* Each tab is a folder tab: rounded on the side facing away from the panel */
+.rehype-code-group .rcg-tab {
+  flex: none;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.rehype-code-group .rcg-tab[aria-selected="true"] {
+  font-weight: 600;
+}
+
+.rehype-code-group .rcg-block {
+  padding: 0.25rem 1.25rem;
+}
+
+/* A panel holding only a code block lets the block fill the card */
+.rehype-code-group .rcg-block:has(> pre:only-child) {
+  padding: 0;
+}
+
+.rehype-code-group .rcg-block > pre:only-child {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Vertical groups: tabs on a side rail */
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+  align-self: stretch;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Below 40rem the bundled stylesheet moves the rail on top; match the tabs */
+@media (max-width: 40rem) {
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+    padding: 0.375rem 0.5rem 0;
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+}
+```
+
+If your highlighter wraps code blocks in another element, as Fumadocs does with `figure`, use that element in the two `:only-child` rules instead of `pre`. To follow a class-based theme toggle rather than `color-scheme`, set `--folder-surface` and `--folder-rail` under your dark class, as in [Dark mode](#dark-mode).
+
+## Built-in behavior worth knowing
+
+- **Before the client runs**, every panel is visible. Panels are hidden only inside `[data-rcg-enhanced]` groups, so readers without JavaScript see all the content.
+- **Long code scrolls** inside its panel instead of widening the page, and a long row of tabs scrolls sideways.
+- **Forced colors** (Windows high contrast): the accent, border and focus colors switch to system colors.
+- **Print:** the tab list is hidden, every panel is printed, and each one is headed by its label.
+- **Vertical groups** use a two-column grid: tabs on the start side, panels next to them. Below `40rem` the tabs move above the panels in a row; the keyboard still uses the up and down arrows.
+
+## Without the bundled stylesheet
+
+You can skip `styles.css` and write all the CSS yourself. The client doesn't depend on it, but it does set the `hidden` attribute on inactive panels, so make sure your CSS doesn't override `[hidden]` with a `display` value. To show all panels until the client has run, hide panels only inside `[data-rcg-enhanced]`, as the bundled stylesheet does.

@@ -1,0 +1,78 @@
+---
+title: Compact groups
+description: The shortest syntax. List the labels on the opening line and give each tab one block.
+---
+
+A compact group is three parts: an opening line with the labels, one block per tab, and a closing line.
+
+````md
+::: code-group labels=[macOS, Windows, Linux]
+
+```sh
+brew install node
+```
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+```sh
+sudo apt install nodejs
+```
+
+:::
+````
+
+::: code-group labels=[macOS, Windows, Linux]
+
+```sh
+brew install node
+```
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+```sh
+sudo apt install nodejs
+```
+
+:::
+
+## The rules
+
+- **The opening line is a paragraph by itself.** Its text must be exactly `::: code-group labels=[…]`. Leave a blank line before it so Markdown doesn't join it to the previous paragraph.
+- **The closing line is `:::` on its own**, also as its own paragraph.
+- **Each block between the two lines is one tab.** Labels are matched to blocks in order, so the number of labels must equal the number of blocks.
+- **A tab is usually a code block, but any single block works**, such as a paragraph, an image, or a table. When a tab needs more than one block, use a [rich group](/docs/syntax/rich-groups).
+- **Groups can sit inside other blocks**, such as list items and block quotes, as long as the opening line, the tabs and the closing line share the same parent.
+
+The first tab is selected. Compact groups have no attributes for a default tab, syncing, persistence or orientation. For those, use a [rich group](/docs/syntax/rich-groups).
+
+## Labels
+
+Labels are separated by commas, and the spaces around each one are trimmed. Quote a label to keep a comma in it:
+
+```md
+::: code-group labels=["npm, classic", pnpm, 'Yarn Berry']
+```
+
+Double quotes, single quotes, and their typographic forms (`“…”` and `‘…’`) all work. The typographic forms matter because some hosts, Astro among them, run smart punctuation before rehype and curl your straight quotes.
+
+A label can't contain `]`, because the first `]` ends the list.
+
+Labels go through the [label resolver](/docs/syntax/labels-and-emoji) before they are shown. By default it turns a few emoji shortcodes, such as `:package:`, into emoji.
+
+<Callout type="info" title="Prefer labels on the fences?">
+  With the [remark companion](/docs/syntax/fence-labels), you can leave out `labels=[…]` and write `[label]` on each code fence instead.
+</Callout>
+
+## When a group doesn't match
+
+If the counts differ, the plugin leaves the Markdown as it was, so you see the `:::` lines on the page, and reports a message such as:
+
+```txt
+Code group has 3 labels but 2 panels.
+```
+
+The [`diagnostics`](/docs/reference/options#diagnostics) option chooses what happens to that message: `"warn"` (the default) adds it to the file's messages, `"error"` fails the build, and `"silent"` drops it. See [Troubleshooting](/docs/guides/troubleshooting) for other reasons a group isn't converted.

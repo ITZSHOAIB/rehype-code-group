@@ -1,0 +1,749 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/*
+ * Theme: "stacked folders". Warm paper in light mode, warm ink in dark mode,
+ * with the logo's orange as the primary colour and its magenta as an accent.
+ */
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono:
+    var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, Consolas,
+    monospace;
+}
+
+@theme {
+  --color-brand-orange: #fb923c;
+  --color-brand-magenta: #be185d;
+  --color-brand-cream: #fff7ed;
+
+  --color-fd-background: hsl(30, 60%, 98.5%);
+  --color-fd-foreground: hsl(18, 30%, 10%);
+  --color-fd-muted: hsl(28, 45%, 94%);
+  --color-fd-muted-foreground: hsl(18, 12%, 38%);
+  --color-fd-popover: hsl(30, 60%, 99%);
+  --color-fd-popover-foreground: hsl(18, 30%, 12%);
+  --color-fd-card: hsl(0, 0%, 100%);
+  --color-fd-card-foreground: hsl(18, 30%, 10%);
+  --color-fd-border: hsl(26, 35%, 86%);
+  --color-fd-primary: hsl(17, 88%, 40%);
+  --color-fd-primary-foreground: hsl(30, 100%, 98%);
+  --color-fd-secondary: hsl(28, 50%, 95%);
+  --color-fd-secondary-foreground: hsl(18, 30%, 12%);
+  --color-fd-accent: hsl(26, 70%, 92%);
+  --color-fd-accent-foreground: hsl(18, 40%, 14%);
+  --color-fd-ring: hsl(20, 90%, 48%);
+  --color-fd-overlay: hsla(18, 30%, 10%, 0.25);
+}
+
+.dark {
+  --color-fd-background: hsl(15, 18%, 5.5%);
+  --color-fd-foreground: hsl(28, 40%, 93%);
+  --color-fd-muted: hsl(15, 12%, 11%);
+  --color-fd-muted-foreground: hsl(24, 14%, 68%);
+  --color-fd-popover: hsl(15, 14%, 9%);
+  --color-fd-popover-foreground: hsl(28, 40%, 92%);
+  --color-fd-card: hsl(15, 14%, 8%);
+  --color-fd-card-foreground: hsl(28, 40%, 93%);
+  --color-fd-border: hsl(15, 10%, 18%);
+  --color-fd-primary: hsl(27, 96%, 63%);
+  --color-fd-primary-foreground: hsl(15, 40%, 8%);
+  --color-fd-secondary: hsl(15, 12%, 12%);
+  --color-fd-secondary-foreground: hsl(28, 40%, 92%);
+  --color-fd-accent: hsl(18, 22%, 16%);
+  --color-fd-accent-foreground: hsl(28, 50%, 95%);
+  --color-fd-ring: hsl(27, 96%, 63%);
+  --color-fd-overlay: hsla(0, 0%, 0%, 0.5);
+}
+
+.dark #nd-sidebar {
+  --color-fd-muted: hsl(15, 12%, 12%);
+  --color-fd-secondary: hsl(15, 12%, 14%);
+  --color-fd-muted-foreground: hsl(24, 14%, 70%);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* With a stable gutter, the scroll lock must not add its own margin. */
+html > body[data-scroll-locked] {
+  /* biome-ignore lint/complexity/noImportantStyles: beats the lock's inline style */
+  margin-right: 0 !important;
+  /* biome-ignore lint/complexity/noImportantStyles: beats the lock's inline style */
+  --removed-body-scroll-bar-size: 0 !important;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-brand-orange) 35%, transparent);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+.prose
+  :where(h1, h2, h3):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+#nd-page h1 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-color: color-mix(in oklab, var(--color-fd-primary) 18%, transparent);
+  background-color: color-mix(
+    in oklab,
+    var(--color-fd-primary) 7%,
+    transparent
+  );
+}
+
+/*
+ * rehype-code-group, dressed for this site. The bundled stylesheet handles
+ * layout and states; these rules map its custom properties to the Fumadocs
+ * palette, so they follow the site's theme toggle rather than the OS setting,
+ * and turn each group into one card with folder-style tabs.
+ */
+.rehype-code-group {
+  --rcg-accent: var(--color-fd-primary);
+  --rcg-border-color: var(--color-fd-border);
+  --rcg-focus-color: var(--color-fd-ring);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: var(--color-fd-card);
+  --rcg-tab-color: var(--color-fd-muted-foreground);
+
+  margin-block: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--rcg-border-color);
+  border-radius: 0.875rem;
+  background: var(--color-fd-card);
+  color: var(--color-fd-card-foreground);
+}
+
+.rehype-code-group .rcg-tab-container {
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem 0;
+  background: color-mix(in oklab, var(--color-fd-muted) 75%, transparent);
+  scrollbar-width: thin;
+}
+
+.rehype-code-group .rcg-tab {
+  position: relative;
+  flex: none;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.rehype-code-group .rcg-tab:hover {
+  color: var(--color-fd-foreground);
+}
+
+.rehype-code-group .rcg-tab.active {
+  color: var(--color-fd-foreground);
+  font-weight: 600;
+}
+
+.rehype-code-group .rcg-block {
+  padding: 0.25rem 1.25rem;
+}
+
+/* A panel holding a single code block lets the block fill the card. */
+.rehype-code-group .rcg-block:has(> figure:only-child) {
+  padding: 0;
+}
+
+.rehype-code-group .rcg-block > figure:only-child {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-fd-card);
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  align-self: stretch;
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Below 40rem the bundled stylesheet moves the tabs on top; match the shape. */
+@media (max-width: 40rem) {
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+    padding: 0.375rem 0.5rem 0;
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+}
+
+/* Homepage */
+.home-grid-backdrop {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 2.5rem 2.5rem;
+  mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 0%,
+    black 30%,
+    transparent 100%
+  );
+}
+
+.home-glow {
+  overflow: hidden;
+  mask-image: linear-gradient(black 55%, transparent);
+}
+
+.home-glow::before {
+  content: "";
+  position: absolute;
+  inset: -2rem;
+  background:
+    radial-gradient(
+      40rem 22rem at 15% -5%,
+      color-mix(in oklab, var(--color-brand-orange) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      36rem 24rem at 95% 10%,
+      color-mix(in oklab, var(--color-brand-magenta) 16%, transparent),
+      transparent 70%
+    );
+}
+
+.folder-card {
+  position: relative;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1.25rem;
+  background: var(--color-fd-card);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 60%, transparent) inset,
+    0 24px 48px -24px
+    color-mix(in oklab, var(--color-fd-foreground) 22%, transparent);
+}
+
+.folder-card > .rehype-code-group {
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+
+/* One motion rhythm across the homepage. No effects hide server HTML. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-glow::before {
+    animation: home-glow-drift 24s ease-in-out infinite alternate;
+  }
+
+  .home-hero-copy > *,
+  .home-hero-demo {
+    animation: home-arrive 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .home-hero-copy > :nth-child(2) {
+    animation-delay: 65ms;
+  }
+  .home-hero-copy > :nth-child(3) {
+    animation-delay: 130ms;
+  }
+  .home-hero-copy > :nth-child(4) {
+    animation-delay: 195ms;
+  }
+  .home-hero-copy > :nth-child(5) {
+    animation-delay: 240ms;
+  }
+  .home-hero-demo {
+    animation-delay: 160ms;
+  }
+
+  .home-page [data-home-reveal] {
+    transition:
+      opacity 550ms ease,
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--home-delay, 0ms);
+  }
+  .home-page [data-motion-pending] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .home-features > :nth-child(3n + 2) {
+    --home-delay: 55ms;
+  }
+  .home-features > :nth-child(3n) {
+    --home-delay: 110ms;
+  }
+
+  .home-cta {
+    transition:
+      background-color 200ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+  .home-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -10px var(--color-fd-primary);
+  }
+  .home-cta:active {
+    transform: translateY(0);
+  }
+  .home-features a {
+    transition:
+      transform 250ms ease,
+      border-color 250ms ease,
+      background-color 250ms ease;
+  }
+  .home-features a:hover,
+  .home-features a:focus-visible {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes home-glow-drift {
+  from {
+    transform: translate3d(-0.75rem, 0, 0);
+    opacity: 0.8;
+  }
+  to {
+    transform: translate3d(0.75rem, 0.5rem, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes home-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Homepage: Markdown source next to a small rendered page */
+.compare-card {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1.25rem;
+  background: var(--color-fd-card);
+  box-shadow: 0 24px 48px -28px
+    color-mix(in oklab, var(--color-fd-foreground) 22%, transparent);
+}
+
+@media (min-width: 64rem) {
+  .compare-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .compare-preview {
+    border-inline-start: 1px solid var(--color-fd-border);
+  }
+}
+
+.compare-pane {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.compare-preview {
+  border-block-start: 1px solid var(--color-fd-border);
+  background-color: color-mix(in oklab, var(--color-fd-muted) 55%, transparent);
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-fd-foreground) 9%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+}
+
+@media (min-width: 64rem) {
+  .compare-preview {
+    border-block-start: 0;
+  }
+}
+
+.compare-label {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 1.25rem;
+  border-block-end: 1px solid var(--color-fd-border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
+
+.compare-label > span:first-child {
+  flex: none;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fd-primary);
+}
+
+.compare-dots {
+  flex: none;
+  width: 2.75rem;
+  height: 0.5rem;
+  background:
+    radial-gradient(circle, var(--color-fd-border) 0.25rem, transparent 0.27rem)
+    0 50% / 0.9rem 0.5rem repeat-x;
+}
+
+/* The source code block fills its pane edge to edge. */
+.compare-source .home-demo {
+  flex: 1;
+}
+
+.compare-source .home-demo > figure {
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.compare-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1rem;
+  background: var(--color-fd-background);
+}
+
+.compare-arrow {
+  display: none;
+  pointer-events: none;
+}
+
+.compare-arrow svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 40rem) {
+  .compare-page {
+    margin: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .compare-arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 999px;
+    background: var(--color-fd-background);
+    color: var(--color-fd-primary);
+    box-shadow: 0 1px 3px
+      color-mix(in oklab, var(--color-fd-foreground) 6%, transparent);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.home-demo .rehype-code-group {
+  margin-block: 0;
+}
+
+/* Homepage: a continuous right-to-left integration reel. */
+.integration-showcase {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Light stays along the lower edge, leaving the logos on a clean surface. */
+.integration-reel::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset-inline: 18%;
+  bottom: -2.5rem;
+  height: 5rem;
+  pointer-events: none;
+  background: radial-gradient(ellipse, #c7a45a14, transparent 70%);
+}
+
+.integration-reel::after {
+  content: "";
+  position: absolute;
+  inset-inline: 5%;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent 10%,
+    #d2ad6330 35%,
+    #cda45d80 48%,
+    #f1dfb3 50%,
+    #cda45d80 52%,
+    #d2ad6330 65%,
+    transparent 90%
+  );
+}
+
+.dark .integration-reel::before {
+  background: radial-gradient(ellipse, #d5a45226, transparent 70%);
+}
+
+.integration-reel {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
+}
+
+.integration-track {
+  display: flex;
+  width: max-content;
+  animation: integration-reel 42s linear infinite;
+}
+
+.integration-logos {
+  display: flex;
+  flex: none;
+  width: 72rem;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1.5rem 1rem;
+}
+
+.integration-logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: color-mix(
+    in oklab,
+    var(--color-fd-foreground) 82%,
+    var(--color-fd-muted-foreground)
+  );
+  transition: color 200ms ease;
+}
+
+.integration-logo-link .hub-mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: inherit;
+}
+
+.integration-logo-link .hub-logo {
+  width: 2rem;
+  height: 2rem;
+}
+
+.integration-logo-link .hub-logo-unified {
+  width: 2.5rem;
+}
+.integration-logo-link .hub-logo-mdx {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.integration-logo-link:hover,
+.integration-logo-link:focus-visible {
+  color: var(--color-fd-foreground);
+}
+
+.integration-reel:hover .integration-track,
+.integration-showcase[data-paused] .integration-track {
+  animation-play-state: paused;
+}
+
+/* Expose the original links in their natural order for keyboard navigation. */
+.integration-reel:focus-within {
+  overflow-x: auto;
+  mask-image: none;
+}
+
+.integration-reel:focus-within .integration-track {
+  animation: none;
+}
+
+.integration-logo-link:focus-visible,
+.integration-footnote a:focus-visible,
+.integration-motion-toggle:focus-visible {
+  outline: 2px solid var(--color-fd-primary);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+.integration-footnote {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block-start: 1.5rem;
+  margin-block-start: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
+
+.integration-footnote a:hover,
+.integration-motion-toggle:hover {
+  color: var(--color-fd-foreground);
+}
+.integration-motion-toggle {
+  cursor: pointer;
+}
+
+@keyframes integration-reel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 39.999rem) {
+  .integration-logos {
+    width: 60rem;
+  }
+  .integration-logo-link {
+    font-size: 1rem;
+  }
+  .integration-footnote {
+    font-size: 0.6875rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .integration-track {
+    animation: none;
+    width: 100%;
+  }
+  .integration-reel {
+    mask-image: none;
+    overflow: visible;
+  }
+  .integration-logos {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+  }
+  .integration-logos-copy,
+  .integration-motion-toggle {
+    display: none;
+  }
+  .integration-logo-link {
+    transition: none;
+  }
+}
+
+.hub-mark {
+  display: grid;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: color-mix(
+    in oklab,
+    var(--color-fd-primary) 12%,
+    var(--color-fd-card)
+  );
+  color: var(--color-fd-primary);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.hub-brand {
+  position: relative;
+  background: transparent;
+  color: var(--color-fd-foreground);
+}
+
+.hub-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hub-logo-unified {
+  width: 2.125rem;
+}
+
+.hub-logo-mdx {
+  width: 2rem;
+  height: 2rem;
+}
+
+.hub-logo-fumadocs {
+  position: absolute;
+  right: -0.125rem;
+  bottom: -0.125rem;
+  border: 2px solid var(--color-fd-card);
+  border-radius: 50%;
+}
+
+kbd.key {
+  display: inline-flex;
+  min-width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem 0.4rem;
+  border: 1px solid var(--color-fd-border);
+  border-bottom-width: 2px;
+  border-radius: 0.375rem;
+  background: var(--color-fd-background);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rehype-code-group .rcg-tab {
+    transition: none;
+  }
+}
