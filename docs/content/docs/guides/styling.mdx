@@ -91,13 +91,102 @@ Besides the `active` classes, you can style from attributes that are always accu
 }
 ```
 
+## Recipe: folder tabs
+
+The groups on this site are drawn as one card with folder-style tabs. That look is not built in. It is the CSS below, which you can copy and adjust. It only uses the classes and attributes listed above, so it works on top of the bundled stylesheet.
+
+```css title="folder-tabs.css"
+.rehype-code-group {
+  --folder-surface: light-dark(#ffffff, #18181b);
+  --folder-rail: light-dark(#f4f4f5, #27272a);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: var(--folder-surface);
+
+  margin-block: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--rcg-border-color);
+  border-radius: 0.875rem;
+  background: var(--folder-surface);
+}
+
+/* The rail the tabs sit on */
+.rehype-code-group .rcg-tab-container {
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem 0;
+  background: var(--folder-rail);
+}
+
+/* Each tab is a folder tab: rounded on the side facing away from the panel */
+.rehype-code-group .rcg-tab {
+  flex: none;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.rehype-code-group .rcg-tab[aria-selected="true"] {
+  font-weight: 600;
+}
+
+.rehype-code-group .rcg-block {
+  padding: 0.25rem 1.25rem;
+}
+
+/* A panel holding only a code block lets the block fill the card */
+.rehype-code-group .rcg-block:has(> pre:only-child) {
+  padding: 0;
+}
+
+.rehype-code-group .rcg-block > pre:only-child {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Vertical groups: tabs on a side rail */
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+  align-self: stretch;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* On narrow screens, put the side rail back on top */
+@media (max-width: 40rem) {
+  .rehype-code-group[data-rcg-orientation="vertical"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+    flex-direction: row;
+    padding: 0.375rem 0.5rem 0;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--rcg-border-color);
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+    border-radius: 0.5rem 0.5rem 0 0;
+    border-inline-end: 0;
+    border-block-end: 2px solid transparent;
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab[aria-selected="true"] {
+    border-block-end-color: var(--rcg-accent);
+  }
+}
+```
+
+If your highlighter wraps code blocks in another element, as Fumadocs does with `figure`, use that element in the two `:only-child` rules instead of `pre`. To follow a class-based theme toggle rather than `color-scheme`, set `--folder-surface` and `--folder-rail` under your dark class, as in [Dark mode](#dark-mode).
+
 ## Built-in behavior worth knowing
 
 - **Before the client runs**, every panel is visible. Panels are hidden only inside `[data-rcg-enhanced]` groups, so readers without JavaScript see all the content.
 - **Long code scrolls** inside its panel instead of widening the page, and a long row of tabs scrolls sideways.
 - **Forced colors** (Windows high contrast): the accent, border and focus colors switch to system colors.
 - **Print:** the tab list is hidden, every panel is printed, and each one is headed by its label.
-- **Vertical groups** use a two-column grid: tabs on the start side, panels next to them.
+- **Vertical groups** use a two-column grid: tabs on the start side, panels next to them, at every width. To stack them on small screens, add a media query as in the [folder tabs recipe](#recipe-folder-tabs).
 
 ## Without the bundled stylesheet
 
