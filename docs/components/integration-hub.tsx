@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { IntegrationMark } from "@/components/integration-mark";
 import { Logo } from "@/components/logo";
 
 type Integration = {
   name: string;
-  mark: string;
+  mark: "unified" | "mdx" | "satteri" | "astro" | "nextjs";
   href: string;
   file: string;
   /** The config line, split so the plugin call can be highlighted. */
@@ -18,7 +19,7 @@ type Integration = {
 const integrations: Integration[] = [
   {
     name: "unified",
-    mark: "u",
+    mark: "unified",
     href: "/docs/integrations/unified/",
     file: "build.js",
     before: ".use(",
@@ -27,7 +28,7 @@ const integrations: Integration[] = [
   },
   {
     name: "MDX",
-    mark: "M",
+    mark: "mdx",
     href: "/docs/integrations/mdx/",
     file: "compile.js",
     before: "rehypePlugins: [",
@@ -36,7 +37,7 @@ const integrations: Integration[] = [
   },
   {
     name: "Sätteri",
-    mark: "S",
+    mark: "satteri",
     href: "/docs/integrations/satteri/",
     file: "render.js",
     before: "hastPlugins: [",
@@ -45,7 +46,7 @@ const integrations: Integration[] = [
   },
   {
     name: "Astro",
-    mark: "A",
+    mark: "astro",
     href: "/docs/integrations/astro/",
     file: "astro.config.mjs",
     before: "satteri({ hastPlugins: [",
@@ -54,7 +55,7 @@ const integrations: Integration[] = [
   },
   {
     name: "Next.js and Fumadocs",
-    mark: "N",
+    mark: "nextjs",
     href: "/docs/integrations/nextjs-fumadocs/",
     file: "source.config.ts",
     before: "rehypePlugins: (v) => [",
@@ -94,9 +95,7 @@ export function IntegrationHub() {
           onMouseEnter={() => setActive(index)}
           onFocus={() => setActive(index)}
         >
-          <span aria-hidden="true" className="hub-mark">
-            {integration.mark}
-          </span>
+          <IntegrationMark name={integration.mark} />
           <span className="min-w-0">
             <span className="block font-display font-semibold tracking-tight">
               {integration.name}

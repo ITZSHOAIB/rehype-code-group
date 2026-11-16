@@ -439,6 +439,34 @@ html > body[data-scroll-locked] {
   font-weight: 700;
 }
 
+.hub-brand {
+  position: relative;
+  background: var(--color-fd-background);
+  color: var(--color-fd-foreground);
+}
+
+.hub-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hub-logo-unified {
+  width: 2.125rem;
+}
+
+.hub-logo-mdx {
+  width: 2rem;
+  height: 2rem;
+}
+
+.hub-logo-fumadocs {
+  position: absolute;
+  right: -0.125rem;
+  bottom: -0.125rem;
+  border: 2px solid var(--color-fd-card);
+  border-radius: 50%;
+}
+
 .hub-go {
   margin-inline-start: auto;
   color: var(--color-fd-muted-foreground);
