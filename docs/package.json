@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "typecheck": "next typegen && tsc --noEmit"
+    "build": "node scripts/changelog.mjs && next build && node scripts/postbuild.mjs",
+    "dev": "node scripts/changelog.mjs && next dev",
+    "preview": "node scripts/serve.mjs --dir dist/public",
+    "typecheck": "node scripts/changelog.mjs && next typegen && tsc --noEmit"
   },
   "dependencies": {
     "fumadocs-core": "16.19.0",

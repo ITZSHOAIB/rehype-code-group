@@ -2,11 +2,281 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+/*
+ * Theme: "stacked folders". Warm paper in light mode, warm ink in dark mode,
+ * with the logo's orange as the primary colour and its magenta as an accent.
+ */
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono:
+    var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, Consolas,
+    monospace;
+}
+
+@theme {
+  --color-brand-orange: #fb923c;
+  --color-brand-magenta: #be185d;
+  --color-brand-cream: #fff7ed;
+
+  --color-fd-background: hsl(30, 60%, 98.5%);
+  --color-fd-foreground: hsl(18, 30%, 10%);
+  --color-fd-muted: hsl(28, 45%, 94%);
+  --color-fd-muted-foreground: hsl(18, 12%, 38%);
+  --color-fd-popover: hsl(30, 60%, 99%);
+  --color-fd-popover-foreground: hsl(18, 30%, 12%);
+  --color-fd-card: hsl(0, 0%, 100%);
+  --color-fd-card-foreground: hsl(18, 30%, 10%);
+  --color-fd-border: hsl(26, 35%, 86%);
+  --color-fd-primary: hsl(17, 88%, 40%);
+  --color-fd-primary-foreground: hsl(30, 100%, 98%);
+  --color-fd-secondary: hsl(28, 50%, 95%);
+  --color-fd-secondary-foreground: hsl(18, 30%, 12%);
+  --color-fd-accent: hsl(26, 70%, 92%);
+  --color-fd-accent-foreground: hsl(18, 40%, 14%);
+  --color-fd-ring: hsl(20, 90%, 48%);
+  --color-fd-overlay: hsla(18, 30%, 10%, 0.25);
+}
+
+.dark {
+  --color-fd-background: hsl(15, 18%, 5.5%);
+  --color-fd-foreground: hsl(28, 40%, 93%);
+  --color-fd-muted: hsl(15, 12%, 11%);
+  --color-fd-muted-foreground: hsl(24, 14%, 68%);
+  --color-fd-popover: hsl(15, 14%, 9%);
+  --color-fd-popover-foreground: hsl(28, 40%, 92%);
+  --color-fd-card: hsl(15, 14%, 8%);
+  --color-fd-card-foreground: hsl(28, 40%, 93%);
+  --color-fd-border: hsl(15, 10%, 18%);
+  --color-fd-primary: hsl(27, 96%, 63%);
+  --color-fd-primary-foreground: hsl(15, 40%, 8%);
+  --color-fd-secondary: hsl(15, 12%, 12%);
+  --color-fd-secondary-foreground: hsl(28, 40%, 92%);
+  --color-fd-accent: hsl(18, 22%, 16%);
+  --color-fd-accent-foreground: hsl(28, 50%, 95%);
+  --color-fd-ring: hsl(27, 96%, 63%);
+  --color-fd-overlay: hsla(0, 0%, 0%, 0.5);
+}
+
+.dark #nd-sidebar {
+  --color-fd-muted: hsl(15, 12%, 12%);
+  --color-fd-secondary: hsl(15, 12%, 14%);
+  --color-fd-muted-foreground: hsl(24, 14%, 70%);
+}
+
 html {
   scrollbar-gutter: stable;
 }
 
+/* With a stable gutter, the scroll lock must not add its own margin. */
 html > body[data-scroll-locked] {
-  margin-right: 0px !important;
-  --removed-body-scroll-bar-size: 0px !important;
+  /* biome-ignore lint/complexity/noImportantStyles: beats the lock's inline style */
+  margin-right: 0 !important;
+  /* biome-ignore lint/complexity/noImportantStyles: beats the lock's inline style */
+  --removed-body-scroll-bar-size: 0 !important;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-brand-orange) 35%, transparent);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+.prose
+  :where(h1, h2, h3):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+#nd-page h1 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-color: color-mix(in oklab, var(--color-fd-primary) 18%, transparent);
+  background-color: color-mix(
+    in oklab,
+    var(--color-fd-primary) 7%,
+    transparent
+  );
+}
+
+/*
+ * rehype-code-group, dressed for this site. The bundled stylesheet handles
+ * layout and states; these rules map its custom properties to the Fumadocs
+ * palette, so they follow the site's theme toggle rather than the OS setting,
+ * and turn each group into one card with folder-style tabs.
+ */
+.rehype-code-group {
+  --rcg-accent: var(--color-fd-primary);
+  --rcg-border-color: var(--color-fd-border);
+  --rcg-focus-color: var(--color-fd-ring);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: var(--color-fd-card);
+  --rcg-tab-color: var(--color-fd-muted-foreground);
+
+  margin-block: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--rcg-border-color);
+  border-radius: 0.875rem;
+  background: var(--color-fd-card);
+  color: var(--color-fd-card-foreground);
+}
+
+.rehype-code-group .rcg-tab-container {
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem 0;
+  background: color-mix(in oklab, var(--color-fd-muted) 75%, transparent);
+  scrollbar-width: thin;
+}
+
+.rehype-code-group .rcg-tab {
+  position: relative;
+  flex: none;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.rehype-code-group .rcg-tab:hover {
+  color: var(--color-fd-foreground);
+}
+
+.rehype-code-group .rcg-tab.active {
+  color: var(--color-fd-foreground);
+  font-weight: 600;
+}
+
+.rehype-code-group .rcg-block {
+  padding: 0.25rem 1.25rem;
+}
+
+/* A panel holding a single code block lets the block fill the card. */
+.rehype-code-group .rcg-block:has(> figure:only-child) {
+  padding: 0;
+}
+
+.rehype-code-group .rcg-block > figure:only-child {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-fd-card);
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  align-self: stretch;
+}
+
+.rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+@media (max-width: 40rem) {
+  .rehype-code-group[data-rcg-orientation="vertical"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
+    flex-direction: row;
+    padding: 0.375rem 0.5rem 0;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--rcg-border-color);
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
+    border-radius: 0.5rem 0.5rem 0 0;
+    border-inline-end: 0;
+    border-block-end: 2px solid transparent;
+  }
+
+  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab.active {
+    border-block-end-color: var(--rcg-accent);
+  }
+}
+
+/* Homepage */
+.home-grid-backdrop {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 2.5rem 2.5rem;
+  mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 0%,
+    black 30%,
+    transparent 100%
+  );
+}
+
+.home-glow {
+  background:
+    radial-gradient(
+      40rem 22rem at 15% -5%,
+      color-mix(in oklab, var(--color-brand-orange) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      36rem 24rem at 95% 10%,
+      color-mix(in oklab, var(--color-brand-magenta) 16%, transparent),
+      transparent 70%
+    );
+}
+
+.folder-card {
+  position: relative;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1.25rem;
+  background: var(--color-fd-card);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 60%, transparent) inset,
+    0 24px 48px -24px
+    color-mix(in oklab, var(--color-fd-foreground) 22%, transparent);
+}
+
+.folder-card > .rehype-code-group {
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+
+.home-demo .rehype-code-group {
+  margin-block: 0;
+}
+
+kbd.key {
+  display: inline-flex;
+  min-width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem 0.4rem;
+  border: 1px solid var(--color-fd-border);
+  border-bottom-width: 2px;
+  border-radius: 0.375rem;
+  background: var(--color-fd-background);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rehype-code-group .rcg-tab {
+    transition: none;
+  }
 }
