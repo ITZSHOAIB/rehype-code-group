@@ -1,0 +1,52 @@
+:::: code-group label="Pipeline" orientation="vertical"
+
+::: code-tab label="unified" value="unified"
+
+```js title="build.js"
+import rehypeCodeGroup from "rehype-code-group";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+const html = await unified()
+  .use(remarkParse)
+  .use(remarkRehype)
+  .use(rehypeCodeGroup)
+  .use(rehypeStringify)
+  .process(markdown);
+```
+
+:::
+
+::: code-tab label="MDX" value="mdx"
+
+```js title="compile.js"
+import { compile } from "@mdx-js/mdx";
+import rehypeCodeGroup from "rehype-code-group";
+
+const code = await compile(source, {
+  rehypePlugins: [[rehypeCodeGroup, { assets: "none" }]],
+});
+
+// In your browser entry:
+// import "rehype-code-group/client";
+// import "rehype-code-group/styles.css";
+```
+
+:::
+
+::: code-tab label="Sätteri" value="satteri"
+
+```js title="render.js"
+import { satteriCodeGroup } from "rehype-code-group/satteri";
+import { markdownToHtml } from "satteri";
+
+const { html } = markdownToHtml(markdown, {
+  hastPlugins: [satteriCodeGroup()],
+});
+```
+
+:::
+
+::::
