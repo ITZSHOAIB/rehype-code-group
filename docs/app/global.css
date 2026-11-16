@@ -375,6 +375,295 @@ html > body[data-scroll-locked] {
   margin-block: 0;
 }
 
+/* Homepage: integration hub */
+.hub {
+  --hub-gap: 3.5rem;
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hub-column {
+  display: grid;
+  gap: 0.875rem;
+  align-content: center;
+}
+
+.hub-item {
+  position: relative;
+}
+
+.hub-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1rem;
+  background: var(--color-fd-card);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.hub-card[data-active],
+.hub-card:hover,
+.hub-card:focus-visible {
+  border-color: color-mix(in oklab, var(--color-fd-primary) 55%, transparent);
+  box-shadow: 0 12px 32px -16px
+    color-mix(in oklab, var(--color-fd-primary) 55%, transparent);
+  transform: translateY(-2px);
+}
+
+.hub-card-ghost {
+  border-style: dashed;
+  background: transparent;
+}
+
+.hub-mark {
+  display: grid;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-fd-primary) 22%, var(--color-fd-card)),
+    color-mix(in oklab, #be185d 18%, var(--color-fd-card))
+  );
+  color: var(--color-fd-primary);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.hub-go {
+  margin-inline-start: auto;
+  color: var(--color-fd-muted-foreground);
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.hub-card[data-active] .hub-go,
+.hub-card:hover .hub-go {
+  color: var(--color-fd-primary);
+  transform: translateX(3px);
+}
+
+/* Wires run from each card across the gap into the core. */
+.hub-wire {
+  display: none;
+}
+
+.hub-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  order: -1;
+}
+
+.hub-core-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid
+    color-mix(in oklab, var(--color-fd-primary) 40%, var(--color-fd-border));
+  border-radius: 1.25rem;
+  background: var(--color-fd-card);
+  box-shadow: 0 24px 60px -28px
+    color-mix(in oklab, var(--color-fd-primary) 60%, transparent);
+}
+
+.hub-config {
+  overflow: hidden;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.75rem;
+  background: var(--color-fd-background);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.hub-config-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-block-end: 1px solid var(--color-fd-border);
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
+
+.hub-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-fd-primary);
+}
+
+.hub-config-line {
+  overflow-x: auto;
+  padding: 0.75rem;
+  white-space: nowrap;
+  animation: hub-swap 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hub-ring {
+  position: absolute;
+  inset: 12%;
+  border: 1px solid
+    color-mix(in oklab, var(--color-fd-primary) 45%, transparent);
+  border-radius: 2rem;
+  animation: hub-pulse 3.2s ease-out infinite;
+}
+
+.hub-ring-late {
+  animation-delay: 1.6s;
+}
+
+@media (min-width: 64rem) {
+  .hub {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem) minmax(0, 1fr);
+    gap: var(--hub-gap);
+  }
+
+  .hub-core {
+    order: 0;
+  }
+
+  .hub-wire {
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: var(--hub-gap);
+    height: 2px;
+    overflow: hidden;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-fd-border) 20%,
+      var(--color-fd-border) 80%,
+      transparent
+    );
+  }
+
+  .hub-item[data-side="left"] .hub-wire {
+    left: 100%;
+  }
+
+  .hub-item[data-side="right"] .hub-wire {
+    right: 100%;
+    transform: scaleX(-1);
+  }
+
+  .hub-packet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.9rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--color-fd-primary);
+    box-shadow: 0 0 8px var(--color-fd-primary);
+    opacity: 0.35;
+    animation: hub-flow 2.4s linear infinite;
+  }
+
+  .hub-packet + .hub-packet {
+    animation-delay: 1.2s;
+  }
+
+  .hub-item:has([data-active]) .hub-packet,
+  .hub-item:hover .hub-packet {
+    opacity: 1;
+    animation-duration: 1.2s;
+  }
+
+  .hub-item:has([data-active]) .hub-packet + .hub-packet,
+  .hub-item:hover .hub-packet + .hub-packet {
+    animation-delay: 0.6s;
+  }
+}
+
+@keyframes hub-flow {
+  from {
+    transform: translateX(-1rem);
+  }
+
+  to {
+    transform: translateX(calc(var(--hub-gap) + 1rem));
+  }
+}
+
+@keyframes hub-pulse {
+  from {
+    opacity: 0.8;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@keyframes hub-swap {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    filter: blur(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Cards rise into place as the section scrolls in, where supported. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hub-item,
+    .compare-card {
+      animation: hub-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+@keyframes hub-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-ring,
+  .hub-packet,
+  .hub-config-line {
+    animation: none;
+  }
+
+  .hub-card {
+    transition: none;
+  }
+}
+
 kbd.key {
   display: inline-flex;
   min-width: 1.75rem;

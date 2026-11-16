@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { IntegrationHub } from "@/components/integration-hub";
 import { Logo } from "@/components/logo";
 import { getMDXComponents } from "@/components/mdx";
 import { npmUrl, repoUrl } from "@/lib/shared";
@@ -118,14 +119,6 @@ const features: { title: string; body: ReactNode; href: string }[] = [
     body: "Rich groups hold prose, lists, images and components, not just code.",
     href: "/docs/syntax/rich-groups",
   },
-];
-
-const integrations = [
-  { name: "unified", href: "/docs/integrations/unified" },
-  { name: "Astro", href: "/docs/integrations/astro" },
-  { name: "Next.js and Fumadocs", href: "/docs/integrations/nextjs-fumadocs" },
-  { name: "MDX", href: "/docs/integrations/mdx" },
-  { name: "Sätteri", href: "/docs/integrations/satteri" },
 ];
 
 export default function HomePage() {
@@ -288,18 +281,7 @@ export default function HomePage() {
           Use it with unified directly, or in the tools built on it. A Sätteri
           version is included for Astro 7's default processor.
         </SectionHeading>
-        <ul className="flex flex-wrap justify-center gap-3">
-          {integrations.map((integration) => (
-            <li key={integration.href}>
-              <Link
-                href={integration.href}
-                className="inline-flex rounded-full border bg-fd-card px-4 py-2 font-mono text-sm transition-colors hover:border-fd-primary/50 hover:text-fd-primary"
-              >
-                {integration.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <IntegrationHub />
       </section>
 
       <footer className="mt-auto border-t">
