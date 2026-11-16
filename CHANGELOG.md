@@ -1,5 +1,11 @@
 # rehype-code-group
 
+## 2.0.1
+
+### Patch Changes
+
+- [#167](https://github.com/ITZSHOAIB/rehype-code-group/pull/167) [`b95e5d8`](https://github.com/ITZSHOAIB/rehype-code-group/commit/b95e5d8879e1202dfb6462dfcdbcd6bb709c1a26) Thanks [@ITZSHOAIB](https://github.com/ITZSHOAIB)! - Make theming overrides apply with the default inline assets. The bundled visual rules now have zero specificity, so site CSS wins regardless of load order, and the `--rcg-*` custom properties are read from the group or any ancestor, such as `:root`. Rules that show and hide panels keep their specificity. Vertical groups now move their tabs above the panels on screens narrower than `40rem`.
+
 ## 2.0.0
 
 ### Major Changes
