@@ -26,6 +26,3 @@ updates:
       # Types track the oldest supported Node.js (engines.node), not the newest.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
-      # twoslash, used by vocs in docs, supports TypeScript 6 at most.
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
