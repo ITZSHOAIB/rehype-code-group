@@ -244,6 +244,133 @@ html > body[data-scroll-locked] {
   background: transparent;
 }
 
+/* Homepage: Markdown source next to a small rendered page */
+.compare-card {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1.25rem;
+  background: var(--color-fd-card);
+  box-shadow: 0 24px 48px -28px
+    color-mix(in oklab, var(--color-fd-foreground) 22%, transparent);
+}
+
+@media (min-width: 64rem) {
+  .compare-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .compare-preview {
+    border-inline-start: 1px solid var(--color-fd-border);
+  }
+}
+
+.compare-pane {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.compare-preview {
+  border-block-start: 1px solid var(--color-fd-border);
+  background-color: color-mix(in oklab, var(--color-fd-muted) 55%, transparent);
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-fd-foreground) 9%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+}
+
+@media (min-width: 64rem) {
+  .compare-preview {
+    border-block-start: 0;
+  }
+}
+
+.compare-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 1.25rem;
+  border-block-end: 1px solid var(--color-fd-border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
+
+.compare-label > span:first-child {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fd-primary);
+}
+
+.compare-dots {
+  width: 2.75rem;
+  height: 0.5rem;
+  background:
+    radial-gradient(circle, var(--color-fd-border) 0.25rem, transparent 0.27rem)
+    0 50% / 0.9rem 0.5rem repeat-x;
+}
+
+/* The source code block fills its pane edge to edge. */
+.compare-source .home-demo {
+  flex: 1;
+}
+
+.compare-source .home-demo > figure {
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.compare-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 1rem;
+  background: var(--color-fd-background);
+}
+
+.compare-arrow {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .compare-page {
+    margin: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .compare-arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 999px;
+    background: var(--color-fd-card);
+    color: var(--color-fd-primary);
+    font-weight: 600;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .home-demo .rehype-code-group {
   margin-block: 0;
 }

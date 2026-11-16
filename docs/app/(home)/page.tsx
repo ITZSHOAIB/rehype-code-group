@@ -16,6 +16,55 @@ function Demo({ file, className }: { file: string; className?: string }) {
   );
 }
 
+/**
+ * Markdown on the left, and on the right the rendered group set inside a
+ * small page, so the result reads in context.
+ */
+function SourceAndResult({
+  source,
+  result,
+  path,
+  title,
+  intro,
+  outro,
+}: {
+  source: string;
+  result: string;
+  path: string;
+  title: string;
+  intro: ReactNode;
+  outro: ReactNode;
+}) {
+  return (
+    <div className="compare-card">
+      <div className="compare-pane compare-source">
+        <p className="compare-label">
+          <span>Markdown</span>
+          <span className="truncate">{path}</span>
+        </p>
+        <Demo file={source} />
+      </div>
+      <span aria-hidden="true" className="compare-arrow">
+        →
+      </span>
+      <div className="compare-pane compare-preview">
+        <p className="compare-label">
+          <span>Rendered</span>
+          <span className="compare-dots" />
+        </p>
+        <div className="compare-page">
+          <p className="font-display text-xl font-semibold tracking-tight">
+            {title}
+          </p>
+          <p className="text-sm text-fd-muted-foreground">{intro}</p>
+          <Demo file={result} />
+          <p className="text-sm text-fd-muted-foreground">{outro}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SectionHeading({
   eyebrow,
   title,
@@ -136,20 +185,14 @@ export default function HomePage() {
           A compact group is a start marker with labels, your code blocks, and a
           closing marker. Nothing else to learn.
         </SectionHeading>
-        <div className="grid items-start gap-6 lg:grid-cols-2">
-          <figure className="min-w-0">
-            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
-              You write
-            </figcaption>
-            <Demo file="compact-source.mdx" />
-          </figure>
-          <figure className="min-w-0">
-            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
-              Readers get
-            </figcaption>
-            <Demo file="compact.mdx" />
-          </figure>
-        </div>
+        <SourceAndResult
+          source="compact-source.mdx"
+          result="compact.mdx"
+          path="docs/install.md"
+          title="Installation"
+          intro="Add the plugin with the package manager you use:"
+          outro="Readers see one command at a time and switch with a click or the arrow keys."
+        />
       </section>
 
       {/* Labels */}
@@ -165,20 +208,19 @@ export default function HomePage() {
           </Link>{" "}
           is one import away.
         </SectionHeading>
-        <div className="grid items-start gap-6 lg:grid-cols-2">
-          <figure className="min-w-0">
-            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
-              What you write
-            </figcaption>
-            <Demo file="emoji-source.mdx" />
-          </figure>
-          <figure className="min-w-0">
-            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
-              What readers get
-            </figcaption>
-            <Demo file="emoji.mdx" />
-          </figure>
-        </div>
+        <SourceAndResult
+          source="emoji-source.mdx"
+          result="emoji.mdx"
+          path="docs/project.md"
+          title="Project files"
+          intro="Every project in this guide starts with these three files:"
+          outro={
+            <>
+              Shortcodes like <code className="font-mono">:rocket:</code> become
+              emoji; the rest of the label stays as written.
+            </>
+          }
+        />
       </section>
 
       {/* Sync */}

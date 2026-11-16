@@ -90,5 +90,5 @@ test("homepage resolves emoji shortcodes in fence labels", async ({ page }) => {
   const deploy = section.getByRole("tab", { name: "🚀 deploy.sh" });
   await deploy.click();
   await expect(deploy).toHaveAttribute("aria-selected", "true");
-  await expect(section.getByText(":rocket:", { exact: true })).toHaveCount(0);
+  await expect(section.getByRole("tablist")).not.toContainText(":rocket:");
 });
