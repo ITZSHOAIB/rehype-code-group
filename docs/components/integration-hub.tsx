@@ -63,7 +63,7 @@ const integrations: Integration[] = [
   },
 ];
 
-const ROTATE_MS = 3200;
+const ROTATE_MS = 5000;
 
 export function IntegrationHub() {
   const [active, setActive] = useState(0);
@@ -109,10 +109,7 @@ export function IntegrationHub() {
             →
           </span>
         </Link>
-        <span aria-hidden="true" className="hub-wire">
-          <span className="hub-packet" />
-          <span className="hub-packet" />
-        </span>
+        <span aria-hidden="true" className="hub-wire" />
       </li>
     );
   };
@@ -129,8 +126,6 @@ export function IntegrationHub() {
       <ul className="hub-column">{left.map((item) => card(item, "left"))}</ul>
 
       <div className="hub-core">
-        <span aria-hidden="true" className="hub-ring" />
-        <span aria-hidden="true" className="hub-ring hub-ring-late" />
         <div className="hub-core-card">
           <p className="flex items-center gap-2 font-display font-semibold tracking-tight">
             <Logo className="size-6" />
@@ -172,10 +167,7 @@ export function IntegrationHub() {
               </span>
             </span>
           </Link>
-          <span aria-hidden="true" className="hub-wire">
-            <span className="hub-packet" />
-            <span className="hub-packet" />
-          </span>
+          <span aria-hidden="true" className="hub-wire" />
         </li>
       </ul>
     </div>
