@@ -471,7 +471,7 @@ html > body[data-scroll-locked] {
   bottom: -2.5rem;
   height: 5rem;
   pointer-events: none;
-  background: radial-gradient(ellipse, #38bdf81c, transparent 70%);
+  background: radial-gradient(ellipse, #c7a45a14, transparent 70%);
 }
 
 .integration-reel::after {
@@ -484,17 +484,17 @@ html > body[data-scroll-locked] {
   background: linear-gradient(
     to right,
     transparent 10%,
-    #7dd3fc33 35%,
-    #7dd3fcbb 48%,
-    #e0f2fe 50%,
-    #7dd3fcbb 52%,
-    #7dd3fc33 65%,
+    #d2ad6330 35%,
+    #cda45d80 48%,
+    #f1dfb3 50%,
+    #cda45d80 52%,
+    #d2ad6330 65%,
     transparent 90%
   );
 }
 
 .dark .integration-reel::before {
-  background: radial-gradient(ellipse, #38bdf82e, transparent 70%);
+  background: radial-gradient(ellipse, #d5a45226, transparent 70%);
 }
 
 .integration-reel {
