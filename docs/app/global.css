@@ -213,6 +213,14 @@ html > body[data-scroll-locked] {
 }
 
 .home-glow {
+  overflow: hidden;
+  mask-image: linear-gradient(black 55%, transparent);
+}
+
+.home-glow::before {
+  content: "";
+  position: absolute;
+  inset: -2rem;
   background:
     radial-gradient(
       40rem 22rem at 15% -5%,
@@ -246,6 +254,10 @@ html > body[data-scroll-locked] {
 
 /* One motion rhythm across the homepage. No effects hide server HTML. */
 @media (prefers-reduced-motion: no-preference) {
+  .home-glow::before {
+    animation: home-glow-drift 24s ease-in-out infinite alternate;
+  }
+
   .home-hero-copy > *,
   .home-hero-demo {
     animation: home-arrive 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -303,14 +315,16 @@ html > body[data-scroll-locked] {
   .home-features a:focus-visible {
     transform: translateY(-3px);
   }
-  .compare-arrow {
-    transition:
-      color 250ms ease,
-      background-color 250ms ease;
+}
+
+@keyframes home-glow-drift {
+  from {
+    transform: translate3d(-0.75rem, 0, 0);
+    opacity: 0.8;
   }
-  .compare-card:hover .compare-arrow {
-    background: var(--color-fd-primary);
-    color: var(--color-fd-primary-foreground);
+  to {
+    transform: translate3d(0.75rem, 0.5rem, 0);
+    opacity: 1;
   }
 }
 
@@ -371,6 +385,7 @@ html > body[data-scroll-locked] {
 
 .compare-label {
   display: flex;
+  min-height: 2.75rem;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -382,6 +397,7 @@ html > body[data-scroll-locked] {
 }
 
 .compare-label > span:first-child {
+  flex: none;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -389,6 +405,7 @@ html > body[data-scroll-locked] {
 }
 
 .compare-dots {
+  flex: none;
   width: 2.75rem;
   height: 0.5rem;
   background:
@@ -424,6 +441,13 @@ html > body[data-scroll-locked] {
 
 .compare-arrow {
   display: none;
+  pointer-events: none;
+}
+
+.compare-arrow svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (max-width: 40rem) {
@@ -445,9 +469,10 @@ html > body[data-scroll-locked] {
     place-items: center;
     border: 1px solid var(--color-fd-border);
     border-radius: 999px;
-    background: var(--color-fd-card);
+    background: var(--color-fd-background);
     color: var(--color-fd-primary);
-    font-weight: 600;
+    box-shadow: 0 1px 3px
+      color-mix(in oklab, var(--color-fd-foreground) 6%, transparent);
     transform: translate(-50%, -50%);
   }
 }

@@ -58,7 +58,20 @@ function SourceAndResult({
         <Demo file={source} />
       </div>
       <span aria-hidden="true" className="compare-arrow">
-        →
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          focusable="false"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 12h16m-6-6 6 6-6 6"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </span>
       <div className="compare-pane compare-preview">
         <p className="compare-label">

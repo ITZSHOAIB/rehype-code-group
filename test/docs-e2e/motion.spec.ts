@@ -21,6 +21,13 @@ test("homepage reveals content for keyboard focus and a reduced-motion preferenc
     "animation-name",
     "none",
   );
+  expect(
+    await page
+      .locator(".home-glow")
+      .evaluate(
+        (element) => getComputedStyle(element, "::before").animationName,
+      ),
+  ).toBe("none");
 });
 
 test("homepage content stays visible without JavaScript", async ({
