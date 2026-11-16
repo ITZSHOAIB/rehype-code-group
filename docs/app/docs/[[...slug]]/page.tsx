@@ -70,7 +70,10 @@ export async function generateMetadata(
   return {
     title: page.data.title,
     description: page.data.description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { "text/markdown": toMarkdownUrl(page.url) },
+    },
     openGraph: {
       type: "article",
       siteName: appName,

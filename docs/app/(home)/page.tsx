@@ -301,7 +301,10 @@ export default function HomePage() {
             <Logo className="size-5" />
             rehype-code-group, MIT licensed. Built by Sohab Sk.
           </p>
-          <nav aria-label="Footer" className="flex gap-5">
+          <nav aria-label="Footer" className="flex flex-wrap gap-5">
+            <a href="/llms.txt" className="hover:text-fd-foreground">
+              llms.txt
+            </a>
             <Link href="/docs" className="hover:text-fd-foreground">
               Docs
             </Link>

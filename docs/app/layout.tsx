@@ -74,6 +74,13 @@ export default function Layout({ children }: LayoutProps<"/">) {
       className={`${sans.variable} ${display.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link
+          rel="describedby"
+          href={`${siteUrl}/llms.txt`}
+          type="text/plain"
+        />
+      </head>
       <body className="flex min-h-screen flex-col">
         {/* Loads the rehype-code-group client and stylesheet for every page. */}
         <CodeGroups />
