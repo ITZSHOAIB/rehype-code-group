@@ -169,6 +169,14 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Integrations */}
+      <section className="relative mx-auto w-full max-w-6xl px-6 pb-10 pt-2">
+        <h2 className="mb-6 text-center font-mono text-xs font-medium uppercase tracking-[0.16em] text-fd-muted-foreground">
+          Works with your stack
+        </h2>
+        <IntegrationHub />
+      </section>
+
       {/* Source and result */}
       <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
         <SectionHeading
@@ -273,15 +281,6 @@ export default function HomePage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* Integrations */}
-      <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
-        <SectionHeading eyebrow="Integrations" title="Works where rehype works">
-          Use it with unified directly, or in the tools built on it. A Sätteri
-          version is included for Astro 7's default processor.
-        </SectionHeading>
-        <IntegrationHub />
       </section>
 
       <footer className="mt-auto border-t">
