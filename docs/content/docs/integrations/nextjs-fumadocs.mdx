@@ -121,6 +121,37 @@ function rehypeCodeGroupPerFile(
 }
 ```
 
+## Search
+
+Fumadocs builds its search index from the Markdown tree, before any rehype plugin runs. At that point the `:::` lines are still paragraphs, so they end up in search results as text like `::: code-tab label="npm"`. Filter them out where you create the search server:
+
+```ts title="app/api/search/route.ts"
+import { createFromSource } from "fumadocs-core/search/server";
+import { source } from "@/lib/source";
+
+const groupMarker = /^:{3,4}(\s+code-(group|tab)\b.*)?$/;
+
+export const { staticGET: GET } = createFromSource(source, {
+  buildIndex(page) {
+    const { structuredData } = page.data;
+    return {
+      id: page.url,
+      url: page.url,
+      title: page.data.title,
+      description: page.data.description,
+      structuredData: {
+        ...structuredData,
+        contents: structuredData.contents.filter(
+          (item) => !groupMarker.test(item.content.trim()),
+        ),
+      },
+    };
+  },
+});
+```
+
+Prose inside the tabs is still indexed.
+
 ## Plain Next.js with @next/mdx
 
 Outside Fumadocs, the same two rules apply: pass the plugins to the MDX loader, use `assets: "none"`, and render the client component in the root layout.
