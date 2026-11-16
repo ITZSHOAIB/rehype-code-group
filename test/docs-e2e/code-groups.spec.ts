@@ -81,3 +81,14 @@ test("homepage demos have unique IDs", async ({ page }) => {
     .evaluateAll((elements) => elements.map((element) => element.id));
   expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
 });
+
+test("homepage resolves emoji shortcodes in fence labels", async ({ page }) => {
+  await page.goto("/");
+  const section = page.locator("section", {
+    hasText: "Emoji and file names",
+  });
+  const deploy = section.getByRole("tab", { name: "🚀 deploy.sh" });
+  await deploy.click();
+  await expect(deploy).toHaveAttribute("aria-selected", "true");
+  await expect(section.getByText(":rocket:", { exact: true })).toHaveCount(0);
+});

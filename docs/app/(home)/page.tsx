@@ -152,6 +152,35 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Labels */}
+      <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
+        <SectionHeading eyebrow="Labels" title="Emoji and file names, built in">
+          Put a label in the fence meta, with an optional shortcode. Five common
+          shortcodes work out of the box; the{" "}
+          <Link
+            href="/docs/syntax/labels-and-emoji/"
+            className="font-medium text-fd-foreground underline underline-offset-4"
+          >
+            full emoji catalog
+          </Link>{" "}
+          is one import away.
+        </SectionHeading>
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <figure className="min-w-0">
+            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
+              What you write
+            </figcaption>
+            <Demo file="emoji-source.mdx" />
+          </figure>
+          <figure className="min-w-0">
+            <figcaption className="mb-3 font-mono text-xs text-fd-muted-foreground">
+              What readers get
+            </figcaption>
+            <Demo file="emoji.mdx" />
+          </figure>
+        </div>
+      </section>
+
       {/* Sync */}
       <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
         <SectionHeading
