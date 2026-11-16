@@ -1,0 +1,126 @@
+---
+title: Sync and persistence
+description: Make related groups switch together, and remember the reader's choice in local storage or the URL.
+---
+
+A reader who picks **pnpm** in one install block usually wants pnpm in every block on the page, and on the next page too. Two attributes on [rich groups](/docs/syntax/rich-groups) handle this:
+
+- `sync` joins groups under a shared key.
+- `persist` saves the selection for that key.
+
+## Sync
+
+Groups with the same `sync` key switch together. The client matches tabs by **value**, not by position or label.
+
+`````md
+:::: code-group label="Package manager" sync="pm-demo"
+
+::: code-tab label="npm" value="npm"
+
+```sh
+npm install rehype-code-group
+```
+
+:::
+
+::: code-tab label="pnpm" value="pnpm"
+
+```sh
+pnpm add rehype-code-group
+```
+
+:::
+
+::::
+`````
+
+Try it: choose a tab in either group below.
+
+:::: code-group label="Install with" sync="pm-demo"
+
+::: code-tab label="npm" value="npm"
+
+```sh
+npm install rehype-code-group
+```
+
+:::
+
+::: code-tab label="pnpm" value="pnpm"
+
+```sh
+pnpm add rehype-code-group
+```
+
+:::
+
+::: code-tab label="Yarn" value="yarn"
+
+```sh
+yarn add rehype-code-group
+```
+
+:::
+
+::::
+
+:::: code-group label="Run the build with" sync="pm-demo"
+
+::: code-tab label="npm" value="npm"
+
+```sh
+npm run build
+```
+
+:::
+
+::: code-tab label="pnpm" value="pnpm"
+
+```sh
+pnpm run build
+```
+
+:::
+
+::: code-tab label="Yarn" value="yarn"
+
+```sh
+yarn run build
+```
+
+:::
+
+::::
+
+How it behaves:
+
+- A group that has no tab with the chosen value keeps its current tab.
+- Groups added to the page later, for example after client-side navigation, start on the value last chosen for their key.
+- Only the group you clicked fires the [`rehype-code-group:change`](/docs/guides/browser-client#the-change-event) event. The groups that follow it don't.
+- Compact groups have no attributes, so they can't sync. Convert a group to the rich syntax to give it a `sync` key.
+
+## Persist
+
+`persist` decides where the choice for a `sync` key is stored. **It does nothing without `sync`**, because the key names the stored value.
+
+| Value   | Stored in                                                   | Good for                                                        |
+| ------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
+| `local` | `localStorage`, under `rehype-code-group:<sync key>`        | Remembering a reader's preference across pages and visits.      |
+| `url`   | The query string, as `?rcg-<sync key>=<value>`              | Links that open with a particular tab selected.                 |
+
+With `persist="url"`, the client updates the address with `history.replaceState`. That changes the current history entry without adding a new one, so the back button isn't affected.
+
+If storage is unavailable, for example in some private browsing modes or sandboxed frames, the client keeps working and doesn't save the choice.
+
+## Which tab is selected on load
+
+When the client sets up a group, it picks the first of these that matches one of the group's tab values:
+
+1. The persisted value: the URL parameter for `persist="url"`, or local storage for `persist="local"`.
+2. The value already chosen for the same `sync` key earlier in this page session.
+3. The `default` attribute, which is already in the generated HTML.
+4. The first tab.
+
+When a persisted value is found, other enhanced groups with the same key switch to it too.
+
+This page's demos use `sync="pm-demo"` without `persist`, so reloading the page resets them.

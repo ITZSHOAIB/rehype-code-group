@@ -1,0 +1,62 @@
+---
+title: Sätteri
+description: The Sätteri plugins, for Astro 7's default Markdown processor and anything else built on Sätteri.
+---
+
+[Sätteri](https://satteri.bruits.org) is a Markdown and MDX processor with its own plugin API. It is the default processor in Astro 7. `rehype-code-group/satteri` provides the same transform as Sätteri plugins.
+
+## Install
+
+`satteri` is an optional peer dependency. Versions **0.10.5 to 0.11.x** are supported.
+
+```sh npm2yarn
+npm install rehype-code-group satteri
+```
+
+## The two plugins
+
+| Export                     | Kind              | Counterpart                                                           |
+| -------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `satteriCodeGroup(options)` | hast plugin       | The rehype plugin. Same [options](/docs/reference/options), same HTML. |
+| `satteriCodeGroupLabels()`  | mdast plugin      | The [remark companion](/docs/syntax/fence-labels) for `[label]` fences. |
+
+Both are functions that return plugin definitions, so call them when you add them.
+
+## Usage
+
+```js
+import {
+  satteriCodeGroup,
+  satteriCodeGroupLabels,
+} from "rehype-code-group/satteri";
+import { markdownToHtml } from "satteri";
+
+const { html } = markdownToHtml(markdown, {
+  // Optional: take tab labels from `[label]` fence metadata.
+  mdastPlugins: [satteriCodeGroupLabels()],
+  hastPlugins: [satteriCodeGroup({ assets: "inline" })],
+});
+```
+
+For MDX, pass the same plugins to `mdxToJs`. For Astro, pass them to the `satteri()` processor. See [Astro](/docs/integrations/astro).
+
+The output matches the rehype plugin's, apart from whitespace between elements, and the test suite checks this for every fixture.
+
+## Diagnostics
+
+Sätteri doesn't show plugin diagnostics to users yet, so malformed compact groups are handled like this:
+
+| `diagnostics`       | Behavior                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------ |
+| `"warn"` (default)  | Reports to Sätteri and logs a `console.warn` naming the file, such as `rehype-code-group: /docs/install.md: Code group has 2 labels but 1 panel.` |
+| `"error"`           | Reports to Sätteri and throws, which fails the build.                                            |
+| `"silent"`          | Does nothing.                                                                                    |
+
+## Notes
+
+- There is no Sätteri version of the [package-manager plugin](/docs/syntax/package-managers). Write the groups by hand.
+- Smart punctuation is handled: curled quotes in labels and attributes are read correctly, as with the rehype plugin.
+
+## Performance
+
+Pages without any `:::` text are skipped before any work is done. Pages with groups are copied, transformed and swapped back in one step, so the cost is paid only where groups exist.

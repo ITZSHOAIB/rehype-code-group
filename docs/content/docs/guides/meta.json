@@ -1,0 +1,10 @@
+{
+  "title": "Shipping it",
+  "pages": [
+    "asset-delivery",
+    "styling",
+    "accessibility",
+    "browser-client",
+    "troubleshooting"
+  ]
+}

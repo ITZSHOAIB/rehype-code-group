@@ -1,0 +1,152 @@
+---
+title: Rich groups
+description: Tabs that hold any Markdown, with a default tab, an accessible name, syncing, persistence and vertical orientation.
+---
+
+When a tab needs a sentence of context, a list of steps, or more than one code block, use a rich group. It has an outer `::::` fence (four colons) and a `::: code-tab` section (three colons) per tab.
+
+`````md
+:::: code-group label="Deploy target" default="pages"
+
+::: code-tab label="Cloudflare Pages" value="pages"
+
+Set the build command and output directory in the dashboard:
+
+- Build command: `pnpm build`
+- Output directory: `dist`
+
+:::
+
+::: code-tab label="Netlify" value="netlify"
+
+Commit a `netlify.toml`:
+
+```toml
+[build]
+command = "pnpm build"
+publish = "dist"
+```
+
+:::
+
+::::
+`````
+
+:::: code-group label="Deploy target" default="pages"
+
+::: code-tab label="Cloudflare Pages" value="pages"
+
+Set the build command and output directory in the dashboard:
+
+- Build command: `pnpm build`
+- Output directory: `dist`
+
+:::
+
+::: code-tab label="Netlify" value="netlify"
+
+Commit a `netlify.toml`:
+
+```toml
+[build]
+command = "pnpm build"
+publish = "dist"
+```
+
+:::
+
+::::
+
+## Group attributes
+
+Attributes go on the opening `:::: code-group` line. All of them are optional.
+
+| Attribute     | Values                       | Effect                                                                                                                       |
+| ------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | any text                     | The tab list's accessible name (`aria-label`). Defaults to `Code examples`.                                                  |
+| `default`     | a tab's value                | The tab selected in the generated HTML. If no tab has that value, the first tab is selected.                                 |
+| `sync`        | any key                      | Groups with the same key switch together. See [Sync and persistence](/docs/syntax/sync-and-persistence).                     |
+| `persist`     | `local` or `url`             | Remembers the choice in local storage or the URL. Needs `sync`.                                                              |
+| `orientation` | `horizontal` or `vertical`   | `vertical` stacks the tabs in a column and switches the arrow keys to up and down. Without it, tabs are horizontal.          |
+
+Values that aren't listed, such as `persist="session"`, are ignored, as are unknown attributes.
+
+## Tab attributes
+
+| Attribute | Required | Effect                                                                                                                                                         |
+| --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`   | yes      | The text on the tab. It goes through the [label resolver](/docs/syntax/labels-and-emoji), so `:package: npm` shows as 📦 npm.                                    |
+| `value`   | no       | A stable identifier used by `default`, `sync` and `persist`. Defaults to the label exactly as written, before the resolver runs.                               |
+
+Give tabs a `value` whenever you use `default`, `sync` or `persist`. Then you can reword a label without breaking links, saved choices or other groups.
+
+## Writing attribute values
+
+- Quote values that contain spaces: `label="Deploy target"`. Double quotes, single quotes and typographic quotes all work.
+- Values without spaces can go unquoted: `default=pages`. An unquoted value ends at the first space, so `label=Deploy target` gives the label `Deploy`.
+- Inside a quoted value, a backslash escapes a quote or another backslash.
+
+## Vertical tabs
+
+`orientation="vertical"` suits groups with several tabs or long labels. On narrow screens this site's stylesheet puts the tabs back in a row; the keyboard still uses the up and down arrows.
+
+`````md
+:::: code-group label="Release checklist" orientation="vertical"
+
+::: code-tab label="1. Version"
+
+Run `pnpm changeset version` and review the generated changelog.
+
+:::
+
+::: code-tab label="2. Build"
+
+```sh
+pnpm build
+```
+
+:::
+
+::: code-tab label="3. Publish"
+
+Merge the release pull request. CI publishes to npm.
+
+:::
+
+::::
+`````
+
+:::: code-group label="Release checklist" orientation="vertical"
+
+::: code-tab label="1. Version"
+
+Run `pnpm changeset version` and review the generated changelog.
+
+:::
+
+::: code-tab label="2. Build"
+
+```sh
+pnpm build
+```
+
+:::
+
+::: code-tab label="3. Publish"
+
+Merge the release pull request. CI publishes to npm.
+
+:::
+
+::::
+
+## Structure rules
+
+- Each marker line (`:::: code-group`, `::: code-tab …`, `:::` and `::::`) must be a paragraph by itself, so surround it with blank lines.
+- Between tabs, only blank lines are allowed.
+- A tab can contain anything, including a [compact group](/docs/syntax/compact-groups).
+- Rich groups can sit inside list items and block quotes.
+
+<Callout type="warn" title="Rich groups fail silently">
+  If a rich group is malformed, for example a `code-tab` without a `label`, stray text between tabs, or a missing `::::`, the plugin leaves the Markdown as it was. Unlike compact groups, it **doesn't report a diagnostic**. If you see `::::` on the page, check those three things first.
+</Callout>

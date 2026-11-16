@@ -1,0 +1,93 @@
+---
+title: Browser client
+description: How the client sets up groups, how to start and stop it yourself, and the change event it fires.
+---
+
+The browser client is the part of rehype-code-group that runs on the page. It is published as `rehype-code-group/client`, the same code that inline mode embeds, so it behaves the same however you load it.
+
+## What it does
+
+For each group in its root, the client:
+
+1. Picks the tab to show. See [which tab is selected on load](/docs/syntax/sync-and-persistence#which-tab-is-selected-on-load).
+2. Adds `data-rcg-enhanced` to the group, which lets the stylesheet hide inactive panels.
+3. Sets `aria-selected`, `tabindex`, the active classes and the `hidden` attribute on every tab and panel.
+
+It then listens for `click` and `keydown` on the root itself, not on each tab. Because events are delegated, groups added later need no extra listeners. A `MutationObserver` sets up any group that appears in the root, whether it comes from client-side routing, a CMS preview, or a "load more" button.
+
+Groups whose number of tabs and panels differ are skipped.
+
+## Loading it
+
+Importing the module in a browser sets up `document`:
+
+```js
+import "rehype-code-group/client";
+```
+
+The import does nothing on the server, where there is no `document`, so it is safe in code that is also rendered on the server.
+
+## initCodeGroups
+
+To choose the root, or to tear the client down, call `initCodeGroups`:
+
+```ts
+import { initCodeGroups } from "rehype-code-group/client";
+
+const cleanup = initCodeGroups(document);
+
+// Later, for example when a micro-frontend unmounts:
+cleanup();
+```
+
+| Parameter | Type         | Default    | Description                                                                         |
+| --------- | ------------ | ---------- | ----------------------------------------------------------------------------------- |
+| `root`    | `ParentNode` | `document` | The document, element, document fragment or shadow root whose groups to manage.     |
+
+It returns a cleanup function that disconnects the observer and removes both listeners. Groups keep their current state.
+
+Calling `initCodeGroups` again on the same root does nothing new and returns the same cleanup function, so importing the module and calling the function yourself don't conflict.
+
+### Shadow DOM
+
+Events and mutations inside a shadow root aren't seen from `document`, so give each shadow root its own client, and add the stylesheet inside it:
+
+```ts
+import { initCodeGroups } from "rehype-code-group/client";
+import styles from "rehype-code-group/styles.css?raw";
+
+const shadow = host.attachShadow({ mode: "open" });
+shadow.innerHTML = `<style>${styles}</style>${renderedHtml}`;
+initCodeGroups(shadow);
+```
+
+The `?raw` suffix is a Vite feature that imports the file as a string. Other bundlers have their own way of doing this.
+
+## The change event
+
+When a reader selects a tab, by pointer or keyboard, its group fires `rehype-code-group:change`. The event bubbles, so one listener on `document` hears every group.
+
+```ts
+import type { CodeGroupChangeDetail } from "rehype-code-group/client";
+
+document.addEventListener("rehype-code-group:change", (event) => {
+  const { index, source, syncKey, value } = (
+    event as CustomEvent<CodeGroupChangeDetail>
+  ).detail;
+
+  analytics.track("code_tab_selected", { index, source, syncKey, value });
+});
+```
+
+| Field     | Type                        | Description                                                         |
+| --------- | --------------------------- | ------------------------------------------------------------------- |
+| `index`   | `number`                    | Position of the selected tab, starting at 0.                        |
+| `value`   | `string`                    | The tab's value: its `value` attribute, or its label.               |
+| `syncKey` | `string \| undefined`       | The group's `sync` key, if it has one.                              |
+| `source`  | `"pointer" \| "keyboard"`   | Whether the tab was chosen by click or tap, or with a key.          |
+
+The event fires only for the group the reader used. Groups that switch because they share a `sync` key don't fire it, and neither does the initial setup.
+
+## Custom class names
+
+If you pass [`customClassNames`](/docs/guides/styling#class-names) to the plugin, the client still finds groups by their default classes, which are always present. Custom active classes are stored on each group, so the client toggles them along with `active`.

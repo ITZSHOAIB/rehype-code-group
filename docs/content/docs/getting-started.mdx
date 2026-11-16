@@ -1,0 +1,104 @@
+---
+title: Getting started
+description: Install rehype-code-group, add it to a unified pipeline, and render your first group of tabs.
+---
+
+## Requirements
+
+- Node.js **22.12** or newer.
+- An ESM project. The package has no CommonJS build, so load it with `import`.
+- A Markdown or HTML pipeline that accepts rehype plugins. This page uses [unified](https://unifiedjs.com) directly; see [Integrations](/docs/integrations/unified) for Astro, Next.js, MDX and Sätteri.
+
+## Install
+
+```sh npm2yarn
+npm install rehype-code-group
+```
+
+The example below also uses the standard unified packages for Markdown:
+
+```sh npm2yarn
+npm install unified remark-parse remark-rehype rehype-stringify
+```
+
+## Render your first group
+
+<Steps>
+<Step>
+
+### Add the plugin
+
+`rehype-code-group` is a rehype plugin, so it goes after `remark-rehype`, once the Markdown has become HTML.
+
+```js title="render.js"
+import rehypeCodeGroup from "rehype-code-group";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
+
+export async function render(markdown) {
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkRehype)
+    .use(rehypeCodeGroup)
+    .use(rehypeStringify)
+    .process(markdown);
+
+  return String(file);
+}
+```
+
+</Step>
+<Step>
+
+### Write a group
+
+Open a group with `::: code-group`, list one label per tab, add one block per tab, and close it with `:::`.
+
+````md title="install.md"
+::: code-group labels=[npm, pnpm]
+
+```sh
+npm install rehype-code-group
+```
+
+```sh
+pnpm add rehype-code-group
+```
+
+:::
+````
+
+</Step>
+<Step>
+
+### Open the page
+
+With the default options, the plugin also adds a `<style>` and a `<script>` to any document that contains a group, so the tabs work without any other setup. The result looks like this:
+
+::: code-group labels=[npm, pnpm]
+
+```sh
+npm install rehype-code-group
+```
+
+```sh
+pnpm add rehype-code-group
+```
+
+:::
+
+</Step>
+</Steps>
+
+<Callout title="Using React, a bundler, or a strict CSP?">
+  Inline assets are the simplest way to start, but they are not always the best way to ship. If your pages are rendered by React, or you already have an application bundle, use `assets: "none"` and import the client yourself. See [Asset delivery and CSP](/docs/guides/asset-delivery).
+</Callout>
+
+## Where to go next
+
+- Learn the full [compact syntax](/docs/syntax/compact-groups), including quoted labels.
+- Write labels on the code fences instead, with the [remark companion](/docs/syntax/fence-labels).
+- Put whole paragraphs and lists in tabs with [rich groups](/docs/syntax/rich-groups).
+- Make related groups switch together with [sync and persistence](/docs/syntax/sync-and-persistence).

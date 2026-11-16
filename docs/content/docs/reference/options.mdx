@@ -1,0 +1,139 @@
+---
+title: Options
+description: Every option accepted by the rehype plugin and satteriCodeGroup, with types and defaults.
+---
+
+The rehype plugin and `satteriCodeGroup` take the same options object, `RehypeCodeGroupOptions`. Every option is optional.
+
+```ts
+import rehypeCodeGroup, { type RehypeCodeGroupOptions } from "rehype-code-group";
+
+const options: RehypeCodeGroupOptions = {
+  assets: "none",
+  diagnostics: "error",
+  idPrefix: "docs",
+};
+
+unified().use(rehypeCodeGroup, options);
+```
+
+<TypeTable
+  type={{
+    assets: {
+      description: "How the browser client and stylesheet are delivered.",
+      type: '"inline" | "none" | { mode: "inline"; nonce?: string } | { mode: "external"; scriptSrc: string; stylesheetHref: string; nonce?: string }',
+      default: '"inline"',
+    },
+    diagnostics: {
+      description: "What to do when a compact group's labels and panels don't match.",
+      type: '"warn" | "error" | "silent"',
+      default: '"warn"',
+    },
+    idPrefix: {
+      description: "Prefix for generated tab and panel IDs.",
+      type: "string",
+      default: '"rcg"',
+    },
+    labelResolver: {
+      description: "Turns a tab's label into the text shown on the tab.",
+      type: "(label: string) => string",
+      default: "commonLabelResolver",
+    },
+    customClassNames: {
+      description: "Extra class names, added next to the defaults.",
+      type: "Partial<ClassNames>",
+      default: "{}",
+    },
+  }}
+/>
+
+## assets
+
+Chooses how the client and stylesheet reach the page. Assets are only added to documents that contain a group.
+
+| Value                                                   | Adds                                                                     |
+| ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `"inline"`                                              | A `<style>` and a classic `<script type="text/javascript">` with the full assets.               |
+| `{ mode: "inline", nonce }`                             | The same, with `nonce` on both elements.                                 |
+| `{ mode: "external", stylesheetHref, scriptSrc, nonce? }` | `<link rel="stylesheet" href>` and `<script type="module" src>`.       |
+| `"none"`                                                | Nothing. Import `rehype-code-group/client` and `/styles.css` yourself.  |
+
+Assets go into the document's `<head>`. If there is an `<html>` element without a `<head>`, one is created. For fragments, they are added at the start of the tree. See [Asset delivery and CSP](/docs/guides/asset-delivery).
+
+## diagnostics
+
+Applies to compact groups whose number of labels differs from the number of blocks. The group is always left unconverted.
+
+- `"warn"`: adds a [vfile](https://github.com/vfile/vfile) message with source `rehype-code-group` and rule `panel-count`.
+- `"error"`: fails the file with the same message, which usually fails the build.
+- `"silent"`: no message.
+
+Malformed rich groups, and compact groups that the plugin doesn't recognize at all, are left unconverted without a message. On Sätteri, see [Sätteri diagnostics](/docs/integrations/satteri#diagnostics).
+
+## idPrefix
+
+Tabs get IDs like `rcg-0-tab-1` and panels like `rcg-0-block-1`: the prefix, the group number in the file, then the tab number. Numbering starts at 0 for each file and is the same on every build. Set a different prefix for each fragment when several separately processed fragments share a page.
+
+## labelResolver
+
+Called once for each tab label. The default, `commonLabelResolver`, replaces five emoji shortcodes. `fullEmojiResolver` from `rehype-code-group/emoji` supports the full catalog. See [Labels and emoji](/docs/syntax/labels-and-emoji).
+
+## customClassNames
+
+<TypeTable
+  type={{
+    codeGroupClass: {
+      description: "The group element.",
+      type: "string",
+      default: '"rehype-code-group"',
+    },
+    tabContainerClass: {
+      description: "The tab list.",
+      type: "string",
+      default: '"rcg-tab-container"',
+    },
+    tabClass: {
+      description: "Each tab button.",
+      type: "string",
+      default: '"rcg-tab"',
+    },
+    blockContainerClass: {
+      description: "Each panel.",
+      type: "string",
+      default: '"rcg-block"',
+    },
+    activeTabClass: {
+      description: "The selected tab.",
+      type: "string",
+      default: '"active"',
+    },
+    activeBlockClass: {
+      description: "The selected panel.",
+      type: "string",
+      default: '"active"',
+    },
+  }}
+/>
+
+The defaults in this table are always applied. Your values are added after them, and may contain several space-separated classes. See [Styling](/docs/guides/styling#class-names).
+
+## Package-manager plugin options
+
+`rehype-code-group/package-managers` takes its own options, `PackageManagerOptions`:
+
+<TypeTable
+  type={{
+    packageManagers: {
+      description: "Tabs to create, in order.",
+      type: '("npm" | "pnpm" | "yarn" | "bun")[]',
+      default: '["npm", "pnpm", "yarn", "bun"]',
+    },
+    diagnostics: {
+      description: "What to do with npm commands that can't be translated.",
+      type: '"warn" | "error" | "silent"',
+      default: '"warn"',
+    },
+  }}
+/>
+
+The remark companion, `rehype-code-group/remark`, and `satteriCodeGroupLabels` take no options.

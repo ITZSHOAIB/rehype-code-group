@@ -1,0 +1,89 @@
+---
+title: Astro
+description: Add code groups to Astro, with the Sätteri plugins for Astro 7's default Markdown processor or the rehype plugin for the remark processor.
+---
+
+How you add rehype-code-group depends on which Markdown processor your Astro site uses.
+
+| Your setup                                                    | Use                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------- |
+| Astro 7 with its default processor, [Sätteri](https://satteri.bruits.org) | `satteriCodeGroup` from `rehype-code-group/satteri` |
+| Astro 6 or earlier                                            | The rehype plugin, in `markdown.rehypePlugins`           |
+| Astro 7 with `@astrojs/markdown-remark` installed             | The rehype plugin, in `markdown.rehypePlugins`           |
+
+<Callout type="warn" title="rehypePlugins and Astro 7">
+  Astro 7 renders Markdown with Sätteri by default, and Sätteri doesn't run remark or rehype plugins. On a default Astro 7 site, use the Sätteri plugins below, or install `@astrojs/markdown-remark` to keep the unified pipeline and `markdown.rehypePlugins`.
+</Callout>
+
+## Astro 7 with Sätteri
+
+```sh npm2yarn
+npm install rehype-code-group
+```
+
+```js title="astro.config.mjs"
+import { satteri } from "@astrojs/markdown-satteri";
+import { defineConfig } from "astro/config";
+import {
+  satteriCodeGroup,
+  satteriCodeGroupLabels,
+} from "rehype-code-group/satteri";
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({
+      // Optional: take tab labels from `[label]` fence metadata.
+      mdastPlugins: [satteriCodeGroupLabels()],
+      hastPlugins: [satteriCodeGroup()],
+    }),
+  },
+});
+```
+
+`satteriCodeGroup` takes the same [options](/docs/reference/options) as the rehype plugin and writes the same HTML. `satteriCodeGroupLabels` does the job of the [remark companion](/docs/syntax/fence-labels). See [Sätteri](/docs/integrations/satteri) for supported versions and diagnostics.
+
+## Astro 6, or the remark processor
+
+```js title="astro.config.mjs"
+import { defineConfig } from "astro/config";
+import rehypeCodeGroup from "rehype-code-group";
+import remarkCodeGroup from "rehype-code-group/remark";
+
+export default defineConfig({
+  markdown: {
+    // Optional: take tab labels from `[label]` fence metadata.
+    remarkPlugins: [remarkCodeGroup],
+    rehypePlugins: [rehypeCodeGroup],
+  },
+});
+```
+
+Astro's Shiki highlighting produces ordinary HTML elements, so the plugin groups highlighted blocks as they are.
+
+## Assets
+
+Astro pages are HTML, and scripts in rendered Markdown run normally, so the default inline assets work without setup.
+
+For a stricter setup, or to avoid repeating the assets on every page, switch to `assets: "none"` and load the client once from a layout:
+
+```astro title="src/layouts/Docs.astro"
+---
+import "rehype-code-group/styles.css";
+---
+
+<slot />
+
+<script>
+  import "rehype-code-group/client";
+</script>
+```
+
+Astro processes and bundles the `<script>` and the stylesheet once for the whole site. The client watches for new groups, so content swapped in by client-side routing is set up automatically.
+
+## Smart quotes
+
+Astro turns on smart punctuation by default, which curls `"npm, classic"` into `“npm, classic”` before rehype-code-group sees it. Quoted labels and attribute values accept the curled forms, so you don't need to turn smart punctuation off.
+
+## MDX
+
+For `.mdx` pages, `@astrojs/mdx` extends your `markdown` configuration by default, so the same plugins apply. Remember that `{` and `<` are special in MDX, even inside labels.

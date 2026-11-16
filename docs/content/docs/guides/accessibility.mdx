@@ -1,0 +1,77 @@
+---
+title: Accessibility
+description: The ARIA tabs pattern, keyboard support, and how content stays reachable without JavaScript, in print, and in high-contrast modes.
+---
+
+Groups follow the [WAI-ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/). The semantics are in the generated HTML, so they don't wait for JavaScript, and the client only keeps the state attributes up to date.
+
+## Roles and properties
+
+| Element      | Markup                                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------- |
+| Tab list     | `role="tablist"`, with `aria-label` from the group's `label` (default `Code examples`), and `aria-orientation="vertical"` on vertical groups |
+| Each tab     | A real `<button type="button">` with `role="tab"`, `aria-selected`, and `aria-controls` pointing at its panel |
+| Each panel   | `role="tabpanel"`, with `aria-labelledby` pointing back at its tab                                            |
+
+IDs are generated from [`idPrefix`](/docs/reference/options#idprefix), so `aria-controls` and `aria-labelledby` always resolve within the page. See [HTML output](/docs/reference/html-output) for the full markup.
+
+## Keyboard
+
+Focus works as a single stop: only the selected tab is in the tab order (`tabindex="0"`), the others have `tabindex="-1"`. Moving between tabs selects them straight away, which is the pattern's "automatic activation".
+
+| Key                    | Horizontal groups                                    | Vertical groups              |
+| ---------------------- | ---------------------------------------------------- | ---------------------------- |
+| <kbd className="key">Tab</kbd>          | Moves focus to the selected tab, then on to the next focusable element, such as a link or button in the panel | Same |
+| <kbd className="key">→</kbd> / <kbd className="key">←</kbd> | Next / previous tab, wrapping around at the ends. Reversed in right-to-left layouts | No effect |
+| <kbd className="key">↓</kbd> / <kbd className="key">↑</kbd> | No effect                                             | Next / previous tab, wrapping around |
+| <kbd className="key">Home</kbd> / <kbd className="key">End</kbd> | First / last tab                             | First / last tab             |
+| <kbd className="key">Enter</kbd> / <kbd className="key">Space</kbd> | Selects the focused tab, as for any button | Same |
+
+Right-to-left is detected from the group's computed `direction`, so it works whether you set `dir="rtl"` on the page, on a container, or in CSS.
+
+Try it here: click a tab, then use the arrow keys.
+
+:::: code-group label="Keyboard demo"
+
+::: code-tab label="First"
+
+Press the right arrow to move to **Second**.
+
+:::
+
+::: code-tab label="Second"
+
+Press <kbd className="key">End</kbd> to jump to the last tab.
+
+:::
+
+::: code-tab label="Third"
+
+Press <kbd className="key">Home</kbd> to go back to the start.
+
+:::
+
+::::
+
+## Without JavaScript
+
+Until the client runs, nothing is hidden: the tab buttons are shown, and every panel below them is visible. If a script fails to load, or a reader has turned JavaScript off, all the content is still there. Search engines and reader modes also see every panel.
+
+## Print
+
+The print stylesheet hides the tab list and prints every panel, each headed by its label. A printout of an install page shows all the package managers, not just the one that happened to be selected.
+
+## Focus and contrast
+
+- Tabs have a visible `:focus-visible` outline in `--rcg-focus-color`.
+- In forced-colors mode, such as Windows high contrast, the accent, border and focus colors switch to the `Highlight` and `CanvasText` system colors.
+- The selected tab is marked by weight and an underline as well as color.
+
+## Writing accessible groups
+
+The markup is only half of it. The rest is up to the author:
+
+- **Name rich groups.** `label="Package manager"` tells screen-reader users what the tabs choose between. Compact groups are all called `Code examples`.
+- **Keep tab labels short and distinct.** They are read on every arrow press.
+- **Don't hide essential steps in tabs.** Use tabs for alternatives, not for a sequence a reader must follow from start to end.
+- **If you change colors, check contrast** of tab text and the focus outline against both of your themes.

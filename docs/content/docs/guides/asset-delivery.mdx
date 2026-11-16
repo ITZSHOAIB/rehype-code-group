@@ -1,0 +1,103 @@
+---
+title: Asset delivery and CSP
+description: Choose how the browser client and stylesheet reach the page, from zero-config inline assets to your own bundle under a strict Content Security Policy.
+---
+
+Tabs need two things in the browser: a stylesheet and a small client script. The [`assets`](/docs/reference/options#assets) option decides how they arrive.
+
+| Mode                     | What the plugin adds                                   | Choose it when                                                                  |
+| ------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `"inline"` (default)     | A `<style>` and a `<script>` with the full assets      | You render standalone HTML and want zero setup.                                 |
+| `{ mode: "inline", nonce }` | The same, with a `nonce` attribute on both           | Your CSP allows inline code by nonce.                                           |
+| `{ mode: "external", … }` | A `<link rel="stylesheet">` and a `<script type="module">` | You serve the files yourself and want the browser to cache them.          |
+| `"none"`                 | Nothing                                                | Your application imports the client and stylesheet, as React apps should.      |
+
+In every mode, assets are added only to documents that contain at least one group.
+
+## Inline (default)
+
+```js
+unified().use(rehypeCodeGroup);
+// same as
+unified().use(rehypeCodeGroup, { assets: "inline" });
+```
+
+Where the assets go depends on what the tree contains:
+
+- **A full document with `<head>`:** both are added to the head. When the document already has a `<style>`, the plugin's style is placed ahead of it, so your own styles win.
+- **An `<html>` without a `<head>`:** a head is created for them.
+- **A fragment**, as with most Markdown: both go at the start of the fragment.
+
+The inline script runs once and sets up the whole document, so several fragments on one page, each with its own copy, don't conflict. It is still about 12 kB of repeated, uncompressed markup per page, so on larger sites prefer one of the other modes.
+
+## External files
+
+The plugin can link to files you host instead:
+
+```js
+unified().use(rehypeCodeGroup, {
+  assets: {
+    mode: "external",
+    stylesheetHref: "/assets/code-group.css",
+    scriptSrc: "/assets/code-group.js",
+  },
+});
+```
+
+Serve the package's own files at those URLs. `dist/client.js` is a self-contained ES module that sets up the document when it loads, which is why it is linked with `type="module"`.
+
+```sh
+cp node_modules/rehype-code-group/dist/client.js public/assets/code-group.js
+cp node_modules/rehype-code-group/dist/styles.css public/assets/code-group.css
+```
+
+Copy them again whenever you upgrade the package, so the files match the markup.
+
+## Your own bundle
+
+With `assets: "none"`, the plugin only writes markup, and your application loads the assets through its bundler:
+
+```js title="markdown.config.js"
+unified().use(rehypeCodeGroup, { assets: "none" });
+```
+
+```js title="main.js"
+import "rehype-code-group/client";
+import "rehype-code-group/styles.css";
+```
+
+Importing `rehype-code-group/client` in a browser sets up `document` straight away. It watches for groups added later, so content swapped in by a router or a framework works without extra calls. To set up a different root, or to stop listening, call [`initCodeGroups`](/docs/guides/browser-client) yourself.
+
+<Callout type="warn" title="React and other client-side renderers">
+  React doesn't run `<script>` elements that it renders on the client, so inline assets can't be relied on in MDX rendered by React, such as Next.js, Fumadocs, Docusaurus or Remix. Use `assets: "none"` and import the client from a client component, as this site does. See [Next.js and Fumadocs](/docs/integrations/nextjs-fumadocs).
+</Callout>
+
+## Content Security Policy
+
+A strict CSP blocks inline `<script>` and `<style>` elements unless they are allowed by a nonce or a hash.
+
+### Inline with a nonce
+
+Generate a fresh nonce for every response and pass it to the plugin. This means rendering per request; a nonce baked into static HTML is the same for every visitor, which defeats its purpose.
+
+```js
+unified().use(rehypeCodeGroup, {
+  assets: { mode: "inline", nonce: response.locals.cspNonce },
+});
+```
+
+```txt title="Response header"
+Content-Security-Policy: script-src 'nonce-R4nd0m'; style-src 'nonce-R4nd0m'
+```
+
+### External files or your own bundle
+
+Both load code from URLs, so `'self'`, or the host serving the files, is enough. Neither needs `'unsafe-inline'`:
+
+```txt title="Response header"
+Content-Security-Policy: script-src 'self'; style-src 'self'
+```
+
+In external mode, the `nonce` option is also accepted and added to both the `<link>` and the `<script>`, for policies that require a nonce on every script.
+
+The client itself doesn't use `eval`, inline event handlers or inline styles. It only toggles classes and the `hidden` and ARIA attributes.

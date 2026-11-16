@@ -1,0 +1,11 @@
+{
+  "title": "Writing groups",
+  "pages": [
+    "compact-groups",
+    "fence-labels",
+    "rich-groups",
+    "sync-and-persistence",
+    "package-managers",
+    "labels-and-emoji"
+  ]
+}
