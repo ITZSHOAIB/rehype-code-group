@@ -375,50 +375,152 @@ html > body[data-scroll-locked] {
   margin-block: 0;
 }
 
-/* Homepage: integration hub */
-.hub {
-  --hub-gap: 3.5rem;
-  --hub-ease: cubic-bezier(0.22, 1, 0.36, 1);
+/* Homepage: supported integrations */
+.integration-showcase {
+  border-block: 1px solid var(--color-fd-border);
+}
+
+.integration-logos {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding-block: 2.25rem;
 }
 
-.hub-column {
-  display: grid;
-  gap: 0.875rem;
-  align-content: center;
+.integration-logo-item {
+  min-width: 0;
 }
 
-.hub-item {
-  position: relative;
-}
-
-.hub-card {
-  position: relative;
-  z-index: 1;
+.integration-logo-link {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--color-fd-border);
-  border-radius: 1rem;
-  background: var(--color-fd-card);
-  transition: border-color 600ms var(--hub-ease);
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 7rem;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-fd-muted-foreground);
+  transition: color 200ms ease;
 }
 
-.hub-card[data-active],
-.hub-card:hover,
-.hub-card:focus-visible {
-  border-color: color-mix(
-    in oklab,
-    var(--color-fd-primary) 45%,
-    var(--color-fd-border)
-  );
+.integration-logo-link .hub-mark {
+  width: 3rem;
+  height: 3rem;
 }
 
-.hub-card-ghost {
-  border-style: dashed;
-  background: transparent;
+.integration-logo-link .hub-logo {
+  width: 2rem;
+  height: 2rem;
+}
+
+.integration-logo-link .hub-logo-unified {
+  width: 3rem;
+}
+
+.integration-logo-link .hub-logo-mdx {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.integration-logo-arrow {
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity 250ms ease,
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.integration-logo-link:hover,
+.integration-logo-link:focus-visible {
+  color: var(--color-fd-foreground);
+}
+
+.integration-logo-link:hover .integration-logo-arrow,
+.integration-logo-link:focus-visible .integration-logo-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+.integration-logo-link:focus-visible,
+.integration-footnote a:focus-visible {
+  outline: 2px solid var(--color-fd-primary);
+  outline-offset: 4px;
+  border-radius: 0.25rem;
+}
+
+.integration-footnote {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+  border-block-start: 1px solid var(--color-fd-border);
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
+
+.integration-footnote a:hover {
+  color: var(--color-fd-foreground);
+}
+
+/* A few pixels of depth as the whole strip passes through the viewport.
+   Unsupported browsers keep the same static layout. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 40rem) {
+    .integration-logos {
+      view-timeline-name: --integration-strip;
+    }
+    .integration-logo-item {
+      animation: integration-drift linear both;
+      animation-timeline: --integration-strip;
+      animation-range: entry 0% exit 100%;
+    }
+    .integration-logo-item:nth-child(even) {
+      animation-name: integration-drift-near;
+    }
+  }
+}
+
+@keyframes integration-drift {
+  from {
+    transform: translateY(8px);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes integration-drift-near {
+  from {
+    transform: translateY(3px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 39.999rem) {
+  .integration-logos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-block: 1rem;
+    row-gap: 0.25rem;
+  }
+  .integration-logo-item:last-child {
+    grid-column: 1 / -1;
+  }
+  .integration-footnote {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .integration-logo-link,
+  .integration-logo-arrow {
+    transition: none;
+  }
 }
 
 .hub-mark {
@@ -441,7 +543,7 @@ html > body[data-scroll-locked] {
 
 .hub-brand {
   position: relative;
-  background: var(--color-fd-background);
+  background: transparent;
   color: var(--color-fd-foreground);
 }
 
@@ -465,167 +567,6 @@ html > body[data-scroll-locked] {
   bottom: -0.125rem;
   border: 2px solid var(--color-fd-card);
   border-radius: 50%;
-}
-
-.hub-go {
-  margin-inline-start: auto;
-  color: var(--color-fd-muted-foreground);
-  transition:
-    color 300ms var(--hub-ease),
-    transform 300ms var(--hub-ease);
-}
-
-.hub-card:hover .hub-go,
-.hub-card:focus-visible .hub-go {
-  color: var(--color-fd-primary);
-  transform: translateX(2px);
-}
-
-.hub-wire {
-  display: none;
-}
-
-.hub-core {
-  display: grid;
-  place-items: center;
-  order: -1;
-}
-
-.hub-core-card {
-  display: grid;
-  width: 100%;
-  gap: 1rem;
-  padding: 1.25rem;
-  border: 1px solid var(--color-fd-border);
-  border-radius: 1.25rem;
-  background: var(--color-fd-card);
-  box-shadow: 0 20px 48px -32px
-    color-mix(in oklab, var(--color-fd-foreground) 35%, transparent);
-}
-
-.hub-config {
-  overflow: hidden;
-  border: 1px solid var(--color-fd-border);
-  border-radius: 0.75rem;
-  background: var(--color-fd-background);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-}
-
-.hub-config-file {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-block-end: 1px solid var(--color-fd-border);
-  font-size: 0.75rem;
-  color: var(--color-fd-muted-foreground);
-}
-
-.hub-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 999px;
-  background: var(--color-fd-primary);
-}
-
-.hub-config-line {
-  overflow-x: auto;
-  padding: 0.75rem;
-  white-space: nowrap;
-  animation: hub-fade 700ms var(--hub-ease);
-}
-
-@media (min-width: 64rem) {
-  .hub {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem) minmax(0, 1fr);
-    gap: var(--hub-gap);
-  }
-
-  .hub-core {
-    order: 0;
-  }
-
-  /* A hairline from each card to the core; the active one is tinted. */
-  .hub-wire {
-    position: absolute;
-    top: 50%;
-    display: block;
-    width: var(--hub-gap);
-    height: 1px;
-    background: var(--color-fd-border);
-  }
-
-  .hub-wire::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, transparent, var(--color-fd-primary));
-    opacity: 0;
-    transition: opacity 600ms var(--hub-ease);
-  }
-
-  .hub-item[data-side="left"] .hub-wire {
-    left: 100%;
-  }
-
-  .hub-item[data-side="right"] .hub-wire {
-    right: 100%;
-    transform: scaleX(-1);
-  }
-
-  .hub-item:has([data-active]) .hub-wire::after,
-  .hub-item:hover .hub-wire::after {
-    opacity: 0.7;
-  }
-}
-
-@keyframes hub-fade {
-  from {
-    opacity: 0;
-    transform: translateY(2px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Cards fade in as the section scrolls in, where supported. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .hub-item,
-    .compare-card {
-      animation: hub-rise linear both;
-      animation-timeline: view();
-      animation-range: entry 10% entry 70%;
-    }
-  }
-}
-
-@keyframes hub-rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hub-config-line {
-    animation: none;
-  }
-
-  .hub-card,
-  .hub-go,
-  .hub-wire::after {
-    transition: none;
-  }
 }
 
 kbd.key {

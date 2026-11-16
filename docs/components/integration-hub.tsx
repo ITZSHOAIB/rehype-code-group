@@ -1,174 +1,40 @@
-"use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { IntegrationMark } from "@/components/integration-mark";
-import { Logo } from "@/components/logo";
 
-type Integration = {
-  name: string;
-  mark: "unified" | "mdx" | "satteri" | "astro" | "nextjs";
-  href: string;
-  file: string;
-  /** The config line, split so the plugin call can be highlighted. */
-  before: string;
-  plugin: string;
-  after: string;
-};
-
-// Each line is taken from the matching integration guide.
-const integrations: Integration[] = [
+const integrations = [
+  { name: "unified", mark: "unified", href: "/docs/integrations/unified/" },
+  { name: "MDX", mark: "mdx", href: "/docs/integrations/mdx/" },
+  { name: "Sätteri", mark: "satteri", href: "/docs/integrations/satteri/" },
+  { name: "Astro", mark: "astro", href: "/docs/integrations/astro/" },
   {
-    name: "unified",
-    mark: "unified",
-    href: "/docs/integrations/unified/",
-    file: "build.js",
-    before: ".use(",
-    plugin: "rehypeCodeGroup",
-    after: ")",
-  },
-  {
-    name: "MDX",
-    mark: "mdx",
-    href: "/docs/integrations/mdx/",
-    file: "compile.js",
-    before: "rehypePlugins: [",
-    plugin: "rehypeCodeGroup",
-    after: "]",
-  },
-  {
-    name: "Sätteri",
-    mark: "satteri",
-    href: "/docs/integrations/satteri/",
-    file: "render.js",
-    before: "hastPlugins: [",
-    plugin: "satteriCodeGroup()",
-    after: "]",
-  },
-  {
-    name: "Astro",
-    mark: "astro",
-    href: "/docs/integrations/astro/",
-    file: "astro.config.mjs",
-    before: "satteri({ hastPlugins: [",
-    plugin: "satteriCodeGroup()",
-    after: "] })",
-  },
-  {
-    name: "Next.js and Fumadocs",
+    name: "Next.js & Fumadocs",
     mark: "nextjs",
     href: "/docs/integrations/nextjs-fumadocs/",
-    file: "source.config.ts",
-    before: "rehypePlugins: (v) => [",
-    plugin: "rehypeCodeGroup",
-    after: ", ...v]",
   },
-];
-
-const ROTATE_MS = 5000;
+] as const;
 
 export function IntegrationHub() {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(
-      () => setActive((index) => (index + 1) % integrations.length),
-      ROTATE_MS,
-    );
-    return () => window.clearInterval(timer);
-  }, [paused]);
-
-  const current = integrations[active];
-  const left = integrations.slice(0, 3);
-  const right = integrations.slice(3);
-
-  const card = (integration: Integration, side: "left" | "right") => {
-    const index = integrations.indexOf(integration);
-    return (
-      <li key={integration.name} className="hub-item" data-side={side}>
-        <Link
-          href={integration.href}
-          className="hub-card"
-          data-active={index === active || undefined}
-          onMouseEnter={() => setActive(index)}
-          onFocus={() => setActive(index)}
-        >
-          <IntegrationMark name={integration.mark} />
-          <span className="min-w-0">
-            <span className="block font-display font-semibold tracking-tight">
-              {integration.name}
-            </span>
-            <span className="block truncate font-mono text-xs text-fd-muted-foreground">
-              {integration.file}
-            </span>
-          </span>
-          <span aria-hidden="true" className="hub-go">
-            →
-          </span>
-        </Link>
-        <span aria-hidden="true" className="hub-wire" />
-      </li>
-    );
-  };
-
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: pausing the rotation on hover is a convenience, not an action.
-    <div
-      className="hub"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-    >
-      <ul className="hub-column">{left.map((item) => card(item, "left"))}</ul>
-
-      <div className="hub-core">
-        <div className="hub-core-card">
-          <p className="flex items-center gap-2 font-display font-semibold tracking-tight">
-            <Logo className="size-6" />
-            rehype-code-group
-          </p>
-          <div className="hub-config" aria-live="polite">
-            <p className="hub-config-file">
-              <span className="hub-dot" />
-              {current.file}
-            </p>
-            <p key={current.name} className="hub-config-line">
-              <span className="text-fd-muted-foreground">{current.before}</span>
-              <span className="text-fd-primary">{current.plugin}</span>
-              <span className="text-fd-muted-foreground">{current.after}</span>
-            </p>
-          </div>
-          <p className="text-xs text-fd-muted-foreground">
-            Same HTML, same options, every pipeline.
-          </p>
-        </div>
-      </div>
-
-      <ul className="hub-column">
-        {right.map((item) => card(item, "right"))}
-        <li className="hub-item" data-side="right">
-          <Link
-            href="/docs/integrations/unified/"
-            className="hub-card hub-card-ghost"
-          >
-            <span aria-hidden="true" className="hub-mark">
-              +
-            </span>
-            <span className="min-w-0">
-              <span className="block font-display font-semibold tracking-tight">
-                Anything with rehype
+    <div className="integration-showcase">
+      <ul className="integration-logos" aria-label="Supported integrations">
+        {integrations.map((integration) => (
+          <li key={integration.mark} className="integration-logo-item">
+            <Link href={integration.href} className="integration-logo-link">
+              <IntegrationMark name={integration.mark} />
+              <span>{integration.name}</span>
+              <span className="integration-logo-arrow" aria-hidden="true">
+                ↗
               </span>
-              <span className="block font-mono text-xs text-fd-muted-foreground">
-                Docusaurus, Nextra, …
-              </span>
-            </span>
-          </Link>
-          <span aria-hidden="true" className="hub-wire" />
-        </li>
+            </Link>
+          </li>
+        ))}
       </ul>
+      <p className="integration-footnote">
+        <span>One plugin. A familiar place in your stack.</span>
+        <Link href="/docs/integrations/unified/">
+          And anywhere else rehype runs <span aria-hidden="true">→</span>
+        </Link>
+      </p>
     </div>
   );
 }
