@@ -7,7 +7,7 @@ The bundled stylesheet is deliberately plain. It handles layout and states and l
 
 ## Custom properties
 
-Set these on `.rehype-code-group`, or on any ancestor of it.
+Set these on `.rehype-code-group`, or on any ancestor of it, such as `:root`. The bundled stylesheet only reads them, with the defaults below as fallbacks, so wherever you set them takes effect.
 
 | Property                      | Default (light / dark)    | Used for                                           |
 | ----------------------------- | ------------------------- | -------------------------------------------------- |
@@ -25,6 +25,18 @@ Set these on `.rehype-code-group`, or on any ancestor of it.
   --rcg-tab-background-active: color-mix(in srgb, rebeccapurple 12%, transparent);
 }
 ```
+
+## Overriding the bundled styles
+
+Your CSS always wins over the bundled look, whatever order the stylesheets load in. That matters with the default inline assets, where the plugin's `<style>` element ends up inside the rendered content, after your site's stylesheets.
+
+- **Visual rules** (spacing, borders, colors, the vertical layout) are wrapped in `:where()`, so they have zero specificity. A plain `.rcg-tab { padding: 0.25rem }` beats them.
+- **Behavior rules** keep their specificity: hiding inactive panels inside `[data-rcg-enhanced]`, and showing every panel when printing. A rule such as `.rcg-block { display: flex }` won't reveal hidden panels.
+- **Defaults live in private properties.** The built-in values are stored as `--_rcg-*`, so `var(--rcg-accent)` has no value unless you set it. To reuse a color in your own rules, set the property yourself first, as the [folder tabs recipe](#recipe-folder-tabs) does with `--rcg-border-color`. Don't depend on the `--_rcg-*` names; they may change.
+
+<Callout title="Version note">
+This applies from the release after 2.0.0. In 2.0.0 and earlier, the bundled rules match the specificity of typical overrides and set the `--rcg-*` properties on the group itself, so with inline assets you need a more specific selector, such as `body .rehype-code-group`, and setting the properties on `:root` has no effect.
+</Callout>
 
 ## Dark mode
 
@@ -82,7 +94,7 @@ Besides the `active` classes, you can style from attributes that are always accu
 
 /* Only after the client has set the group up */
 .rehype-code-group[data-rcg-enhanced] {
-  border: 1px solid var(--rcg-border-color);
+  border: 1px solid #d4d4d8;
 }
 
 /* Vertical groups */
@@ -93,12 +105,13 @@ Besides the `active` classes, you can style from attributes that are always accu
 
 ## Recipe: folder tabs
 
-The groups on this site are drawn as one card with folder-style tabs. That look is not built in. It is the CSS below, which you can copy and adjust. It only uses the classes and attributes listed above, so it works on top of the bundled stylesheet.
+The groups on this site are drawn as one card with folder-style tabs. That look is not built in. It is the CSS below, which you can copy and adjust. It only uses the classes and attributes listed above and sits on top of the bundled stylesheet, which still handles states and the narrow-screen layout.
 
 ```css title="folder-tabs.css"
 .rehype-code-group {
   --folder-surface: light-dark(#ffffff, #18181b);
   --folder-rail: light-dark(#f4f4f5, #27272a);
+  --rcg-border-color: light-dark(#d4d4d8, #3f3f46);
   --rcg-tab-background: transparent;
   --rcg-tab-background-active: var(--folder-surface);
 
@@ -153,27 +166,14 @@ The groups on this site are drawn as one card with folder-style tabs. That look 
   border-radius: 0.5rem 0 0 0.5rem;
 }
 
-/* On narrow screens, put the side rail back on top */
+/* Below 40rem the bundled stylesheet moves the rail on top; match the tabs */
 @media (max-width: 40rem) {
-  .rehype-code-group[data-rcg-orientation="vertical"] {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
-    flex-direction: row;
     padding: 0.375rem 0.5rem 0;
-    border-inline-end: 0;
-    border-block-end: 1px solid var(--rcg-border-color);
   }
 
   .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
     border-radius: 0.5rem 0.5rem 0 0;
-    border-inline-end: 0;
-    border-block-end: 2px solid transparent;
-  }
-
-  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab[aria-selected="true"] {
-    border-block-end-color: var(--rcg-accent);
   }
 }
 ```
@@ -186,7 +186,7 @@ If your highlighter wraps code blocks in another element, as Fumadocs does with 
 - **Long code scrolls** inside its panel instead of widening the page, and a long row of tabs scrolls sideways.
 - **Forced colors** (Windows high contrast): the accent, border and focus colors switch to system colors.
 - **Print:** the tab list is hidden, every panel is printed, and each one is headed by its label.
-- **Vertical groups** use a two-column grid: tabs on the start side, panels next to them, at every width. To stack them on small screens, add a media query as in the [folder tabs recipe](#recipe-folder-tabs).
+- **Vertical groups** use a two-column grid: tabs on the start side, panels next to them. Below `40rem` the tabs move above the panels in a row; the keyboard still uses the up and down arrows.
 
 ## Without the bundled stylesheet
 

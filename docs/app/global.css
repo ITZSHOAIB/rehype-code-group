@@ -180,26 +180,14 @@ html > body[data-scroll-locked] {
   border-radius: 0.5rem 0 0 0.5rem;
 }
 
+/* Below 40rem the bundled stylesheet moves the tabs on top; match the shape. */
 @media (max-width: 40rem) {
-  .rehype-code-group[data-rcg-orientation="vertical"] {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab-container {
-    flex-direction: row;
     padding: 0.375rem 0.5rem 0;
-    border-inline-end: 0;
-    border-block-end: 1px solid var(--rcg-border-color);
   }
 
   .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab {
     border-radius: 0.5rem 0.5rem 0 0;
-    border-inline-end: 0;
-    border-block-end: 2px solid transparent;
-  }
-
-  .rehype-code-group[data-rcg-orientation="vertical"] .rcg-tab.active {
-    border-block-end-color: var(--rcg-accent);
   }
 }
 

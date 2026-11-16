@@ -14,3 +14,4 @@ docs/*.tsbuildinfo
 docs/dist/
 # Generated from CHANGELOG.md by docs/scripts/changelog.mjs
 docs/content/docs/changelog.md
+docs/AGENTS.md
