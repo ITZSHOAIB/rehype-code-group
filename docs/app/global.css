@@ -271,6 +271,9 @@ html > body[data-scroll-locked] {
   .home-hero-copy > :nth-child(4) {
     animation-delay: 195ms;
   }
+  .home-hero-copy > :nth-child(5) {
+    animation-delay: 240ms;
+  }
   .home-hero-demo {
     animation-delay: 160ms;
   }

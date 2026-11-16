@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { GitHubMark } from "@/components/github-mark";
 import { HomeMotion } from "@/components/home-motion";
 import { IntegrationHub } from "@/components/integration-hub";
 import { Logo } from "@/components/logo";
 import { getMDXComponents } from "@/components/mdx";
+import { getNpmDownloads } from "@/lib/npm-stats";
 import { npmUrl, repoUrl } from "@/lib/shared";
 import { homeDemos } from "@/lib/source";
 
@@ -146,7 +148,21 @@ const features: { title: string; body: ReactNode; href: string }[] = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const downloads = await getNpmDownloads();
+  const formatDate = (value: string) =>
+    new Intl.DateTimeFormat("en", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(`${value}T00:00:00Z`));
+  const downloadCount = downloads
+    ? new Intl.NumberFormat("en", {
+        notation: "compact",
+        maximumFractionDigits: 1,
+      }).format(downloads.downloads)
+    : null;
   return (
     <HomeMotion>
       <div
@@ -181,12 +197,50 @@ export default function HomePage() {
             >
               Get started
             </Link>
-            <Link
-              href="/docs"
-              className="home-cta inline-flex items-center rounded-full border bg-fd-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
+            <a
+              href={repoUrl}
+              className="home-cta inline-flex items-center gap-2 rounded-full border bg-fd-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
             >
-              Read the docs
-            </Link>
+              <GitHubMark className="size-4" />
+              Star on GitHub
+            </a>
+          </div>
+          <div className="home-credibility mt-5 text-xs leading-relaxed text-fd-muted-foreground">
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              {downloads && (
+                <>
+                  <a
+                    href={npmUrl}
+                    className="hover:text-fd-foreground underline-offset-4 hover:underline"
+                    title={`${downloads.downloads.toLocaleString("en")} downloads from ${downloads.start} to ${downloads.end}`}
+                  >
+                    <span className="font-medium text-fd-foreground">
+                      {downloadCount}
+                    </span>{" "}
+                    npm downloads / 30 days
+                  </a>
+                  <span aria-hidden="true">·</span>
+                </>
+              )}
+              <a
+                href={`${repoUrl}/blob/main/LICENSE`}
+                className="hover:text-fd-foreground underline-offset-4 hover:underline"
+              >
+                MIT licensed
+              </a>
+            </p>
+            {downloads && (
+              <p className="mt-1 text-[0.6875rem]">
+                Reporting period:{" "}
+                <time dateTime={downloads.start}>
+                  {formatDate(downloads.start)}
+                </time>{" "}
+                –{" "}
+                <time dateTime={downloads.end}>
+                  {formatDate(downloads.end)}
+                </time>
+              </p>
+            )}
           </div>
         </div>
         <div className="folder-card home-hero-demo">

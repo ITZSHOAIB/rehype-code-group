@@ -10,3 +10,5 @@ Locally bundled artwork for the homepage. SVG path geometry is unchanged; monoch
 - Fumadocs: https://github.com/fuma-nama/fumadocs/blob/main/apps/docs/app/icon.png (MIT repository); downloaded from https://fumadocs.dev/icon.png.
 
 Brand names and marks belong to their respective owners.
+
+The hero GitHub action uses the [GitHub mark](https://github.com/simple-icons/simple-icons/blob/16.38.0/icons/github.svg) via Simple Icons 16.38.0 (CC0-1.0).

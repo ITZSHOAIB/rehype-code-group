@@ -57,3 +57,28 @@ test("pages declare canonical URLs and social images", async ({ page }) => {
     "summary_large_image",
   );
 });
+
+test("hero offers distinct getting-started and GitHub actions", async ({
+  page,
+}) => {
+  const npmRequests: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).hostname === "api.npmjs.org")
+      npmRequests.push(request.url());
+  });
+  await page.goto("/");
+  const hero = page.locator(".home-hero");
+  await expect(
+    hero.getByRole("link", { name: "Get started", exact: true }),
+  ).toHaveAttribute("href", "/docs/getting-started/");
+  await expect(
+    hero.getByRole("link", { name: "Star on GitHub", exact: true }),
+  ).toHaveAttribute("href", "https://github.com/ITZSHOAIB/rehype-code-group");
+  await expect(
+    hero.getByRole("link", { name: "Read the docs", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    hero.getByRole("link", { name: "MIT licensed", exact: true }),
+  ).toBeVisible();
+  expect(npmRequests).toEqual([]);
+});
