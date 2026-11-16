@@ -43,105 +43,138 @@ export const getClassNames = (
   };
 };
 
+const group = `.${defaultClassNames.codeGroupClass}`;
+const tabs = `.${defaultClassNames.tabContainerClass}`;
+const tab = `.${defaultClassNames.tabClass}`;
+const block = `.${defaultClassNames.blockContainerClass}`;
+const vertical = `${group}[data-rcg-orientation="vertical"]`;
+
+/**
+ * Visual rules are wrapped in `:where()`, so any site rule wins whatever the
+ * load order; inline assets land after the site's stylesheets. The rules
+ * that show and hide panels keep their specificity, because they are
+ * behavior rather than looks.
+ *
+ * The public `--rcg-*` properties are never set here, only read with
+ * fallbacks into private `--_rcg-*` ones. That way a value set on the group
+ * or on any ancestor, such as `:root`, takes effect.
+ */
 export const styles = `
-.${defaultClassNames.codeGroupClass} {
-  --rcg-accent: #2563eb;
-  --rcg-border-color: #d4d4d8;
-  --rcg-focus-color: #2563eb;
-  --rcg-tab-background: transparent;
-  --rcg-tab-background-active: #f4f4f5;
-  --rcg-tab-color: inherit;
+:where(${group}) {
+  --_rcg-accent: var(--rcg-accent, #2563eb);
+  --_rcg-border-color: var(--rcg-border-color, #d4d4d8);
+  --_rcg-focus-color: var(--rcg-focus-color, #2563eb);
+  --_rcg-tab-background: var(--rcg-tab-background, transparent);
+  --_rcg-tab-background-active: var(--rcg-tab-background-active, #f4f4f5);
   display: grid;
   gap: 0;
   min-width: 0;
 }
-.${defaultClassNames.tabContainerClass} {
+:where(${tabs}) {
   display: flex;
   gap: 0.125rem;
   overflow-x: auto;
-  border-block-end: 1px solid var(--rcg-border-color);
+  border-block-end: 1px solid var(--_rcg-border-color);
 }
-.${defaultClassNames.tabClass} {
+:where(${tab}) {
   padding: 0.5rem 1rem;
   margin: 0;
   cursor: pointer;
   color: var(--rcg-tab-color);
   border: 0;
   border-block-end: 2px solid transparent;
-  background: var(--rcg-tab-background);
+  background: var(--_rcg-tab-background);
   font: inherit;
 }
-.${defaultClassNames.tabClass}.${defaultClassNames.activeTabClass} {
-  border-block-end-color: var(--rcg-accent);
-  background: var(--rcg-tab-background-active);
+:where(${tab}.${defaultClassNames.activeTabClass}) {
+  border-block-end-color: var(--_rcg-accent);
+  background: var(--_rcg-tab-background-active);
   font-weight: 600;
 }
-.${defaultClassNames.tabClass}:focus-visible {
-  outline: 2px solid var(--rcg-focus-color);
+:where(${tab}:focus-visible) {
+  outline: 2px solid var(--_rcg-focus-color);
   outline-offset: -2px;
 }
-.${defaultClassNames.blockContainerClass} {
+:where(${block}) {
   min-width: 0;
   overflow-x: auto;
   margin: 0;
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] {
+:where(${vertical}) {
   grid-template-columns: minmax(max-content, 12rem) minmax(0, 1fr);
   align-items: start;
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabContainerClass} {
+:where(${vertical} ${tabs}) {
   flex-direction: column;
   inline-size: 100%;
   border-block-end: 0;
-  border-inline-end: 1px solid var(--rcg-border-color);
+  border-inline-end: 1px solid var(--_rcg-border-color);
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabClass} {
+:where(${vertical} ${tab}) {
   text-align: start;
   border-block-end: 0;
   border-inline-end: 2px solid transparent;
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-orientation="vertical"] .${defaultClassNames.tabClass}.${defaultClassNames.activeTabClass} {
-  border-inline-end-color: var(--rcg-accent);
+:where(${vertical} ${tab}.${defaultClassNames.activeTabClass}) {
+  border-inline-end-color: var(--_rcg-accent);
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass} {
+@media (max-width: 40rem) {
+  :where(${vertical}) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(${vertical} ${tabs}) {
+    flex-direction: row;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--_rcg-border-color);
+  }
+  :where(${vertical} ${tab}) {
+    text-align: center;
+    border-inline-end: 0;
+    border-block-end: 2px solid transparent;
+  }
+  :where(${vertical} ${tab}.${defaultClassNames.activeTabClass}) {
+    border-block-end-color: var(--_rcg-accent);
+  }
+}
+${group}[data-rcg-enhanced] ${block} {
   display: none;
 }
-.${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass}.${defaultClassNames.activeBlockClass} {
+${group}[data-rcg-enhanced] ${block}.${defaultClassNames.activeBlockClass} {
   display: block;
 }
 @media (prefers-color-scheme: dark) {
-  .${defaultClassNames.codeGroupClass} {
-    --rcg-accent: #60a5fa;
-    --rcg-border-color: #3f3f46;
-    --rcg-focus-color: #93c5fd;
-    --rcg-tab-background-active: #27272a;
+  :where(${group}) {
+    --_rcg-accent: var(--rcg-accent, #60a5fa);
+    --_rcg-border-color: var(--rcg-border-color, #3f3f46);
+    --_rcg-focus-color: var(--rcg-focus-color, #93c5fd);
+    --_rcg-tab-background-active: var(--rcg-tab-background-active, #27272a);
   }
 }
 @supports (color: light-dark(black, white)) {
-  .${defaultClassNames.codeGroupClass} {
-    --rcg-accent: light-dark(#2563eb, #60a5fa);
-    --rcg-border-color: light-dark(#d4d4d8, #3f3f46);
-    --rcg-focus-color: light-dark(#2563eb, #93c5fd);
-    --rcg-tab-background-active: light-dark(#f4f4f5, #27272a);
+  :where(${group}) {
+    --_rcg-accent: var(--rcg-accent, light-dark(#2563eb, #60a5fa));
+    --_rcg-border-color: var(--rcg-border-color, light-dark(#d4d4d8, #3f3f46));
+    --_rcg-focus-color: var(--rcg-focus-color, light-dark(#2563eb, #93c5fd));
+    --_rcg-tab-background-active: var(--rcg-tab-background-active, light-dark(#f4f4f5, #27272a));
   }
 }
 @media (forced-colors: active) {
-  .${defaultClassNames.codeGroupClass} {
-    --rcg-accent: Highlight;
-    --rcg-border-color: CanvasText;
-    --rcg-focus-color: Highlight;
+  :where(${group}) {
+    --_rcg-accent: Highlight;
+    --_rcg-border-color: CanvasText;
+    --_rcg-focus-color: Highlight;
   }
 }
 @media print {
-  .${defaultClassNames.tabContainerClass} {
+  ${tabs} {
     display: none;
   }
-  .${defaultClassNames.codeGroupClass}[data-rcg-enhanced] .${defaultClassNames.blockContainerClass},
-  .${defaultClassNames.codeGroupClass} .${defaultClassNames.blockContainerClass}[hidden] {
+  ${group}[data-rcg-enhanced] ${block},
+  ${group} ${block}[hidden] {
     display: block !important;
     break-inside: avoid;
   }
-  .${defaultClassNames.blockContainerClass}::before {
+  :where(${block})::before {
     content: attr(data-rcg-label);
     display: block;
     margin-block-end: 0.4rem;

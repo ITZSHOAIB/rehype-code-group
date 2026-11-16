@@ -234,9 +234,11 @@ test("exposes stable CSS custom properties for application theming", async () =>
     {},
   );
 
-  expect(output).toContain("--rcg-accent:");
-  expect(output).toContain("--rcg-border-color:");
-  expect(output).toContain("--rcg-tab-background-active:");
+  expect(output).toContain("var(--rcg-accent,");
+  expect(output).toContain("var(--rcg-border-color,");
+  expect(output).toContain("var(--rcg-tab-background-active,");
+  // Setting the public properties here would block values from ancestors.
+  expect(output).not.toMatch(/--rcg-accent:/);
 });
 
 test("does not emit invalid orientation or persistence semantics", async () => {

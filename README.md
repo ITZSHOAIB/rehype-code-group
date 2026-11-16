@@ -214,7 +214,7 @@ Generated IDs are deterministic per transformation. Supply `idPrefix` when separ
 
 ## Styling
 
-Default classes are retained when custom classes are added, keeping browser behavior stable. The bundled styles keep tabs aligned inside host typography systems and follow the page's light or dark `color-scheme`. Theme with `--rcg-accent`, `--rcg-border-color`, `--rcg-focus-color`, `--rcg-tab-background`, `--rcg-tab-background-active`, and `--rcg-tab-color`.
+Default classes are retained when custom classes are added, keeping browser behavior stable. The bundled styles keep tabs aligned inside host typography systems and follow the page's light or dark `color-scheme`. Theme with `--rcg-accent`, `--rcg-border-color`, `--rcg-focus-color`, `--rcg-tab-background`, `--rcg-tab-background-active`, and `--rcg-tab-color`. Set them on `.rehype-code-group` or any ancestor, such as `:root`. The bundled visual rules have zero specificity, so your own CSS wins whatever order the stylesheets load in. Vertical groups move their tabs above the panels on screens narrower than `40rem`.
 
 ```css
 .rehype-code-group {
